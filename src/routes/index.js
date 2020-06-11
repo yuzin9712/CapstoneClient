@@ -18,7 +18,7 @@ import ClosetPage from '../components/Closet/ClosetPage'
 import DesignRecentPage from '../components/Design/DesignRecentPage'
 import DesignBestPage from '../components/Design/DesignBestPage'
 import DesignMypage from '../components/Design/DesignMypage'
-import DesignLikepage from '../components/Design/DesignLikepage'
+import DesignLikepage from '../components/Design/DesignLikePage'
 import DesignFollowPage from '../components/Design/DesignFollowPage'
 import DesignHashtagSearchPage from '../components/Design/DesignHashtagSearchPage'
 
