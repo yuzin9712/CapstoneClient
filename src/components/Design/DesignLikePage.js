@@ -77,4 +77,4 @@ const mapDispatchToProps = (dispatch) => ({
     designSetLikeList: (designs) => dispatch(designSetLikeList(designs))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(DesignMypage)
+export default connect(mapStateToProps, mapDispatchToProps)(DesignLikepage)
