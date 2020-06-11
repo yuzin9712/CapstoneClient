@@ -4,6 +4,8 @@ node_js:
 branches:
   only:
     - master
+install:
+  - yarn
 before_deploy: # 배포하기전 하는 작업들
   - yarn install --frozen-lockfile
   - yarn run build
