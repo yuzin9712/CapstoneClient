@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { ConnectedRouter, push } from 'connected-react-router'
 import routes from './routes'
 import { connect } from 'react-redux'
-
+//ci 연동 테스트
 import NavBar from './components/Header/NavBar'
 import SketchDrawer from './components/SketchDrawer'
 import AuthPage from './components/Auth/AuthPage'
