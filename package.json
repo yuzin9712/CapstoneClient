@@ -4,8 +4,8 @@
   "description": "A basic example for Connected React Router",
   "main": "src/index.js",
   "scripts": {
-    "start": "webpack-dev-server --config ./config/webpack.config.dev --hot",
-    "dev": "node server.js",
+    "test": "exit",
+    "dev": "webpack-dev-server --config ./config/webpack.config.dev --hot",
     "build": "webpack --config ./config/webpack.config.prod"
   },
   "author": "ramram1048",
