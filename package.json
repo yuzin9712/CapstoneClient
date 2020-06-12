@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "exit",
-    "dev": "webpack-dev-server --config ./config/webpack.config.dev --hot",
+    "start": "webpack-dev-server --config ./config/webpack.config.dev --hot",
     "build": "webpack --config ./config/webpack.config.prod"
   },
   "author": "ramram1048",
