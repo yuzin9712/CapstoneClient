@@ -42,3 +42,4 @@ notifications:
   email:
     recipients:
       - dbwls97@ajou.ac.kr
+#테스트
