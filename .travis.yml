@@ -6,7 +6,7 @@ branches:
     - master
 install:
   - yarn
-before_deploy: # 배포하기전 하는 작업들!!!!
+before_deploy: # 배포하기전 하는 작업들입니당
   - yarn install --frozen-lockfile
   - webpack --config ./config/webpack.config.prod
   - rm -rf node_modules # travis가 설치한 node_moduels를 삭제
