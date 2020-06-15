@@ -18,7 +18,8 @@ module.exports = {
         },
         '/images': {
             target: 'https://swcap02.s3.ap-northeast-2.amazonaws.com',
-            pathRewrite: {'^/images': '' }
+            changeOrigin: true,
+            pathRewrite: {'^/images': '/' }
         }
     },
     contentBase: path.resolve(__dirname, '../build'),
