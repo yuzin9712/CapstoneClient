@@ -121,7 +121,7 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
         color="primary"
         className={classes.submit}
       >
-        로그인이다
+        로그인
       </Button>
     </form>
 
