@@ -40,7 +40,7 @@ const TryButton = ({pid, previews, fullButton, addItem, openDrawer, variant}) =>
   };
 
   const handleTry = (preview) => {
-    const proxyImage = preview.img.replace('https://swcap02.s3.ap-northeast-2.amazonaws.com','http://localhost:8000/images')
+    const proxyImage = preview.img.replace('https://swcap02.s3.ap-northeast-2.amazonaws.com','/images')
     // console.log(pid, preview.color, proxyImage)
     addItem(pid, preview.color, proxyImage)
     // console.log(img)
