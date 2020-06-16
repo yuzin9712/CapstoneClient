@@ -5,11 +5,12 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 
 module.exports = {
-  entry: 
-  ['react-hot-loader/patch',
-  'webpack-hot-middleware/client',
-  'babel-polyfill',
-  "./src/index.js"],
+  entry: [
+    'react-hot-loader/patch',
+    // 'webpack-hot-middleware/client',
+    'babel-polyfill',
+    path.resolve('src/index.js'),
+  ],
   devtool: 'eval-source-map',
   devServer: {
     proxy: {
@@ -24,11 +25,12 @@ module.exports = {
     },
     contentBase: path.resolve(__dirname, '../build'),
     index: "index.html",
-    port: 8000
+    port: 8080,
   },
   output: {
     filename: "bundle.js",
-    path: path.resolve(__dirname, "../build")
+    path: path.resolve(__dirname, "../build"),
+    publicPath: '/',
   },
   mode: "production",
   module: {

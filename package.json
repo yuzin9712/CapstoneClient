@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "exit",
-    "start": "webpack-dev-server --config ./config/webpack.config.dev --hot",
+    "start": "webpack-dev-server --config ./config/webpack.config.dev --hot --history-api-fallback",
     "build": "webpack --config ./config/webpack.config.prod"
   },
   "author": "ramram1048",
@@ -34,6 +34,7 @@
     "connected-react-router": "^6.0.0",
     "cors": "^2.8.5",
     "css-loader": "^3.5.3",
+    "emailjs-com": "^2.4.1",
     "fabric": "^3.6.3",
     "fabric-webpack": "^1.6.0-rc.1",
     "file-loader": "^6.0.0",
