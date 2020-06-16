@@ -105,7 +105,7 @@ const NavBar = ({menus, authStore, sketchOpened, handleDrawer, requestLogout, pu
       <Box className={classes.topbar} alignItems="center">
         <Box className={classes.actionBox}>
         <Link onClick={handleLogout} color="inherit" >로그아웃</Link>
-        <Link onClick={() => push("/order/cart")} color="inherit" >바구니!!!!</Link>
+        <Link onClick={() => push("/order/cart")} color="inherit" >장바구니</Link>
         <Link onClick={() => {push("/order/myorder")}} color="inherit" >마이페이지</Link>
         {adminMenu}
         </Box>

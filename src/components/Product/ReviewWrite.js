@@ -68,7 +68,7 @@ const ReviewWrite = ({ pid, reload }) => {
     .then((json) => {
       console.log(json)
       const images = json
-      fetch(sangminserver+"/review/"+pid,{
+      fetch(sangminserver+"/review/post/"+pid,{
         method: "POST",
         headers: {
           'Accept': 'application/json',

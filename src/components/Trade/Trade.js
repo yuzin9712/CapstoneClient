@@ -1,5 +1,4 @@
 import * as React from 'react';
-import './Trade.css';
 import TradeApply from '../TradeApply';
 import Trademember from '../Trademember';
 import Paper from '@material-ui/core/Paper'; //컴포넌트의 외부를감싸기위해사용하는놈

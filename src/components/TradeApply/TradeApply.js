@@ -1,5 +1,4 @@
 import * as React from 'react';
-import './TradeApply.css';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import {post} from 'axios';
@@ -11,6 +10,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { yujinserver } from '../../restfulapi';
+import emailjs from 'emailjs-com'
 
 
 export default class TradeApply extends React.Component {
@@ -38,6 +38,11 @@ export default class TradeApply extends React.Component {
     addCustomer(){
       const url = yujinserver+'/admin/'+this.props.id;
     const formData = new FormData();
+    const emailC = {
+      title: '멋쟁이마당 제휴 승인 메일입니다.',
+      contents: '안녕하십니까 멋쟁이마당입니다. 제휴승인을 축하드립니다. 감사합니다.'+Date.now(),
+      give_men : this.props.email
+  }
   
   
     //전달하고자하는 data에 파일이 포함되어있을때, 서버에 전송할때는 웹표준에 맞는 헤더를 추가해줘야한다
@@ -46,7 +51,17 @@ export default class TradeApply extends React.Component {
             'content-type':'multipart/form-data'
         }
     }
-    return get(url,formData,config); //axios에 있는post라이브러리를 이용해서 해당 url의 formData를 해당환경설정에맞게 헤더를 붙여서 실제로 서버로 데이터를 보내는거임
+    return get(url,formData,config)
+    .then((text) => {
+      if(text.data === "success"){
+        console.log("성공이요")
+        emailjs.send("1234", "template_gKmhe134", emailC, "user_0itOJn1aftoqkWwVIDfq3")
+        .then(
+          (res) => console.log(res), 
+          (error) => console.error(error)
+        )
+      }
+    }); //axios에 있는post라이브러리를 이용해서 해당 url의 formData를 해당환경설정에맞게 헤더를 붙여서 실제로 서버로 데이터를 보내는거임
 }
     
     

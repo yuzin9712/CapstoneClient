@@ -1,5 +1,4 @@
 import * as React from 'react';
-import './Trademember.css';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import {post} from 'axios';

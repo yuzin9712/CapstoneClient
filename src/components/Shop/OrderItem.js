@@ -58,7 +58,10 @@ const useStyles = makeStyles((theme) => ({
     },
     contentPanel: {
       
-    }
+    },
+    select: {
+      minWidth: 120,
+    },
 }));
 
 const OrderList = ({order, carriers, reload}) => {
@@ -67,7 +70,7 @@ const OrderList = ({order, carriers, reload}) => {
   const { register, handleSubmit, errors } = useForm();
 
   const statusLookup = [
-    "주문접수", "입금확인", "배송준비중", "발송", "배송완료"
+    "주문접수", "입금확인", "배송준비", "발송완료", "배송완료"
   ]
 
 
@@ -108,13 +111,15 @@ const OrderList = ({order, carriers, reload}) => {
     : ""
   )
   const invoiceForm = (carrierName !== ""?
-    <Box display="flex" flexDirection="row" alignItems="center">
-      <Typography gutterBottom variant="body2">{carrierName} / 운송장번호: {order.t_invoice}</Typography>
-      <Button variant="outlined" component={Link} to={"https://tracker.delivery/#/"+order.zipCode+"/"+order.t_invoice} target="_blank" onClick={(event) => {event.preventDefault(); window.open("https://tracker.delivery/#/"+order.zipCode+"/"+order.t_invoice);}} >보기</Button>
+  <Box display="flex" flexDirection="row" alignItems="center" >
+    <Box p={1} component={Typography} gutterBottom variant="body2">{carrierName} / 운송장번호: {order.t_invoice}</Box>
+    <Button variant="outlined" component={Link} to={"https://tracker.delivery/#/"+order.zipCode+"/"+order.t_invoice} target="_blank" onClick={(event) => {event.preventDefault(); window.open("https://tracker.delivery/#/"+order.zipCode+"/"+order.t_invoice);}} >
+      배송현황
+    </Button>
     {/* <Button component={Link} >배송조회</Button> */}
     </Box>
   : <form onSubmit={handleSubmit(updateInvoice)}>
-      <FormControl>
+      <FormControl className={classes.select}>
         <InputLabel>배송사</InputLabel>
         <Select 
         value={zipCode}
@@ -147,19 +152,18 @@ const OrderList = ({order, carriers, reload}) => {
         <Typography gutterBottom>{order.product.pname}</Typography>
         <Typography gutterBottom variant="body2">{order.color}, {order.size} ／ {order.product.price}원 ✕ {order.cnt} ＝ {order.price}원</Typography>
       </Box>
-      <Box>
-        {invoiceForm}
-        <Stepper activeStep={order.status-1}>
-          {statusLookup.map((label, index) => {
-              const completed = (index < order.status)
-              return(
-              <Step>
-                  <StepLabel completed={completed}>{label}</StepLabel>
-              </Step>
-              ) 
-          })}
-        </Stepper>
-      </Box>
+      {invoiceForm}
+      {/* <Stepper activeStep={order.status-1}>
+        {statusLookup.map((label, index) => {
+            const completed = (index < order.status)
+            return(
+            <Step>
+                <StepLabel completed={completed}>{label}</StepLabel>
+            </Step>
+            ) 
+        })}
+      </Stepper> */}
+      <Box p={1} component={Typography} gutterBottom>{statusLookup[order.status-1]}</Box>
     </Box>
   )
 }

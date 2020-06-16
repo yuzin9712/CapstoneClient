@@ -2,7 +2,6 @@ import * as React from 'react';
 import {post} from 'axios';
 // import html2canvas from 'html2canvas';
 // import white from '../../media/white.jpg'
-import './Scatch.css';
 import Table from '@material-ui/core/Table';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';

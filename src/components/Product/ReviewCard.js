@@ -24,12 +24,16 @@ import {
   MoreVert as MoreVertIcon,
   Delete,
   Edit,
+  Cancel,
+  Done,
+  Clear,
 } from '@material-ui/icons'
 import { useForm } from 'react-hook-form';
 import { connect } from 'react-redux';
 import { sangminserver } from '../../restfulapi';
 import { useSnackbar } from 'notistack';
 import FollowButton from '../Community/FollowButton';
+import ReviewComment from './ReviewComment';
 
 const useStyles = makeStyles((theme) => ({
   cardMedia: {
@@ -55,12 +59,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ReviewCard = ({currentUser, width, review}) => {
+const ReviewCard = ({authStore, width, review, reload}) => {
   const classes = useStyles();
   const { register, handleSubmit, errors } = useForm();
   const { enqueueSnackbar } = useSnackbar();
   const [expanded, setExpanded] = useState(false);
   const [comments, setComments] = useState(null)
+  const [content, setContent] = useState(null)
+  const [editReview, setEditReview] = useState(false)
   const [recentComment, setRecentComment] = useState(null)
   const cardSizeLookup = {
     xs: 1,
@@ -71,6 +77,43 @@ const ReviewCard = ({currentUser, width, review}) => {
   }
   const createdAt = new Date(review.createdAt)
   const updatedAt = new Date(review.updatedAt)
+
+  useEffect(() => {
+    if(editReview){
+      setContent(
+        <form id="content-edit-form" onSubmit={handleSubmit(submitReviewEdit)}>
+          <TextField
+          required
+          fullWidth
+          inputRef={register({})}
+          defaultValue={review.content}
+          variant="outlined"
+          margin="normal"
+          name="editedContent"
+          label="내용" />
+          <Box flexGrow={1} display="flex" justifyContent="flex-end" alignItems="center">
+            <Tooltip title="수정 취소">
+              <IconButton onClick={() => setEditReview(false)}>
+                <Clear />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="적용">
+              <IconButton type="submit" form="content-edit-form" >
+                <Done />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        </form>
+      )
+    }
+    else(
+      setContent(
+        <Typography>
+          {review.content}
+        </Typography>
+      )
+    )
+  }, [editReview, review.content])
 
   useEffect(() => {
     if(comments === null) fetchComments()
@@ -86,25 +129,15 @@ const ReviewCard = ({currentUser, width, review}) => {
     )
     .then((json) => {
       // console.log(json.comments)
-      setComments(json.comments.map((comment) => (
-        <Box p={1} display="flex" flexDirection="row" key={comment.id}>
-          <Avatar className={classes.commentAvatar}>
-            {comment.writer}
-          </Avatar>
-          <Box flexDirection="column" p={1} mx={1} flexGrow={1} component={Paper} variant="outlined">
-            <Typography item gutterBottom>{comment.content}</Typography>
-          </Box>
-          <Tooltip title="삭제">
-            <IconButton>
-              <Delete />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      )))
+      setComments(json.comments.map((comment) => {
+        return(
+          <ReviewComment comment={comment} reload={() => fetchComments()} />
+        )
+      }))
       const recent = json.comments.reverse()[0]
       if(recent !== undefined) setRecentComment(
         <Box display="flex" flexDirection="row">
-          <Avatar className={classes.commentAvatar}>{recent.writer}</Avatar>
+        <Avatar className={classes.commentAvatar}>{recent.writer.slice(0,1)}</Avatar>
           <Box p={1} flexGrow={1}>
             <Typography item gutterBottom>
               {recent.content.length>50?recent.content.substring(0,50) + "...":recent.content}
@@ -112,6 +145,7 @@ const ReviewCard = ({currentUser, width, review}) => {
           </Box>
         </Box>
       )
+      else setRecentComment(null)
     })
   }
 
@@ -145,10 +179,44 @@ const ReviewCard = ({currentUser, width, review}) => {
         console.log(text)
     })
   }
+  const submitReviewEdit = (data) => {
+    if(data.editedContent !== review.content){
+      fetch(sangminserver+"/review/updateReview/",{
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          "Content-Type": "application/json",
+          'Cache': 'no-cache'
+        },
+        body: JSON.stringify({
+          reviewId: review.id,
+          comment: data.editedContent
+        }),
+        credentials: 'include',
+      })
+      .then(
+        response => response.text(),
+        error => console.log(error)
+      )
+      .then((text) => {
+        if(text === 'update review complete'){
+          enqueueSnackbar("리뷰를 수정했어요",{"variant": "success"});
+          reload()
+        }
+        else if(text === 'update review fail'){
+          enqueueSnackbar("수정할 권한이 없어요",{"variant": "error"});
+        }
+        else{
+          enqueueSnackbar("리뷰 수정에 실패했어요. 오류가 계속되면 관리자에게 문의해주세요",{"variant": "error"});
+        }
+      })
+    }
+    setEditReview(false)
+  }
   const commentWriteComponent = (
     <form onSubmit={handleSubmit(submitComment)}>
       <Box display="flex" flexDirection="row" alignItems="center">
-        <Avatar>{currentUser}</Avatar>
+        <Avatar className={classes.commentAvatar}>{authStore.currentUser.slice(0,1)}</Avatar>
         <Box flexGrow={1} p={1}>
           <TextField 
             inputRef={register({required: true})}
@@ -167,12 +235,42 @@ const ReviewCard = ({currentUser, width, review}) => {
       </Box>
     </form>
   )
+  const deleteReview = () => {
+    fetch(sangminserver+"/review/deleteReview/",{
+      method: "POST",
+      headers: {
+        'Accept': 'application/json',
+        "Content-Type": "application/json",
+        'Cache': 'no-cache'
+      },
+      body: JSON.stringify({
+        reviewId: review.id
+      }),
+      credentials: 'include',
+    })
+    .then(
+      response => response.text(),
+      error => console.log(error)
+    )
+    .then((text) => {
+        if(text === 'delete review done'){
+          enqueueSnackbar("리뷰를 삭제했어요",{"variant": "success"});
+          reload()
+        }
+        else if(text === 'delete review fail'){
+          enqueueSnackbar("삭제할 권한이 없어요",{"variant": "error"});
+        }
+        else{
+          enqueueSnackbar("리뷰 삭제에 실패했어요. 오류가 계속되면 관리자에게 문의해주세요",{"variant": "error"});
+        }
+    })
+  }
 
   return (
     <Box p={1} container={Card} item width={cardSizeLookup[width]} className={classes.card} variant="outlined">
       
       <Grid item container>
-        <Avatar item>{review.user_email}</Avatar>
+        <Avatar item>{review.user_email.slice(0,1)}</Avatar>
         <Box item direction="column" flexGrow={1}>
           <Typography>{review.user_email}</Typography>
           <Typography variant="body2" color="textSecondary">
@@ -181,16 +279,36 @@ const ReviewCard = ({currentUser, width, review}) => {
         </Box>
         <Box item>
           <FollowButton targetuserid={review.userId} />
-          <Tooltip title="수정">
-            <IconButton>
-              <Edit />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="삭제">
-            <IconButton>
-              <Delete />
-            </IconButton>
-          </Tooltip>
+          {review.userId === authStore.currentId?(
+            editReview?(
+              <React.Fragment>
+                <Tooltip title="수정 취소">
+                  <IconButton onClick={() => setEditReview(false)}>
+                    <Clear />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="적용">
+                  <IconButton type="submit" form="content-edit-form" >
+                    <Done />
+                  </IconButton>
+                </Tooltip>
+              </React.Fragment>
+            ): (
+              <React.Fragment>
+                <Tooltip title="수정">
+                  <IconButton onClick={() => setEditReview(true)}>
+                    <Edit />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="삭제">
+                  <IconButton onClick={deleteReview}>
+                    <Delete />
+                  </IconButton>
+                </Tooltip>
+              </React.Fragment>
+            )
+          )
+          :null}
         </Box>
       </Grid>
       {review.img?<ButtonBase>
@@ -201,7 +319,7 @@ const ReviewCard = ({currentUser, width, review}) => {
         />
       </ButtonBase>:null}
       <CardContent>
-        {review.content}
+        {content}
       </CardContent>
       <CardActions>
         <Box flexGrow={1}>
@@ -229,11 +347,11 @@ const ReviewCard = ({currentUser, width, review}) => {
 }
 
 ReviewCard.propTypes = {
-    design: PropTypes.object,
+    // design: PropTypes.object,
 }
 
 const mapStateToProps = state => ({
-  currentUser: state.auth.currentUser,
+  authStore: state.auth,
   //pathname: state.router.location.pathname,
   //search: state.router.location.search,
   //hash: state.router.location.hash,

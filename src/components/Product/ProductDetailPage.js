@@ -9,6 +9,7 @@ import {
   Typography,
   Divider,
   Button,
+  Grid,
 } from '@material-ui/core'
 
 import ReviewCard from './ReviewCard';
@@ -54,7 +55,7 @@ const ProductDetailPage = ({pathname, goBack}) => {
           <ReviewWrite pid={pid} reload={() => setLoading(true)} />
         )
         if(json.reviews.length){
-          setReviewListComponent(json.reviews.map((review) => <ReviewCard review={review} />))
+          setReviewListComponent(json.reviews.map((review) => <ReviewCard key={"review"+review.id} review={review} reload={() => setLoading(true)} />))
         }
         else setReviewListComponent(
           <Box p={7} flexGrow={1} component={Typography} variant="body2" gutterBottom align="center">리뷰가 없어요!</Box>
@@ -74,9 +75,9 @@ const ProductDetailPage = ({pathname, goBack}) => {
           {reviewWriteComponent}
         </Box>
         <Divider />
-        <Box display="flex">
+        <Grid container>
           {reviewListComponent}
-        </Box>
+        </Grid>
       </Box>
     </Box>
   )
