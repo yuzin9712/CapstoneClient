@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const CommentWrite = ({ dispatchPush, postid, reload }) => {
+const CommentWrite = ({ authStore, dispatchPush, postid, reload }) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [ loading, setLoading ] = useState(true);
@@ -87,7 +87,7 @@ const CommentWrite = ({ dispatchPush, postid, reload }) => {
 
   useEffect(() => {
     if(loading){
-      fetch(yujinserver+"/page/closet", { credentials: 'include', })
+      fetch(yujinserver+"/page/closet/"+authStore.currentId, { credentials: 'include', })
       .then(
         response => response.json(),
         error => console.log(error)
@@ -317,6 +317,7 @@ CommentWrite.propTypes = {
 
 
 const mapStateToProps = state => ({
+  authStore: state.auth,
   //pathname: state.router.location.pathname,
   //search: state.router.location.search,
   //hash: state.router.location.hash,

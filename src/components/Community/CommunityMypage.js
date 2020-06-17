@@ -22,14 +22,14 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const fetchurl = yujinserver+"/post/user"
+const fetchurl = yujinserver+"/post/user/"
 
-const CommunityMypage = () => {
+const CommunityMypage = ({authStore}) => {
     const classes = useStyles();
     const [ postList, setPostList ] = useState(null)
 
     useEffect(() => {
-        fetch(fetchurl, {credentials: 'include',})
+        fetch(fetchurl+authStore.currentId, {credentials: 'include',})
         .then(response => response.json(),
             error => console.error(error))
         .then(json => {
@@ -57,6 +57,7 @@ CommunityMypage.propTypes = {
 
 
 const mapStateToProps = state => ({
+  authStore: state.auth,
     //pathname: state.router.location.pathname,
     //search: state.router.location.search,
     //hash: state.router.location.hash,

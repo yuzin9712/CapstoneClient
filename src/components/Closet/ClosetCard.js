@@ -15,7 +15,7 @@ import {
   Collapse,
   Chip,
   Button, Typography, Avatar, IconButton, ThemeProvider ,
-  Popover, Fade,
+  Popover, Fade, withWidth,
 } from '@material-ui/core';
 import {
   Delete,
@@ -53,13 +53,25 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ClosetCard = ({closet, reload}) => {
+const ClosetCard = ({closet, reload, width}) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [expanded, setExpanded] = useState(false);
   const [confirmPopoverAnchorEl, setConfirmPopoverAnchorEl] = useState(null);
   const open = Boolean(confirmPopoverAnchorEl);
+  const [cardSize, setCardSize] = useState(1)
   const id = open ? 'simple-popover' : undefined;
+
+  useEffect(() => {
+    setCardSize(cardSizeLookup[width])
+  }, [width])
+  const cardSizeLookup = {
+    xs: 1/2,
+    sm: 1/3,
+    md: 1/4,
+    lg: 1/4,
+    xl: 1/4,
+  }
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -89,7 +101,7 @@ const ClosetCard = ({closet, reload}) => {
   }
 
   return (
-    <Box component={Card} width={1/2} elevation={0} p={1} className={classes.card} >
+    <Box component={Card} width={cardSize} elevation={0} p={1} className={classes.card} >
       <CardActionArea>
         <CardMedia
           className={classes.cardMedia}
@@ -150,4 +162,4 @@ ClosetCard.propTypes = {
     product: PropTypes.object,
 }
   
-export default ClosetCard
+export default withWidth()(ClosetCard)

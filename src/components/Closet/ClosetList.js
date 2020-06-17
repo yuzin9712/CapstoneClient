@@ -17,37 +17,6 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const sampleCloset = () => {
-    const temp = [];
-    while(temp.length<100) temp.push({
-        "id": 14,
-        "img": "https://swcap02.s3.ap-northeast-2.amazonaws.com/closet/1588077824737testimg1.jpg",
-        "createdAt": "2020-04-28T12:43:48.000Z",
-        "updatedAt": "2020-04-28T12:43:48.000Z",
-        "deletedAt": null,
-        "userId": 2,
-        "products": [
-            {
-                "id": 1,
-                "seller": "룩앤핏",
-                "pname": "스트라이프긴팔티",
-                "img": "https://swcap02.s3.ap-northeast-2.amazonaws.com/product/top1-1585993258043.jpg",
-                "price": 12000,
-                "description": "테스트1"
-            },
-            {
-                "id": 5,
-                "seller": "언더아머",
-                "pname": "스파이크트레이닝긴팔",
-                "img": "https://swcap02.s3.ap-northeast-2.amazonaws.com/product/top3-1586279327511.jpg",
-                "price": 40000,
-                "description": "상의3"
-            }
-        ]
-    });
-    return temp;
-}
-
 const ClosetList = ({closets, reload}) => {
     const [ closetCards, setClosetCards ] = useState(null)
 
@@ -56,15 +25,15 @@ const ClosetList = ({closets, reload}) => {
             if(closets.length) setClosetCards(closets.map((closet) => {
                 return <ClosetCard closet={closet} reload={() => reload()} />
             }))
+            else setClosetCards(<Typography gutterBottom>저장된 코디가 없습니다. 코디를 만들어보세요!</Typography>)
         }
-        else setClosetCards(<Typography gutterBottom>없어요</Typography>)
+        else setClosetCards(<Typography gutterBottom>저장된 코디가 없습니다. 코디를 만들어보세요!</Typography>)
     }, [closets])
     
-
     return(
-        <Grid component={Container} maxWidth="md" container>
-                {closetCards}
-        </Grid>
+      <Grid container>
+        {closetCards}
+      </Grid>
     )
 }
 
