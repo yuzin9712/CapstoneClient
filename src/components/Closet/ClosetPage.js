@@ -7,7 +7,8 @@ import { useSnackbar } from 'notistack';
 
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Grid,
+  Box,
+  Container,
   Typography,
   Divider,
 } from '@material-ui/core'
@@ -19,16 +20,16 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const fetchurl=yujinserver+"/page/closet"
+const fetchurl=yujinserver+"/page/closet/"
 
-const ClosetPage = () => {
+const ClosetPage = ({authStore}) => {
     const classes = useStyles();
     const [ loading, setLoading ] = useState(true);
     const [ closetList, setClosetList ] = useState(null);
 
     useEffect(() => {
         if(loading){
-            fetch(fetchurl, {credentials: 'include',})
+            fetch(fetchurl+authStore.currentId, {credentials: 'include',})
             .then(response => response.json(),
                 error => console.error(error))
             .then(json => {
@@ -41,11 +42,11 @@ const ClosetPage = () => {
     }, [loading]);
 
     return(
-        <Grid container direction="column">
+        <Box display="flex" flexDirection="column" component={Container} maxWidth="md">
             <Typography variant="h4">나의 옷장</Typography>
             <Divider />
             {closetList}
-        </Grid>
+        </Box>
     )
 }
 
@@ -57,7 +58,7 @@ ClosetPage.propTypes = {
 
 
 const mapStateToProps = state => ({
-    loginResult: state.auth.fetching,
+    authStore: state.auth,
     //pathname: state.router.location.pathname,
     //search: state.router.location.search,
     //hash: state.router.location.hash,
