@@ -17,7 +17,6 @@ import DesignWrite from './DesignWrite'
 import DesignSubheader from './DesignSubheader'
 import {yujinserver} from '../../restfulapi'
 
-import { designSetLikeList } from '../../actions/design'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -26,16 +25,16 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const fetchurl = yujinserver+"/design/user";
+const fetchurl = yujinserver+"/design/user/";
 
-const DesignMypage = ({ designSetLikeList }) => {
+const DesignMypage = ({ authStore }) => {
     const classes = useStyles();
     const [ loading, setLoading ] = useState(true);
     const [ designs, setDesigns ] = useState([]);
     // const [ bestDesigns, setBestDesigns ] = useState([]);
     const [ writeDialogOpened, setWriteDialogOpened] = useState(false)
     useEffect(() => {
-        fetch(fetchurl, {credentials: 'include',})
+        fetch(fetchurl+authStore.currentId, {credentials: 'include',})
         .then(response => response.json(),
             error => console.error(error))
         .then(json => {
@@ -68,6 +67,7 @@ DesignMypage.propTypes = {
 
 
 const mapStateToProps = state => ({
+  authStore: state.auth,
     //pathname: state.router.location.pathname,
     //search: state.router.location.search,
     //hash: state.router.location.hash,

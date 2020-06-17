@@ -52,7 +52,7 @@ const PostCard = ({post}) => {
     const summary = content.length>100?content.substring(0,100) + "...":content
     const thumbnail = post.Pimgs.length?post.Pimgs[0].img : ""
 
-    console.log(thumbnail)
+    // console.log(thumbnail)
 
     const updatedAt = post.updatedAt
     const updated = (post.createdAt !== post.updatedAt)

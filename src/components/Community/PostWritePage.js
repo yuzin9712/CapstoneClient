@@ -76,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const PostWritePage = ({originalPost, backButtonAction, dispatchPush}) => {
+const PostWritePage = ({authStore, originalPost, backButtonAction, dispatchPush}) => {
     const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
     const [ loading, setLoading ] = useState(true);
@@ -87,7 +87,7 @@ const PostWritePage = ({originalPost, backButtonAction, dispatchPush}) => {
         if(loading){
           
           if(originalPost === undefined){
-            fetch(yujinserver+"/page/closet", { credentials: 'include', })
+            fetch(yujinserver+"/page/closet/"+authStore.currentId, { credentials: 'include', })
             .then(
               response => response.json(),
               error => console.log(error)
@@ -221,7 +221,7 @@ const PostWritePage = ({originalPost, backButtonAction, dispatchPush}) => {
     if(loading) return <Button disabled>옷장 공유하기</Button>
   else return(
         <Container maxWidth="md">
-            <Grid container={Paper} className={classes.root}>
+            <Grid component={Paper} className={classes.root}>
                 <Grid item container>
                     <Typography className={classes.title} gutterBottom variant="h4">글쓰기</Typography>
                     <Button onClick={backButtonAction}>뒤로가기</Button>
@@ -269,7 +269,7 @@ const PostWritePage = ({originalPost, backButtonAction, dispatchPush}) => {
                         return <Avatar src={img.img} className={classes.previewImage} variant="rounded" />
                       }) 
                     )}
-                    <Button type="submit" fillWidth variant="contained" color="primary">Submit</Button>
+                    <Button type="submit" fullWidth variant="contained" color="primary">Submit</Button>
                 </form>
             </Grid>
         </Container>
@@ -290,6 +290,7 @@ const mapStateToProps = state => {
     //pathname: state.router.location.pathname,
     //search: state.router.location.search,
     //hash: state.router.location.hash,
+    authStore: state.auth,
     originalPost: originalPost
   })
 }

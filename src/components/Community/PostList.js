@@ -24,19 +24,20 @@ const PostList = ({posts}) => {
     const [ postCards, setPostCards ] = useState(null)
 
     useEffect(() => {
-        if(posts){
-            if(posts.length) setPostCards(posts.map((post) => {
-                return <PostCard post={post} />
-            }))
-        }
-        else setPostCards(<Typography gutterBottom>없어요</Typography>)
+      if(posts){
+        if(posts.length) setPostCards(posts.map((post) => {
+          return <PostCard post={post} />
+        }))
+        else setPostCards(<Typography gutterBottom>작성한 게시글이 없어요.</Typography>)
+      }
+      else setPostCards(<Typography gutterBottom>작성한 게시글이 없어요.</Typography>)
     }, [posts])
     
 
     return(
-        <Box p={2} component={Container} maxWidth="md">
-                {postCards}
-        </Box>
+      <Box p={2}>
+        {postCards}
+      </Box>
     )
 }
 
