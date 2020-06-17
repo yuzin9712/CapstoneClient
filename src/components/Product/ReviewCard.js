@@ -108,9 +108,9 @@ const ReviewCard = ({authStore, width, review, reload}) => {
     }
     else(
       setContent(
-        <Typography>
-          {review.content}
-        </Typography>
+        review.content.split('\n').map((i, key) => {
+          return <Typography key={key} paragraph variant="body1">{i}</Typography>;
+        })
       )
     )
   }, [editReview, review.content])

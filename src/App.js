@@ -63,7 +63,6 @@ const menus = [
   {component: "👖하의", path: `/productList/category/${2}`},
   {component: "🎀패션잡화", path: `/productList/category/${3}`},
   {component: "🥾신발", path: `/productList/category/${4}`},
-  {component: "✨나의옷장", path: "/closet"},
   {component: "💎추천코디", path: "/design"},
   {component: "👀패션케어커뮤니티", path: "/community"},
   // {component: "Hello", path: "/hello"},
@@ -97,7 +96,7 @@ const App = ({ history, pathname, authStore, fetchLoginStatus, dispatchPush }) =
           <SnackbarProvider anchorOrigin={{vertical: 'top', horizontal: 'center'}}>
           { authStore.session !== "LOGOUT"?
             <React.Fragment key={authStore.currentId}>
-              <Box component={Container} maxWidth="lg" className={classes.main}>
+              <Box p={1} component={Container} maxWidth="lg" className={classes.main}>
                 <NavBar menus={menus} mode={authStore.session} />
                 <Box flexGrow={1} className={classes.context} key={authStore.currentId}>
                   { routes }

@@ -118,7 +118,7 @@ const ClosetCard = ({closet, reload, width}) => {
             anchorEl={confirmPopoverAnchorEl}
             onClose={handleConfirmPopoverClose}
             anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
-            transformOrigirn={{vertical: 'top', horizontal: 'left'}}>
+            transformOrigin={{vertical: 'top', horizontal: 'left'}}>
               <Typography gutterBottom>진짜지울래?</Typography>
               <Button onClick={handleRemove}>ㅇㅇ</Button>
               <Button onClick={handleConfirmPopoverClose}>ㄴㄴ</Button>

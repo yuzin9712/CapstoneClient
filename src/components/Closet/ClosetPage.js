@@ -15,6 +15,7 @@ import {
 
 import ClosetList from './ClosetList'
 import {yujinserver} from '../../restfulapi'
+import MypageSubheader from '../Mypage/MypageSubheader';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -22,36 +23,45 @@ const useStyles = makeStyles((theme) => ({
 
 const fetchurl=yujinserver+"/page/closet/"
 
-const ClosetPage = ({authStore}) => {
-    const classes = useStyles();
-    const [ loading, setLoading ] = useState(true);
-    const [ closetList, setClosetList ] = useState(null);
+const ClosetPage = ({authStore, pathname}) => {
+  const classes = useStyles();
+  const [ loading, setLoading ] = useState(true);
+  const [ closetList, setClosetList ] = useState(null);
 
-    useEffect(() => {
-        if(loading){
-            fetch(fetchurl+authStore.currentId, {credentials: 'include',})
-            .then(response => response.json(),
-                error => console.error(error))
-            .then(json => {
-                setClosetList(
-                    <ClosetList closets={json} reload={() => setLoading(true)} />
-                )
-                setLoading(false)
-            })
-        }
-    }, [loading]);
+  useEffect(() => {
+    if(loading){
+      const userId = parseInt(pathname.substring(pathname.lastIndexOf('/') + 1));
+      if(userId !== authStore.currentId){
+        setClosetList(
+          <Typography>다른 유저의 옷장을 볼 권한이 없어요</Typography>
+        )
+      }
+      else(
+        fetch(fetchurl+authStore.currentId, {credentials: 'include',})
+        .then(response => response.json(),
+          error => console.error(error))
+        .then(json => {
+          setClosetList(
+              <ClosetList closets={json} reload={() => setLoading(true)} />
+          )
+          setLoading(false)
+        })
+      )
+    }
+  }, [loading]);
 
-    return(
-        <Box display="flex" flexDirection="column" component={Container} maxWidth="md">
-            <Typography variant="h4">나의 옷장</Typography>
-            <Divider />
-            {closetList}
-        </Box>
-    )
+  return(
+    <Box display="flex" flexDirection="column" component={Container} maxWidth="md">
+      <MypageSubheader userId={authStore.currentId} />
+      <Typography variant="h4">나의 옷장</Typography>
+      <Divider />
+      {closetList}
+    </Box>
+  )
 }
 
 ClosetPage.propTypes = {
-    //pathname: PropTypes.string,
+    pathname: PropTypes.string,
     //search: PropTypes.string,
     //hash: PropTypes.string,
 }
@@ -59,7 +69,7 @@ ClosetPage.propTypes = {
 
 const mapStateToProps = state => ({
     authStore: state.auth,
-    //pathname: state.router.location.pathname,
+    pathname: state.router.location.pathname,
     //search: state.router.location.search,
     //hash: state.router.location.hash,
 })

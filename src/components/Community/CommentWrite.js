@@ -248,41 +248,39 @@ const CommentWrite = ({ authStore, dispatchPush, postid, reload }) => {
         </React.Fragment>
       }
     })
-    return <React.Fragment>
+    return <Grid container>
       {imagePreview}
       {closetPreview}
-    </React.Fragment>
+    </Grid>
   }
 
   if(loading) return <Button disabled>💬댓글쓰기</Button>
   else return(
     <React.Fragment>
       <form onSubmit={handleSubmit(submitComment)}>
-        <Box py={1}>
-          <Grid container direction="row" alignItems="center">
-            <Box flexGrow={1}>
-              <TextField 
-                inputRef={register({required: true})}
-                required
-                multiline
-                name="content"
-                label="댓글 작성"
-                fullWidth 
-                variant="outlined" 
-              />
-            </Box>
-            <Box flexDirection="column">
-              <Button
-                color="inherit"
-                onClick={handleClickOpen}
-                variant="outlined">📷사진/옷장 첨부</Button>
-              <Button
-                type="submit"
-                color="inherit"
-                variant="outlined">💬댓글쓰기</Button>
-            </Box>
-          </Grid>
-          {imageClosetPreview()}
+        <Box py={1} display="flex" flexDirection="row" alignItems="center">
+          <Box display="flex" flexDirection="column" flexGrow={1}>
+            {imageClosetPreview()}
+            <TextField 
+              inputRef={register({required: true})}
+              required
+              multiline
+              name="content"
+              label="댓글 작성"
+              fullWidth 
+              variant="outlined" 
+            />
+          </Box>
+          <Box p={1} display="flex" flexDirection="column">
+            <Button
+              color="inherit"
+              onClick={handleClickOpen}
+              variant="outlined">📷사진/옷장 첨부</Button>
+            <Button
+              type="submit"
+              color="inherit"
+              variant="outlined">💬댓글쓰기</Button>
+          </Box>
         </Box>
       </form>
       <Dialog 

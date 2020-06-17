@@ -38,7 +38,7 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: "/node_modules",
-        use: ["babel-loader"]
+        use: ["babel-loader?cacheDirectory"]
       },
       {
         test: /\.html$/,
@@ -80,5 +80,10 @@ module.exports = {
     modules: [
       'node_modules',
     ],
-  },
+  },  
+  resolve: {
+    alias: {
+      'react-dom': '@hot-loader/react-dom'
+    }
+  }
 };

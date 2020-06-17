@@ -18,6 +18,7 @@ import {
   Button, Typography, Avatar, IconButton, ThemeProvider, Tooltip ,
   withWidth,
   Popover,
+  ButtonBase,
 } from '@material-ui/core';
 import {
   FavoriteBorder as FavoriteBorderIcon,
@@ -41,8 +42,9 @@ import { requestUnfollow, requestFollow } from '../../actions/follow';
 import { push } from 'connected-react-router';
 import ChipInput from 'material-ui-chip-input';
 import FollowButton from '../Community/FollowButton';
-import NameAvatar from '../common/NameAvatar';
-import ConfirmPopover from '../Closet/ConfirmPopover';
+import RawNameAvatar from '../common/RawNameAvatar';
+import ConfirmPopover from '../common/ConfirmPopover';
+import NameAvatarButton from '../common/NameAvatarButton';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -118,11 +120,13 @@ const DesignCard = ({sessionId, width, design, designStore, followStore, request
 
   const cardSizeLookup = {
     xs: 1,
-    sm: 1,
-    md: 1/2,
-    lg: 1/2,
-    xl: 1/4,
+    sm: 1/2,
+    md: 1/3,
+    lg: 1/3,
+    xl: 1/3,
   }
+  const createdAt = new Date(design.createdAt)
+  const updatedAt = new Date(design.updatedAt)
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -157,8 +161,8 @@ const DesignCard = ({sessionId, width, design, designStore, followStore, request
   }
 
   const hashtagView = (
-    <Box display="flex" flexGrow={1}>
-      <Box flexGrow={1}>
+    <Box display="flex" flexGrow={1} alignItems="center">
+      <Box flexGrow={1} alignItems="center">
         {hashtagChips}
       </Box>
       {sessionId === design.user.id?(
@@ -248,13 +252,15 @@ const DesignCard = ({sessionId, width, design, designStore, followStore, request
   return (
     <Box container={Card} width={cardSize} className={classes.card} variant="outlined">
       <Grid container direction="row">
-        <Grid item container xs={12} md={8}>
+        <Grid item container xs={12} md={8} component={Box} alignItems="center">
           <Grid item>
-            <NameAvatar name={design.user.name} />
+            <NameAvatarButton name={design.user.name} userId={design.user.id} />
           </Grid>
           <Box>
             <Typography>{design.user.name}</Typography>
-            <Typography>{design.updatedAt}</Typography>
+            <Typography variant="body2">
+              {updatedAt.getTime()>createdAt.getTime()?updatedAt.toLocaleString()+" (수정됨)" : createdAt.toLocaleString()}
+            </Typography>
           </Box>
         </Grid>
         <Grid item container xs={12} md={4} direction="row" justify="flex-end" alignItems="center">

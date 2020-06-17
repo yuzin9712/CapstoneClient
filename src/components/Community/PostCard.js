@@ -17,6 +17,7 @@ import {
   CardActions,
 } from '@material-ui/core'
 import FollowButton from './FollowButton';
+import NameAvatarButton from '../common/NameAvatarButton';
 
 const useStyles = makeStyles((theme) => ({
     card: {
@@ -26,10 +27,6 @@ const useStyles = makeStyles((theme) => ({
         '& > *': {
           padding: theme.spacing(2),
         },
-    },
-    actionBox: {
-        display: 'flex',
-        alignItems: 'center'
     },
     cardContent: {
         display: 'flex',
@@ -52,10 +49,8 @@ const PostCard = ({post}) => {
     const summary = content.length>100?content.substring(0,100) + "...":content
     const thumbnail = post.Pimgs.length?post.Pimgs[0].img : ""
 
-    // console.log(thumbnail)
-
-    const updatedAt = post.updatedAt
-    const updated = (post.createdAt !== post.updatedAt)
+    const createdAt = new Date(post.createdAt)
+    const updatedAt = new Date(post.updatedAt)
     const commentcount = post.commentcount
 
     if(!post) return <div>ㅇㅅㅇ</div>
@@ -74,15 +69,15 @@ const PostCard = ({post}) => {
                     </CardContent>
                 </CardActionArea>
                 <Box p={2} display="flex" height="100%" alignItems="flex-end">
-                    <Box className={classes.actionBox} flexGrow={1}>
-                        <Box className={classes.actionBox} flexGrow={1}>
-                            <Avatar>{uname}</Avatar>
-                            <FollowButton targetuserid={post.user.id} />
-                            <Typography gutterBottom variant="body2" color="textSecondary">
-                                ー {updatedAt} {updated?"(수정됨)":""}
-                            </Typography>
-                        </Box>
-                        <Typography gutterBottom>💬{commentcount} 💗{post.likecount}</Typography>
+                    <Box display="flex" flexDirection="row" flexGrow={1} alignItems="center">
+                      <NameAvatarButton name={post.user.name} userId={post.user.id} />
+                      <Box display="flex" flexDirection="column" flexGrow={1}>
+                        <Typography variant="body2" color="textSecondary">{post.user.name}</Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          {updatedAt.getTime()>createdAt.getTime()?updatedAt.toLocaleString()+" (수정됨)" : createdAt.toLocaleString()}
+                        </Typography>
+                      </Box>
+                      <Typography>💬댓글 {commentcount}개 / 💗좋아요 {post.likecount}개</Typography>
                     </Box>
                 </Box>
             </Grid>

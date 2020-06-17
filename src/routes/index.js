@@ -37,6 +37,9 @@ import CommunityFollowPage from '../components/Community/CommunityFollowPage'
 import CommunityMypage from '../components/Community/CommunityMypage'
 import CommunityLikePage from '../components/Community/CommunityLikePage'
 import AdminManageShopPage from '../components/Admin/AdminManageShopPage'
+import Mypage from '../components/Mypage/Mypage'
+
+
 // import LoginPage from '../components/Login/LoginPage'
 // import AuthPage from '../components/Auth/AuthPage'
 
@@ -77,6 +80,9 @@ const routes = (
         <Route path="/community/mypage" component={CommunityMypage}/>
         <Route path="/community/like" component={CommunityLikePage}/>
         <Route path="/community/" component={CommunityRecentPage}/>
+
+        
+        <Route path="/mypage/:id" component={Mypage}/>
 
         <Route path="/shop/addproduct" component={ShopAddProduct} /> 
         <Route path="/shop/order" component={ShopOrders} /> 

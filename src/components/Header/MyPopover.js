@@ -47,7 +47,7 @@ const ConfirmPopover = ({text, target, action, cancel}) => {
     anchorEl={target}
     onClose={() => cancel()}
     anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
-    transformOrigirn={{vertical: 'top', horizontal: 'left'}}>
+    transformOrigin={{vertical: 'top', horizontal: 'left'}}>
       <Typography gutterBottom>{text}</Typography>
       <Button onClick={() => action()}>네</Button>
       <Button onClick={() => cancel()}>아니오</Button>

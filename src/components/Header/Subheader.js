@@ -16,12 +16,8 @@ import { handleDrawer } from '../../actions/sketch';
 import {yujinserver} from '../../restfulapi'
 
 const useStyles = makeStyles((theme) => ({
-  toolbar: {
-    display: 'flex',
-    justifyContent: 'space-between'
-  },
   toolbarSecondary: {
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     overflowX: 'auto',
   },
   toolbarLink: {

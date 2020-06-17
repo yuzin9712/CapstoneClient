@@ -28,7 +28,9 @@ import ClosetDetail from './ClosetDetail';
 import { Edit, Delete } from '@material-ui/icons';
 import { push } from 'connected-react-router';
 import { useSnackbar } from 'notistack';
-import ConfirmPopover from '../Closet/ConfirmPopover';
+import ConfirmPopover from '../common/ConfirmPopover';
+import NameAvatarButton from '../common/NameAvatarButton';
+import CommentCard from './CommentCard';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -104,35 +106,7 @@ const PostDetailPage = ({authStore, pathname, push, match}) => {
         })
         const commentDoms = post.postComments.map((comment) => {
             return(
-                <Grid container direction="row" alignItems="center">
-                    <Box p={2}>
-                        <Avatar>
-                            {comment.user.name.slice(0,1)}
-                        </Avatar>
-                        <FollowButton targetuserid={comment.user.id} />
-                    </Box>
-                    <Box flexDirection="column" flexGrow={1} component={Paper}>
-                        <Grid container direction="row">
-                            {comment.Cimgs.map((image) => {
-                                if(image.closet){
-                                    // closet
-                                    return <Box>
-                                        <ClosetDetail closet={image} imagestyle={classes.commentImage} />
-                                        </Box>
-                                }
-                                else{
-                                    // image only
-                                    return <Box>
-                                    <ButtonBase>
-                                    <Avatar variant="rounded" src={image.img} className={classes.commentImage} />
-                                    </ButtonBase>
-                                    </Box>
-                                }
-                            })}
-                        </Grid>
-                        <Typography item gutterBottom>{comment.content}</Typography>
-                    </Box>
-                </Grid>
+              <CommentCard comment={comment} reload={() => setLoading(true)} />
             )
         })
 
@@ -171,20 +145,16 @@ const PostDetailPage = ({authStore, pathname, push, match}) => {
         return(
             <Container maxWidth="md" className={classes.root}>
                 <Grid container component={Paper} direction="column" elevation={3}>
-                    <Typography item variant="h4" gutterBottom>{post.title}</Typography>
+                    <Typography variant="h4" gutterBottom>{post.title}</Typography>
                     <Box display="flex" flexDirection="row" alignItems="center">
-                        <Avatar>{post.user.name.slice(0,1)}</Avatar>
-                        <Box display="flex" flexDirection="column" flexGrow={1} px={1}>
+                      <NameAvatarButton name={post.user.name} userId={post.user.id} />
+                        <Box display="flex" flexDirection="column" flexGrow={1}>
                           <Typography>{post.user.name}</Typography>
                           <Typography variant="body2" color="textSecondary">
-                            {updatedAt.getTime()>createdAt.getTime()?updatedAt.toLocaleString()+" (수정됨)" : createdAt.toLocaleString()} 댓글 {post.commentcount}개
+                            {updatedAt.getTime()>createdAt.getTime()?updatedAt.toLocaleString()+" (수정됨)" : createdAt.toLocaleString()}
                           </Typography>
                         </Box>
-                        <Box>
-                            <FollowButton targetuserid={post.user.id} />
-                            <Button>작성글보기</Button>
-                            <Button>코디 보기</Button>
-                        </Box>
+                          <Typography>💬댓글 {post.commentcount}개</Typography>
                     </Box>
                     <Divider />
                     <Box p={3}>
@@ -197,7 +167,7 @@ const PostDetailPage = ({authStore, pathname, push, match}) => {
                         })}
                       </Box>
                       <Container maxWidth="xs">
-                          <Box display="flex" flexDirection="row" component={Paper} flexGrow={1} variant="outlined" justifyContent="space-around">
+                          <Box display="flex" flexDirection="row" flexGrow={1} component={Paper} variant="outlined" justifyContent="space-around">
                               <PostLikeButton targetpostid={post.id} initialLike={post.likecount} />
                               <Button>공유</Button>
                           </Box>
@@ -221,7 +191,7 @@ const PostDetailPage = ({authStore, pathname, push, match}) => {
                     </Box>
                 </Grid>
                 <Grid container direction="column">
-                    <Typography flexGrow={1} gutterBottom variant="h6">댓글 {post.commentcount}개</Typography>
+                    <Typography gutterBottom variant="h6">댓글 {post.commentcount}개</Typography>
                     <Divider />
                     <CommentWrite postid={post.id} reload={() => setLoading(true)} />
                     {commentDoms}

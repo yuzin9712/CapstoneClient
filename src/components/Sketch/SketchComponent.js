@@ -311,7 +311,7 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem }) =>
         anchorEl={colorPickerAnchorEl}
         onClose={closeColorPicker}
         anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
-        transformOrigirn={{vertical: 'top', horizontal: 'left'}}>
+        transformOrigin={{vertical: 'top', horizontal: 'left'}}>
           <GithubPicker 
             colors={[red[100], pink[100], purple[100], deepPurple[100], indigo[100], blue[100], lightBlue[100], 
               cyan[100], teal[100], green[100], lightGreen[100], lime[100], yellow[100], amber[100], orange[100], deepOrange[100], 
