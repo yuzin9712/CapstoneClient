@@ -27,7 +27,7 @@ const categoryLookup = [
     "", "상의", "하의", "패션잡화", "신발"
 ]
 
-const ProductCategoryPage = ({pathname, search}) => {
+const ProductCategoryPage = ({pathname, search, match}) => {
     const classes = useStyles();
     const [ loading, setLoading ] = useState(true)
     const [initialProducts, setInitialProducts] = useState([])
@@ -42,10 +42,12 @@ const ProductCategoryPage = ({pathname, search}) => {
 
     useEffect(() => {
         while(loading){
+            const id = match.params.id;
+            console.log('id값은???', id);
             const categoryId = pathname.substring(pathname.lastIndexOf('/') + 1)
             console.log(categoryId)
             setCategory(categoryLookup[categoryId])
-            fetch(sangminserver+"/product/category/"+categoryId, {
+            fetch(sangminserver+"/product/category/"+id, {
                 credentials: 'include',
             })
             .then(

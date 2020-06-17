@@ -51,9 +51,9 @@ const routes = (
         {/* <Route path="/auth" component={AuthPage} /> */}
         <Route path="/hello" component={Hello} />
         <Route path="/counter" component={Counter} />  
-        <Route path="/productList/category" component={ProductCategoryPage} /> 
+        <Route path="/productList/category/:id" component={ProductCategoryPage} /> 
         <Route path="/productList/search" component={ProductSearchPage} /> 
-        <Route path="/productDetail" component={ProductDetailPage} /> 
+        <Route path="/productDetail/:id" component={ProductDetailPage} /> 
 
         <Route path="/order/placeorder" component={OrderPlacePage} /> 
         <Route path="/order/myorder" component={OrderMypage} /> 

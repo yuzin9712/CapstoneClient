@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const ProductDetailPage = ({pathname, goBack}) => {
+const ProductDetailPage = ({pathname, goBack, match}) => {
   const classes = useStyles()
   const [pid, setPid] = useState(0);
   const [loading, setLoading] = useState(null)
@@ -39,7 +39,9 @@ const ProductDetailPage = ({pathname, goBack}) => {
   
   useEffect(() => {
     if(loading){
-      fetch(sangminserver+"/product/"+pid, {
+      const id = match.params.id;
+      console.log('id값은???', id)
+      fetch(sangminserver+"/product/"+id, {
         credentials: 'include',
       })
       .then(

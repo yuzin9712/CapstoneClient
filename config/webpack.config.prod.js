@@ -1,14 +1,16 @@
 const path = require("path");
+const webpack = require('webpack');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 
 module.exports = {
-  entry: ['babel-polyfill',"./src/index.js"],
+  entry: ['babel-polyfill','react-hot-loader/patch',"./src/index.js"],
   devtool: 'eval-source-map',
   output: {
-    filename: "bundle.[contenthash].js",
-    path: path.resolve(__dirname, "../build")
+    filename: "bundle.[hash].js",
+    path: path.resolve(__dirname, "../build"),
+    publicPath: '/'
   },
   mode: "production",
   module: {
@@ -44,6 +46,7 @@ module.exports = {
     ]
   },
   plugins: [
+    new webpack.HotModuleReplacementPlugin(),
     new HtmlWebPackPlugin({
       template: "./public/index.html",
       filename: "index.html"
