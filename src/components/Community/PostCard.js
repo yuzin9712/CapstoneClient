@@ -87,7 +87,8 @@ const PostCard = ({post}) => {
                 </Box>
             </Grid>
             <Grid item xs={12} sm={4} md={2}>
-            <Avatar component={Link} to={"/community/post/"+id}
+            {/* <Avatar component={Link} to={"/community/post/"+id} */}
+            <Avatar component={Link} to={`/community/post/${id}`}
                 className={classes.media}
                 src={thumbnail}
                 variant="rounded"

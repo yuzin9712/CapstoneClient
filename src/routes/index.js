@@ -71,7 +71,7 @@ const routes = (
         <Route path="/design/" component={DesignBestPage} /> 
 
         <Route path="/community/write" component={PostWritePage}/> 
-        <Route path="/community/post/" component={PostDetailPage}/> 
+        <Route path="/community/post/:id" component={PostDetailPage}/> 
         <Route path="/community/recent" component={CommunityRecentPage}/>
         <Route path="/community/follow" component={CommunityFollowPage}/>
         <Route path="/community/mypage" component={CommunityMypage}/>

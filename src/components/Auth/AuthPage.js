@@ -89,41 +89,46 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
   }
 
   const loginView =
-    <form
-      className={classes.form}
-      onSubmit={loginSubmit}
-    >
-      <TextField
-        variant="outlined"
-        margin="normal"
-        required
-        fullWidth
-        id="email"
-        value={email}
-        onChange={(e) => (setEmail(e.target.value))}
-        label="Email Address"
-        autoComplete="email"
-        autoFocus />
-      <TextField
-        variant="outlined"
-        margin="normal"
-        required
-        fullWidth
-        label="Password"
-        type="password"
-        id="password"
-        onChange={(e) => (setPassword(e.target.value))}
-        autoComplete="current-password" />
-      <Button
-        type="submit"
-        fullWidth
-        variant="contained"
-        color="primary"
-        className={classes.submit}
+  <div>
+  <form
+        className={classes.form}
+        onSubmit={loginSubmit}
       >
-        로그인
-      </Button>
-    </form>
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          id="email"
+          value={email}
+          onChange={(e) => (setEmail(e.target.value))}
+          label="Email Address"
+          autoComplete="email"
+          autoFocus />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          label="Password"
+          type="password"
+          id="password"
+          onChange={(e) => (setPassword(e.target.value))}
+          autoComplete="current-password" />
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+          className={classes.submit}
+        >
+          로그인
+        </Button>
+      </form>
+      <a href={"http://localhost:8001/api/auth/kakao"}>
+          <img alt={"kakao_login"} src={"https://kauth.kakao.com/public/widget/login/kr/kr_02_medium.png"}/>
+</a>
+    </div>
 
 
   const registerSubmit = (data) => {

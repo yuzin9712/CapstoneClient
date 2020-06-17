@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const PostDetailPage = ({authStore, pathname, push}) => {
+const PostDetailPage = ({authStore, pathname, push, match}) => {
   const { enqueueSnackbar } = useSnackbar();
   const [ loading, setLoading ] = useState(true)
   const [ post, setPost ] = useState([]);
@@ -57,8 +57,10 @@ const PostDetailPage = ({authStore, pathname, push}) => {
 
     useEffect(() => {
         if(loading){
+            const id = match.params.id;
+            console.log('id값은???', id)
             const postid = pathname.substring(pathname.lastIndexOf('/') + 1);
-            fetch(yujinserver+"/post/"+postid, {
+            fetch(yujinserver+"/post/"+id, {
                 credentials: 'include',
             })
             .then(response => response.json())
