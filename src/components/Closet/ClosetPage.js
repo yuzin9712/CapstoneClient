@@ -23,14 +23,14 @@ const useStyles = makeStyles((theme) => ({
 
 const fetchurl=yujinserver+"/page/closet/"
 
-const ClosetPage = ({authStore, pathname}) => {
+const ClosetPage = ({authStore, match}) => {
   const classes = useStyles();
   const [ loading, setLoading ] = useState(true);
   const [ closetList, setClosetList ] = useState(null);
 
   useEffect(() => {
     if(loading){
-      const userId = parseInt(pathname.substring(pathname.lastIndexOf('/') + 1));
+      const userId = parseInt(match.params.id);
       if(userId !== authStore.currentId){
         setClosetList(
           <Typography>다른 유저의 옷장을 볼 권한이 없어요</Typography>

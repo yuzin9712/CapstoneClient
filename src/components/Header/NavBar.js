@@ -110,7 +110,7 @@ const NavBar = ({menus, authStore, sketchOpened, handleDrawer, requestLogout, pu
             <Avatar src={Logo} className={classes.logo} variant="square" />
           </ButtonBase>
           <ProductSearchBar />
-          <Box display="flex">
+          <Box display="flex" flexShrink={1}>
             {designMenu}
             <IconButton onClick={(event) => setPopoverTarget(event.target)}>
               <RawNameAvatar name={authStore.currentUser} />
@@ -143,7 +143,7 @@ const NavBar = ({menus, authStore, sketchOpened, handleDrawer, requestLogout, pu
           <Box display="flex" flexDirection="column" p={1}>
             <Link onClick={() => pushTo("/mypage/"+authStore.currentId+"?design")} color="inherit" >💎추천코디 공유글</Link>
             <Link onClick={() => pushTo("/mypage/"+authStore.currentId+"?community")} color="inherit" >👀커뮤니티 게시글</Link>
-            <Link onClick={() => pushTo("/mypage/"+authStore.currentId)} color="inherit" >📬쪽지함</Link>
+            <Link onClick={() => pushTo("/message/"+authStore.currentId)} color="inherit" >📬쪽지함</Link>
             <Link onClick={() => pushTo("/closet/"+authStore.currentId)} color="inherit" >✨나의옷장</Link>
           </Box>
           <Divider />

@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import {
-  Avatar, Box, makeStyles, Popover, ButtonBase, Divider, Link, Tooltip, IconButton,
+  Avatar, Box, makeStyles, Popover, ButtonBase, Divider, Link, Tooltip, IconButton, Typography,
 } from '@material-ui/core'
 import FollowButton from '../Community/FollowButton';
 import RawNameAvatar from './RawNameAvatar';
@@ -60,15 +60,19 @@ const NameAvatarButton = ({authStore, name, userId, size = 5, push}) => {
       transformOrigin={{vertical: 'top', horizontal: 'left'}}>
         <Box>
           <Box display="flex" flexDirection="column" px={10} py={3} alignItems="center" justifyContent="center">
-            <Box p={1}>
-              <RawNameAvatar name={name} size={10} />
-            </Box>
-            <Link onClick={() => pushTo("/mypage/"+userId)} color="inherit" variant="h6" >{name}</Link>
+            <ButtonBase onClick={() => pushTo("/mypage/"+userId)} >
+              <Box display="flex" flexDirection="column" alignItems="center">
+                <Box p={1}>
+                  <RawNameAvatar name={name} size={10} />
+                </Box>
+                <Typography variant="h6">{name}</Typography>
+              </Box>
+            </ButtonBase>
             {authStore.currentId !== userId?(
               <Box alignItems="center">
                 <FollowButton targetuserid={parseInt(userId)} />
                 <Tooltip title="쪽지보내기">
-                  <IconButton>
+                  <IconButton onClick={() => pushTo("/message/"+authStore.currentId+"?to="+userId)}>
                     <Chat />
                   </IconButton>
                 </Tooltip>

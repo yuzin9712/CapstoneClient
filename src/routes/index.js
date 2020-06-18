@@ -38,6 +38,7 @@ import CommunityMypage from '../components/Community/CommunityMypage'
 import CommunityLikePage from '../components/Community/CommunityLikePage'
 import AdminManageShopPage from '../components/Admin/AdminManageShopPage'
 import Mypage from '../components/Mypage/Mypage'
+import MessagePage from '../components/Message/MessagePage'
 
 
 // import LoginPage from '../components/Login/LoginPage'
@@ -62,8 +63,6 @@ const routes = (
         <Route path="/order/myorder" component={OrderMypage} /> 
         <Route path="/order/cart" component={OrderCartPage} /> 
 
-        <Route path="/closet" component={ClosetPage} /> 
-        {/* <Route path="/test" component={PostTester} />  */}
 
         <Route path="/design/recent" component={DesignRecentPage} /> 
         <Route path="/design/best" component={DesignBestPage} /> 
@@ -83,6 +82,8 @@ const routes = (
 
         
         <Route path="/mypage/:id" component={Mypage}/>
+        <Route path="/closet/:id" component={ClosetPage} /> 
+        <Route path="/message/:id" component={MessagePage} /> 
 
         <Route path="/shop/addproduct" component={ShopAddProduct} /> 
         <Route path="/shop/order" component={ShopOrders} /> 
