@@ -65,7 +65,7 @@ const ProductCard = ({width, product, preview}) => {
       </Link>
       <Box display="flex" flexDirection="row" alignItems="center">
         <Box display="flex" flexDirection="column" flexGrow={1}>
-          <Typography gutterBottom>{product.price}원</Typography>
+          <Typography gutterBottom>{product.price}원인데요????</Typography>
           <Typography gutterBottom variant="body2">{product.shopname}</Typography>
         </Box>
         <TryButton pid={product.id} previews={preview} />
