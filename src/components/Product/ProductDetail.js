@@ -86,9 +86,17 @@ const ProductDetail = ({product, options, previews, pushToOrderList, cleanOrderL
 
   const handleQuantityChange = (event, index) => {
     const value = event.target.value<1? 1 : event.target.value>100? 100: event.target.value
-    let newArray = [...selectedOptions]
-    newArray[index] = {...newArray[index], quantity: value}
-    setSelectedOptions(newArray)
+    if(value > selectedOptions[index].cnt){
+      enqueueSnackbar("옵션 "+selectedOptions[index].color+" / "+selectedOptions[index].size+"에 준비된 재고 "+selectedOptions[index].cnt+"보다 많은 양을 선택하셨습니다. 다른 옵션을 선택하시거나 상품 판매자와 직접 문의하세요.",{"variant": "error"})
+      let newArray = [...selectedOptions]
+      newArray[index] = {...newArray[index], quantity: selectedOptions[index].cnt}
+      setSelectedOptions(newArray)
+    }
+    else{
+      let newArray = [...selectedOptions]
+      newArray[index] = {...newArray[index], quantity: value}
+      setSelectedOptions(newArray)
+    }
   }
 
   useEffect(() => {
@@ -185,7 +193,7 @@ const ProductDetail = ({product, options, previews, pushToOrderList, cleanOrderL
         )
         .then(text => {
           if(text === 'success'){
-            enqueueSnackbar("장바구니담았어요",{"variant": "success"})
+            enqueueSnackbar(product.pname+": 장바구니에 담았습니다.",{"variant": "success"})
           }
         })
       })

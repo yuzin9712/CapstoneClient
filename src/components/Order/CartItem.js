@@ -26,36 +26,52 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CartItem = ({order, product, options, reload}) => {
-  const initialOption = (options.find((option) => (option.color === order.color) && (option.size === order.size))).optionId
+  const initialOption = (options.find((option) => (option.color === order.color) && (option.size === order.size)))
   
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [edit, setEdit] = useState(false)
   const [deletePopover, setDeletePopover] = useState(null)
   const [fetching, setFetching] = useState(false)
-  const [optionId, setOptionId] = useState(initialOption)
+  const [selectedOption, setSelectedOption] = useState(initialOption)
   const [quantity, setQuantity] = useState(order.cnt)
 
   useEffect(() => {
     if(!edit){
-      setOptionId(initialOption)
+      setSelectedOption(initialOption)
       setQuantity(order.cnt)
     }
   }, [edit])
 
   const handleOptionChange = (event) => {
-    setOptionId(event.target.value)
+    // setSelectedOption(event.target.value)
+    const newOption = options.find((option) => option.optionId === event.target.value)
+    if(newOption === undefined){
+      enqueueSnackbar("장바구니 옵션 수정 에러입니다. 문제가 계속되면 관리자에게 문의해주세요",{"variant": "error"})
+    }
+    else{
+      setSelectedOption(newOption)
+      if(newOption.cnt < quantity){
+        enqueueSnackbar("옵션 "+newOption.color+" / "+newOption.size+"에 준비된 재고 "+newOption.cnt+"보다 많은 양을 선택하셨습니다. 다른 옵션을 선택하시거나 상품 판매자와 직접 문의하세요.",{"variant": "error"})
+        setQuantity(newOption.cnt)
+      }
+    }
   }
 
   const handleQuantityChange = (event) => {
     const value = event.target.value<1? 1 : event.target.value>100? 100: event.target.value
-    setQuantity(value)
+    if(value > selectedOption.cnt){
+      enqueueSnackbar("상품에 준비된 재고 "+selectedOption.cnt+"보다 많은 양을 선택하셨습니다. 다른 옵션을 선택하시거나 상품 판매자와 직접 문의하세요.",{"variant": "error"})
+      setQuantity(selectedOption.cnt)
+    }
+    else{
+      setQuantity(value)
+    }
   }
 
   const submitEdit = () => {
     if(!fetching){
-      if(optionId !== initialOption || quantity !== order.cnt){
-        const option = options.find(option => option.optionId === optionId)
+      if(selectedOption.optionId !== initialOption.optionId || quantity !== order.cnt){
         fetch(sangminserver+'/cart/'+order.id, {
           method: 'PUT',
           headers: {
@@ -64,9 +80,9 @@ const CartItem = ({order, product, options, reload}) => {
             'Cache': 'no-cache'
           },
           body: JSON.stringify({
-            color: option.color,
+            color: selectedOption.color,
             cnt: quantity,
-            size: option.size,
+            size: selectedOption.size,
           }),
           credentials: 'include',
         })
@@ -139,7 +155,7 @@ const CartItem = ({order, product, options, reload}) => {
       </Box>
       <Box display="flex" flexDirection="row" alignItems="center" className={clsx({[classes.hide]: !edit})}>
         <Select
-        value={optionId}
+        value={selectedOption.optionId}
         onChange={(event) => handleOptionChange(event)}
         // displayEmpty
         >
