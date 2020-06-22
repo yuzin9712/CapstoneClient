@@ -23,7 +23,7 @@ const authReducer = (state = init, action) => {
             return {
                 fetching: 'FAILURE',
                 session: "LOGOUT",
-                currentUser: '',
+                currentUser: action.name,
                 currentId: -1,
             }
         case 'AUTH_LOGIN_STATUS_NOT_FOUND':

@@ -67,17 +67,11 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const { register, control, handleSubmit } = useForm();
-
-  // useEffect(() => {
-  //   if(authStore.fetching === 'SUCCESS'){
-  //     if(authStore.session) enqueueSnackbar("어서오세요 "+authStore.name+"님.",{"variant": "success"});
-  //     else enqueueSnackbar("안전하게 로그아웃되었습니다.",{"variant": "success"});
-  //   }
-  //   else if(authStore.fetching === 'FAILURE'){
-  //     console.log(authStore)
-  //     enqueueSnackbar("에러요",{"variant": "error"});
-  //   }
-  // }, [])
+  useEffect(() => {
+    if(authStore.fetching === 'FAILURE'){
+      enqueueSnackbar("로그인에 실패했습니다: "+authStore.currentUser,{"variant": "error"});
+    }
+  }, [authStore])
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue)
@@ -85,7 +79,6 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
 
   const loginSubmit = (event) => {
     event.preventDefault()
-    // console.log(email, password)
     requestLogin(email, password)
   }
 
@@ -133,7 +126,6 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
 
 
   const registerSubmit = (data) => {
-    console.log(data)
     fetch(yujinserver+"/auth/join",{
         method: "POST",
         headers: {
@@ -146,16 +138,16 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
     })
     .then(
       response => response.text(),
-      error => console.log(error)
+      error => console.error(error)
     )
     .then((text) => {
-        if(text === "success"){
-            enqueueSnackbar("성공이요",{"variant": "success"});
-        }
-        else{
-            enqueueSnackbar("실패따리",{"variant": "error"});
-        }
-        console.log(text)
+      if(text === "success"){
+        enqueueSnackbar("회원가입에 성공했습니다! 로그인해주세요.",{"variant": "success"});
+        setTabValue("1")
+      }
+      else{
+        enqueueSnackbar("회원가입에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
+      }
     })
   }
   const registerView = (
@@ -207,7 +199,6 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
   )
 
   const shopRegisterSubmit = (data) => {
-    console.log(data)
     fetch(yujinserver+"/auth/shop",{
         method: "POST",
         headers: {
@@ -220,16 +211,16 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
     })
     .then(
       response => response.text(),
-      error => console.log(error)
+      error => console.error(error)
     )
     .then((text) => {
-        if(text === "success"){
-            enqueueSnackbar("성공이요",{"variant": "success"});
-        }
-        else{
-            enqueueSnackbar("실패따리",{"variant": "error"});
-        }
-        console.log(text)
+      if(text === "success"){
+        enqueueSnackbar("회원가입에 성공했습니다! 로그인해주세요.",{"variant": "success"});
+        setTabValue("1")
+      }
+      else{
+        enqueueSnackbar("회원가입에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
+      }
     })
   }
   const shopRegisterView = (

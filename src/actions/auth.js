@@ -21,7 +21,7 @@ export const requestLogin = (email, password) => {
       credentials: 'include',
     })
     .then(
-      res => res.json(),
+      res => res.clone().json(),
       err => {console.error(err); return dispatch(loginFailure())}
     )
     .then((data) => {
@@ -31,20 +31,21 @@ export const requestLogin = (email, password) => {
         dispatch(followSetList(data.followingInfo))
         return dispatch(loginSuccess(data.name, data.id, data.shopStatus))
       }
-      else return dispatch(loginFailure());
+      else return dispatch(loginFailure(data.name));
     })
   }
 }
 
 export const fetchLoginStatus = (initialId) => {
+  console.log(initialId)
   return (dispatch) => {
     dispatch(login());
     return fetch(yujinserver+"/auth/status", {
       credentials: 'include',
     })
     .then(
-      res => res.json(),
-      err => {console.error(err);}
+      res => res.clone().json(),
+      error => {console.error(error);}
     )
     .then(data => {
       if(data.loginStatus){
@@ -54,7 +55,7 @@ export const fetchLoginStatus = (initialId) => {
         return dispatch(loginSuccess(data.name, data.id, data.shopStatus))
       }
       else if(initialId !== -1){
-        return dispatch(loginFailure())
+        return dispatch(loginFailure(data.name))
       }
       else return dispatch(loginStatusNotFound())
     })
@@ -68,16 +69,13 @@ export const requestLogout = () => {
       credentials: 'include',
     })
     .then(
-      res => res.json(),
-      err => {console.error(err); return dispatch(loginFailure())}
+      res => res.clone().json(),
+      error => {console.error(error); return dispatch(loginFailure())}
     )
     .then(data => {
-      if(data.loginStatus){
-        dispatch(designInitialization())
-        dispatch(followInitialization())
-        return dispatch(logoutSuccess())
-      }
-      else return dispatch(loginFailure())
+      dispatch(designInitialization())
+      dispatch(followInitialization())
+      return dispatch(logoutSuccess())
     })
   }
 }
@@ -94,8 +92,8 @@ export const loginSuccess = (name, id, shopAdmin) => ({
   type: 'AUTH_LOGIN_SUCCESS', name, id, shopAdmin
 })
 
-export const loginFailure = () => ({
-  type: 'AUTH_LOGIN_FAILURE',
+export const loginFailure = (name) => ({
+  type: 'AUTH_LOGIN_FAILURE', name,
 })
 
 export const loginStatusNotFound = () => ({

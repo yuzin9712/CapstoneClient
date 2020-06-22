@@ -65,22 +65,10 @@ const menus = [
   {component: "🥾신발", path: `/productList/category/${4}`},
   {component: "💎추천코디", path: "/design"},
   {component: "👀패션케어커뮤니티", path: "/community"},
-  // {component: "Hello", path: "/hello"},
-  // {component: "Counter", path: "/counter"},
-  // {component: "Login", path: "/login"},
 ];
 
 const App = ({ history, pathname, authStore, fetchLoginStatus, dispatchPush }) => {
   const classes = useStyles();
-//   useEffect(() => {
-//     fetchLoginStatus().then(() => {
-//       console.log(getLoginStatus())
-//       if(getLoginStatus().fetching !== "SUCCESS"){
-//           dispatchPush("/auth")
-//           return (<div>좀기다리셈</div>)
-//       }
-//     })
-// }, [])
   useEffect(() => {
     while (authStore.fetching !== 'FETCHING'){
       fetchLoginStatus(authStore.currentId)
@@ -94,7 +82,7 @@ const App = ({ history, pathname, authStore, fetchLoginStatus, dispatchPush }) =
       <ThemeProvider theme={theme}>
         <Grid container className={classes.root}>
           <CssBaseline />
-          <SnackbarProvider anchorOrigin={{vertical: 'top', horizontal: 'center'}}>
+          <SnackbarProvider preventDuplicate anchorOrigin={{vertical: 'top', horizontal: 'center'}}>
           { authStore.session !== "LOGOUT"?
             <React.Fragment key={authStore.currentId}>
               <Box p={1} component={Container} maxWidth="lg" className={classes.main}>
