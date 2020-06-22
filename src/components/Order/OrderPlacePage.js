@@ -124,7 +124,7 @@ const OrderPlacePage = ({orderList, authStore, push}) => {
                 size: order.size,
                 color: order.color,
                 cnt: order.quantity,
-                price: order.price,
+                price: order.price * order.quantity,
               })),
               deliveryInfo: {
                 ...deliveryInfo,

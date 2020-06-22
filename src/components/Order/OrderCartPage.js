@@ -53,7 +53,7 @@ const OrderCartPage = ({pushToOrderList, cleanOrderList, push}) => {
       })
       .then(
         (res) => res.json(),
-        (err) => console.error(err)
+        (error) => console.error(error)
       )
       .then((json) => {
         const options = json.result2n3.result2.reduce((result = {}, item) => {
@@ -106,7 +106,7 @@ const OrderCartPage = ({pushToOrderList, cleanOrderList, push}) => {
           color: option.color, 
           size: option.size, 
           quantity: option.cnt,
-          price: cartList.products[option.productId].price * option.cnt, 
+          price: cartList.products[option.productId].price, 
           img: option.img
         });
       })
