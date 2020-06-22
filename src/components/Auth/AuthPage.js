@@ -126,7 +126,7 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
           로그인
         </Button>
       </form>
-      <a href={"http://15.165.120.239:8001/api/auth/kakao"}>
+      <a href={"http://www.softjs2.com/api/auth/kakao"}>
           <img alt={"kakao_login"} src={kakaologo}/>
 </a>
     </div>
