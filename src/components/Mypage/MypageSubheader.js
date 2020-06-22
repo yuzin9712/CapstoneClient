@@ -53,7 +53,7 @@ const MypageSubheader = ({authStore, userId, getFollowings, push }) => {
               <React.Fragment>
                 <FollowButton targetuserid={parseInt(userId)} />
                 <Tooltip title="쪽지보내기">
-                  <IconButton onClick={() => push("/message/"+authStore.currentId+"?to="+userId)}>
+                  <IconButton onClick={() => push("/message/"+authStore.currentId+"?to="+userId, {target: user.name})}>
                     <Chat />
                   </IconButton>
                 </Tooltip>
@@ -120,7 +120,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  push: (url) => dispatch(push(url))
+  push: (url, props) => dispatch(push(url, props))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(MypageSubheader)

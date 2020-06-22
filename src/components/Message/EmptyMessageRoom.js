@@ -41,7 +41,7 @@ const EmptyMessageRoom = ({authStore, target, reload, search, push}) => {
   const [open, setOpen] = useState(false)
   const topScroll = useRef(null)
   useEffect(() => {
-    setOpen(parseInt(queryString.parse(search).to) === target)
+    setOpen(parseInt(queryString.parse(search).to) === target.id)
   }, [search])
   const handleClose = () => {
     push('/message/'+authStore.currentId)
@@ -51,7 +51,7 @@ const EmptyMessageRoom = ({authStore, target, reload, search, push}) => {
     event.preventDefault()
     if(!fetching){
       setFetching(true)
-      fetch(yujinserver+"/message/"+target,{
+      fetch(yujinserver+"/message/"+target.id,{
         method: "POST",
         headers: {
           'Accept': 'application/json',
@@ -92,7 +92,7 @@ const EmptyMessageRoom = ({authStore, target, reload, search, push}) => {
       <Box flexGrow={1} className={classes.dialog} p={1} display="flex" flexDirection="column">
         <Box flexShrink={0} display="flex" flexDirection="column">
           <Box px={3} display="flex" flexDirection="row" alignItems="center">
-            <Typography component={Box} flexGrow={1}><strong>{"넌누구냐"+target}</strong>님과의 쪽지</Typography>
+            <Typography component={Box} flexGrow={1}><strong>{target.name}</strong>님과의 쪽지</Typography>
             <Tooltip title="새로고침">
               <IconButton onClick={() => {
                 reload()

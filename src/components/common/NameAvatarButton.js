@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import {
-  Avatar, Box, makeStyles, Popover, ButtonBase, Divider, Link, Tooltip, IconButton, Typography,
+  Avatar, Box, makeStyles, Popover, ButtonBase, Divider, Link, Tooltip, IconButton, Typography, Button,
 } from '@material-ui/core'
 import FollowButton from './FollowButton';
 import RawNameAvatar from './RawNameAvatar';
@@ -45,6 +45,10 @@ const NameAvatarButton = ({authStore, name, userId, size = 5, push}) => {
     push(url)
     closePopover()
   }
+  const messageToUser = () => {
+    push("/message/"+authStore.currentId+"?to="+userId, {target: name})
+    closePopover()
+  }
 
   return(
     <React.Fragment>
@@ -59,22 +63,18 @@ const NameAvatarButton = ({authStore, name, userId, size = 5, push}) => {
       anchorOrigin={{vertical: 'top', horizontal: 'right'}}
       transformOrigin={{vertical: 'top', horizontal: 'left'}}>
           <Box display="flex" flexDirection="column" px={10} py={3} alignItems="center" justifyContent="center">
-            <ButtonBase onClick={() => pushTo("/mypage/"+userId)} >
-              <Box display="flex" flexDirection="column" alignItems="center">
-                <Box p={1}>
+            <IconButton onClick={() => pushTo("/mypage/"+userId)} >
                   <RawNameAvatar name={name} size={10} />
-                </Box>
-                <Typography variant="h6">{name}</Typography>
-              </Box>
-            </ButtonBase>
+            </IconButton>
+            <Box display="flex" flexDirection="row" alignItems="center">
+              <Typography variant="h6">{name}</Typography>
+              <FollowButton targetuserid={parseInt(userId)} />
+            </Box>
             {authStore.currentId !== userId?(
               <Box alignItems="center">
-                <FollowButton targetuserid={parseInt(userId)} />
-                <Tooltip title="쪽지보내기">
-                  <IconButton onClick={() => pushTo("/message/"+authStore.currentId+"?to="+userId)}>
-                    <Chat />
-                  </IconButton>
-                </Tooltip>
+                <Button onClick={() => messageToUser()}>
+                  <Chat /> 쪽지보내기
+                </Button>
               </Box>
             ) : null}
           </Box>
@@ -102,7 +102,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  push: (url) => dispatch(push(url))
+  push: (url, props) => dispatch(push(url, props))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(NameAvatarButton)

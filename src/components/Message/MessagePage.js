@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const MessagePage = ({authStore, match, search, push}) => {
+const MessagePage = ({authStore, target, match, push}) => {
   const userId = parseInt(match.params.id);
   const classes = useStyles();
   const [loading, setLoading] = useState(true)
@@ -79,7 +79,7 @@ const MessagePage = ({authStore, match, search, push}) => {
           {followingMembers.map((member) => {
             return(
               <Box p={1} m={1} width={1} display="flex" flexDirection="row" justifyContent="flex-start" alignItems="center"
-              component={Button} onClick={() => (push('/message/'+authStore.currentId+'?to='+member.id))}>
+              component={Button} onClick={() => push("/message/"+authStore.currentId+"?to="+member.id, {target: member.name})}>
                 <RawNameAvatar name={member.name} />
                 <Typography component={Box} px={1}>{member.name}</Typography>
               </Box>
@@ -90,20 +90,17 @@ const MessagePage = ({authStore, match, search, push}) => {
     )
   }, [edit, followingMembers])
 
-  useEffect(() => {
-    if(openedRooms.length !== 0){
-      const target = parseInt(queryString.parse(search).to)
-      if(!openedRooms.some((room) => (target === room.user1Id) || (target === room.user2Id))){
-        // create new room
-        setNewMessageRoom(
-          <EmptyMessageRoom key={target} target={target} reload={() => setLoading(true)} />
-        )
-      }
-      else{
-        setNewMessageRoom(null)
-      }
+  useEffect(() => { 
+    if(!openedRooms.some((room) => (target.id === room.user1Id) || (target.id === room.user2Id))){
+      // create new room
+      setNewMessageRoom(
+        <EmptyMessageRoom key={target.id} target={target} reload={() => setLoading(true)} />
+      )
     }
-  }, [search, openedRooms])
+    else{
+      setNewMessageRoom(null)
+    }
+  }, [target, openedRooms])
 
   return(
     <Box display="flex" flexDirection="column">
@@ -135,15 +132,26 @@ MessagePage.propTypes = {
 }
 
 
-const mapStateToProps = state => ({
-  authStore: state.auth,
-  //pathname: state.router.location.pathname,
-  search: state.router.location.search,
-  // hash: state.router.location.hash,
-})
+const mapStateToProps = state => {
+  const id = parseInt(queryString.parse(state.router.location.search).to)
+  const target = state.router.location.state !== undefined? ({
+    name: state.router.location.state.target,
+    id: id,
+  }) : ({
+    name: "user"+id,
+    id: id,
+  })
+  return({
+    //pathname: state.router.location.pathname,
+    //search: state.router.location.search,
+    //hash: state.router.location.hash,
+    authStore: state.auth,
+    target: target,
+  })
+}
 
 const mapDispatchToProps = (dispatch) => ({
-  push: (url) => dispatch(push(url))
+  push: (url, props) => dispatch(push(url, props))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(MessagePage)
