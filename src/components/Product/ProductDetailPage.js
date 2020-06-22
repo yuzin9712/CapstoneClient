@@ -16,9 +16,16 @@ import ReviewCard from './ReviewCard';
 import {sangminserver, yujinserver} from '../../restfulapi';
 import ReviewWrite from './ReviewWrite'
 import ProductDetail from './ProductDetail'
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
-
+  hide: {
+    display: 'none',
+  }, 
+  deletedProduct: {
+    backdropFilter: `grayscale(0.5) blur(8px)`,
+    WebkitBackdropFilter: `grayscale(0.5) blur(8px)`,
+  },
 }));
 
 const ProductDetailPage = ({pathname, goBack, match}) => {
@@ -40,7 +47,6 @@ const ProductDetailPage = ({pathname, goBack, match}) => {
   useEffect(() => {
     if(loading){
       const id = match.params.id;
-      console.log('id값은???', id)
       fetch(sangminserver+"/product/"+id, {
         credentials: 'include',
       })
@@ -50,18 +56,28 @@ const ProductDetailPage = ({pathname, goBack, match}) => {
       )
       .then(json => {
         const options = json.detail.filter((option) => option.cnt !== 0)
-        setProductDetailComponent(
-          <ProductDetail product={json.selected_product[0]} options={options} previews={json.colors} />
-        )
-        setReviewWriteComponent(
-          <ReviewWrite pid={pid} reload={() => setLoading(true)} />
-        )
-        if(json.reviews.length){
-          setReviewListComponent(json.reviews.map((review) => <ReviewCard key={"review"+review.id} review={review} reload={() => setLoading(true)} />))
+        const isDeleted = Boolean(json.selected_product[0].deletedAt)
+        if(!isDeleted){
+          setProductDetailComponent(
+            <ProductDetail product={json.selected_product[0]} options={options} previews={json.colors} />
+          )
+          setReviewWriteComponent(
+            <ReviewWrite pid={pid} reload={() => setLoading(true)} />
+          )
+          if(json.reviews.length){
+            setReviewListComponent(json.reviews.map((review) => <ReviewCard key={"review"+review.id} review={review} reload={() => setLoading(true)} />))
+          }
+          else setReviewListComponent(
+            <Box p={7} flexGrow={1} component={Typography} variant="body2" gutterBottom align="center">리뷰가 없어요!</Box>
+          )
         }
-        else setReviewListComponent(
-          <Box p={7} flexGrow={1} component={Typography} variant="body2" gutterBottom align="center">리뷰가 없어요!</Box>
-        )
+        else{
+          setProductDetailComponent(
+            <Box>
+              <Typography>판매 중지된 상품입니다.😥</Typography>
+            </Box>
+          )
+        }
         setLoading(false)
       })
     }
@@ -70,16 +86,18 @@ const ProductDetailPage = ({pathname, goBack, match}) => {
   return(
     <Box>
       <Button onClick={() => goBack()}>뒤로가요</Button>
-      {productDetailComponent}
-      <Box display="flex" p={3} flexDirection="column">
-        <Box display="flex" flexDirection="row">
-          <Box flexGrow={1} component={Typography} variant="h6" gutterBottom>리뷰</Box>
-          {reviewWriteComponent}
+      <Box>
+        {productDetailComponent}
+        <Box display="flex" p={3} flexDirection="column">
+          <Box display="flex" flexDirection="row">
+            <Box flexGrow={1} component={Typography} variant="h6" gutterBottom>리뷰</Box>
+            {reviewWriteComponent}
+          </Box>
+          <Divider />
+          <Grid container>
+            {reviewListComponent}
+          </Grid>
         </Box>
-        <Divider />
-        <Grid container>
-          {reviewListComponent}
-        </Grid>
       </Box>
     </Box>
   )
