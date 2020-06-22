@@ -41,7 +41,7 @@ const ProductCategoryPage = ({pathname, search, match}) => {
     }, [pathname])
 
     useEffect(() => {
-        while(loading){
+        if(loading){
             const id = match.params.id;
             console.log('id값은???', id);
             const categoryId = pathname.substring(pathname.lastIndexOf('/') + 1)
@@ -61,7 +61,6 @@ const ProductCategoryPage = ({pathname, search, match}) => {
                 setProducts(recentProducts)
             })
             setLoading(false)
-            break
         }
     }, [loading])
 
@@ -105,19 +104,20 @@ const ProductCategoryPage = ({pathname, search, match}) => {
       }
     }
     const sortUpdatedAscending = () => {
-        const newArray = products.sort((a,b) => Math.max(new Date(a.createdAt), new Date(a.updatedAt)) - Math.max(new Date(b.createdAt), new Date(b.updatedAt))).slice()
-        setProducts(newArray)
+      const newArray = products.sort((a,b) => Math.max(Date.parse(a.createdAt), Date.parse(a.updatedAt)) - Math.max(Date.parse(b.createdAt), Date.parse(b.updatedAt))).slice()
+      setProducts(newArray)
     }
     const sortUpdatedDescending = () => {
-      setProducts(initialProducts)
+      const newArray = products.sort((a,b) => Math.max(Date.parse(b.createdAt), Date.parse(b.updatedAt)) - Math.max(Date.parse(a.createdAt), Date.parse(a.updatedAt))).slice()
+      setProducts(newArray)
     }
     const sortPriceAscending = () => {
-        const newArray = products.sort((a,b) => a.price - b.price).slice()
-        setProducts(newArray)
+      const newArray = products.sort((a,b) => a.price - b.price).slice()
+      setProducts(newArray)
     }
     const sortPriceDescending = () => {
-        const newArray = products.sort((a,b) => b.price - a.price).slice()
-        setProducts(newArray)
+      const newArray = products.sort((a,b) => b.price - a.price).slice()
+      setProducts(newArray)
     }
 
   return(
