@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     overflowX: 'auto',
+    flexWrap: 'wrap'
   },
   logo: {
     width: theme.spacing(30),
@@ -106,15 +107,17 @@ const NavBar = ({menus, authStore, sketchOpened, handleDrawer, requestLogout, pu
     <React.Fragment>
       <AppBar position="sticky" color="transparent" elevation={0}>
         <Toolbar className={classes.topbar} alignItems="center">
-          <ButtonBase component={RouterLink} to="/">
-            <Avatar src={Logo} className={classes.logo} variant="square" />
-          </ButtonBase>
-          <ProductSearchBar />
-          <Box display="flex" flexShrink={1}>
-            {designMenu}
+          <Box flexGrow={1} display="flex" justifyContent="space-between" alignItems="center">
+            <ButtonBase component={RouterLink} to="/">
+              <Avatar src={Logo} className={classes.logo} variant="square" />
+            </ButtonBase>
+            <ProductSearchBar />
+          </Box>
+          <Box flexGrow={1} display="flex" justifyContent="flex-end" alignItems="center">
             <IconButton onClick={(event) => setPopoverTarget(event.target)}>
-              <RawNameAvatar name={authStore.currentUser} />
+              <MenuIcon />
             </IconButton>
+            {designMenu}
           </Box>
         </Toolbar>
         <Toolbar component="nav" variant="dense" className={classes.toolbar}>
@@ -135,12 +138,19 @@ const NavBar = ({menus, authStore, sketchOpened, handleDrawer, requestLogout, pu
       anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
       transformOrigin={{vertical: 'top', horizontal: 'right'}}>
         <Box p={1} display="flex" flexDirection="column">
-          <Box display="flex" flexDirection="column" px={10} py={3} alignItems="center" justifyContent="center">
-            <RawNameAvatar name={authStore.currentUser} size={10} />
-            <Link onClick={() => pushTo("/mypage/"+authStore.currentId)} color="inherit" >{authStore.currentUser}</Link>
+          <Box display="flex" flexDirection="column" px={10} py={3} alignItems="center" justifyContent="center"  onClick={() => pushTo("/mypage/"+authStore.currentId)}>
+            <ButtonBase onClick={() => pushTo("/mypage/"+userId)} >
+              <Box display="flex" flexDirection="column" alignItems="center">
+                <Box p={1}>
+                  <RawNameAvatar name={authStore.currentUser} size={10} />
+                </Box>
+                <Typography variant="h6">{authStore.currentUser}</Typography>
+              </Box>
+            </ButtonBase>
           </Box>
           <Divider />
           <Box display="flex" flexDirection="column" p={1}>
+            <Link onClick={() => pushTo("/mypage/"+authStore.currentId)} component={Typography} variant="h6" color="inherit" >마이페이지</Link>
             <Link onClick={() => pushTo("/mypage/"+authStore.currentId+"?design")} color="inherit" >💎추천코디 공유글</Link>
             <Link onClick={() => pushTo("/mypage/"+authStore.currentId+"?community")} color="inherit" >👀커뮤니티 게시글</Link>
             <Link onClick={() => pushTo("/message/"+authStore.currentId)} color="inherit" >📬쪽지함</Link>

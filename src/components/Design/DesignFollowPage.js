@@ -28,32 +28,34 @@ const useStyles = makeStyles((theme) => ({
 
 const fetchurl = yujinserver+"/design/followpost";
 
-const DesignFollowPage = ({ designSetLikeList }) => {
-    const classes = useStyles();
-    const [ loading, setLoading ] = useState(true);
-    const [ designs, setDesigns ] = useState([]);
+const DesignFollowPage = ({}) => {
+  const [ loading, setLoading ] = useState(true);
+  const [ designList, setDesignList ] = useState(null);
 
-    useEffect(() => {
-        fetch(fetchurl, {credentials: 'include',})
-        .then(response => response.json(),
-            error => console.error(error))
-        .then(json => {
-            setDesigns(json)
-        })
+  useEffect(() => {
+    if(loading){
+      fetch(fetchurl, {credentials: 'include',})
+      .then(
+        response => response.json(),
+        error => console.error(error)
+      )
+      .then(designs => {
+        setDesignList(
+          <DesignList designs={designs} reload={() => setLoading(true)} />
+        )
         setLoading(false)
-    }, []);
+      })
+    }
+  }, [loading]);
 
-    if(loading) return(<div>로딩중요</div>)
-    else return(
-        <Grid container direction="column">
-            <DesignSubheader />
-            <Grid item container>
-                <Typography variant="h4">팔로우한 유저의 디자인</Typography>
-            </Grid>
-            <Divider />
-            <DesignList designs={designs} />
-        </Grid>
-    )
+  return(
+    <Grid container direction="column">
+      <DesignSubheader />
+      <Typography variant="h4">팔로우 유저들의 최신 디자인</Typography>
+      <Divider />
+      {designList}
+    </Grid>
+  )
 }
 
 DesignFollowPage.propTypes = {

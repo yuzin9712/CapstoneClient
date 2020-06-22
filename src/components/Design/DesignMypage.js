@@ -9,54 +9,42 @@ import {
   Grid,
   Typography,
   Divider,
-  Button
 } from '@material-ui/core'
 
 import DesignList from './DesignList'
-import DesignWrite from './DesignWrite'
 import DesignSubheader from './DesignSubheader'
 import {yujinserver} from '../../restfulapi'
-
-
-
-const useStyles = makeStyles((theme) => ({
-    title: {
-        flexGrow: 1
-    }
-}));
 
 const fetchurl = yujinserver+"/design/user/";
 
 const DesignMypage = ({ authStore }) => {
-    const classes = useStyles();
-    const [ loading, setLoading ] = useState(true);
-    const [ designs, setDesigns ] = useState([]);
-    // const [ bestDesigns, setBestDesigns ] = useState([]);
-    const [ writeDialogOpened, setWriteDialogOpened] = useState(false)
-    useEffect(() => {
-        fetch(fetchurl+authStore.currentId, {credentials: 'include',})
-        .then(response => response.json(),
-            error => console.error(error))
-        .then(json => {
-            // design만오고있다!!
-            setDesigns(json)
-            // console.log(json.likeInfo)
-            // designSetLikeList(json.likeInfo)
-        })
-        setLoading(false)
-    }, []);
+  const [ loading, setLoading ] = useState(true);
+  const [ designList, setDesignList ] = useState(null);
 
-    if(loading) return(<div>로딩중요</div>)
-    else return(
-        <Grid container direction="column">
-            <DesignSubheader />
-            <Grid item container>
-                <Typography variant="h4">내가 올린 디자인</Typography>
-            </Grid>
-            <Divider />
-            <DesignList designs={designs} />
-        </Grid>
-    )
+  useEffect(() => {
+    if(loading){
+      fetch(fetchurl+authStore.currentId, {credentials: 'include',})
+      .then(
+        response => response.json(),
+        error => console.error(error)
+      )
+      .then(designs => {
+        setDesignList(
+          <DesignList designs={designs} reload={() => setLoading(true)} />
+        )
+        setLoading(false)
+      })
+    }
+  }, [loading]);
+
+  return(
+    <Grid container direction="column">
+      <DesignSubheader />
+      <Typography variant="h4">내 디자인</Typography>
+      <Divider />
+      {designList}
+    </Grid>
+  )
 }
 
 DesignMypage.propTypes = {
@@ -74,7 +62,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-    designSetLikeList: (designs) => dispatch(designSetLikeList(designs))
+  
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(DesignMypage)

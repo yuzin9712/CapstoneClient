@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import {
   Avatar, Box, makeStyles, Popover, ButtonBase, Divider, Link, Tooltip, IconButton, Typography,
 } from '@material-ui/core'
-import FollowButton from '../Community/FollowButton';
+import FollowButton from './FollowButton';
 import RawNameAvatar from './RawNameAvatar';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
@@ -58,7 +58,6 @@ const NameAvatarButton = ({authStore, name, userId, size = 5, push}) => {
       onClose={() => closePopover()}
       anchorOrigin={{vertical: 'top', horizontal: 'right'}}
       transformOrigin={{vertical: 'top', horizontal: 'left'}}>
-        <Box>
           <Box display="flex" flexDirection="column" px={10} py={3} alignItems="center" justifyContent="center">
             <ButtonBase onClick={() => pushTo("/mypage/"+userId)} >
               <Box display="flex" flexDirection="column" alignItems="center">
@@ -84,14 +83,13 @@ const NameAvatarButton = ({authStore, name, userId, size = 5, push}) => {
             <Link onClick={() => pushTo("/mypage/"+userId+"?design")} color="inherit" >💎추천코디 공유글</Link>
             <Link onClick={() => pushTo("/mypage/"+userId+"?community")} color="inherit" >👀커뮤니티 게시글</Link>
           </Box>
-        </Box>
       </Popover>
     </React.Fragment>
   )
 }
 
 NameAvatarButton.propTypes = {
-    pathname: PropTypes.string.isRequired,
+    // pathname: PropTypes.string.isRequired,
     //search: PropTypes.string,
     //hash: PropTypes.string,
 }

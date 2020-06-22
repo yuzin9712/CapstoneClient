@@ -25,9 +25,8 @@ import { Check, Cancel, PhotoCamera } from '@material-ui/icons';
 
 import {yujinserver} from '../../restfulapi'
 import clsx from 'clsx';
-import ChipInput from 'material-ui-chip-input'
-import { push } from 'connected-react-router';
 import { useForm } from 'react-hook-form';
+import ImageInput from '../common/ImageInput';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -74,15 +73,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const CommentWrite = ({ authStore, dispatchPush, postid, reload }) => {
+const CommentWrite = ({ authStore, postid, reload }) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [ loading, setLoading ] = useState(true);
   const [ images, setImages ] = useState([]);
   const [ open, setOpen ] = useState(false)
   const [ closetData, setClosetData ] = useState([]);
-  const [ selectedClosetId, setSelectedClosetId] = useState(-1)
-  const [ tags, setTags ] = useState([])
   const { register, handleSubmit, errors } = useForm();
 
   useEffect(() => {
@@ -153,39 +150,6 @@ const CommentWrite = ({ authStore, dispatchPush, postid, reload }) => {
       </React.Fragment>
       )
   })
-
-  const handleImageInput = (event) => {
-    if(images.length < 3){
-      if(event.target.files[0] !== undefined){
-        setImages([...images, event.target.files[0]]);
-      }
-    }
-  }
-  const removeImage = (index) => {
-    const newList = [...images];
-    newList.splice(index, 1);
-    setImages(newList);
-  }
-  const imageUpload = <Grid className={classes.imageContainer}>
-        {imagePreview}
-        <input 
-            accpet="image/*"
-            className={classes.hide}
-            id="icon-button-file"
-            name="photo"
-            multiple
-            type="file"
-            onChange={(event) => handleImageInput(event)}
-        />
-        <label htmlFor="icon-button-file">
-        <Avatar variant="rounded" className={clsx({
-            [classes.previewImage]: true,
-            [classes.hide]: images.length >= 3
-        })}>
-            <PhotoCamera />
-        </Avatar>
-        </label>
-    </Grid>
 
   const submitComment = (data) => {
     const selectedClosetIds = closetData.filter((closet) => closet.selected).map((closet) => closet.closet.id)
@@ -293,7 +257,7 @@ const CommentWrite = ({ authStore, dispatchPush, postid, reload }) => {
         <DialogTitle>미디어 공유</DialogTitle>
         <DialogContent>
           <Typography gutterBottom>이미지 게시</Typography>
-          {imageUpload}
+          <ImageInput name="thumbnail" images={images} setImages={setImages} maxInput={3} />
           <Typography gutterBottom>옷장 게시</Typography>
           <GridList className={classes.gridList} cols={2.5}>
             {closetComponentList}

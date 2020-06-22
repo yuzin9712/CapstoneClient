@@ -9,73 +9,45 @@ import {
   Grid,
   Typography,
   Divider,
-  Button
 } from '@material-ui/core'
 
 import DesignList from './DesignList'
-import DesignWrite from './DesignWrite'
 import DesignSubheader from './DesignSubheader'
 import {yujinserver} from '../../restfulapi'
 
-import { designSetLikeList } from '../../actions/design'
-import { followSetList } from '../../actions/follow'
-
-
-const useStyles = makeStyles((theme) => ({
-    title: {
-        flexGrow: 1
-    }
-}));
-
 const fetchurl = yujinserver+"/design/best";
 
-const DesignBestPage = ({ designSetLikeList, followSetList }) => {
-    const classes = useStyles();
-    const [ loading, setLoading ] = useState(true);
-    const [ designs, setDesigns ] = useState([]);
-    // const [ bestDesigns, setBestDesigns ] = useState([]);
-    const [ writeDialogOpened, setWriteDialogOpened] = useState(false)
-    useEffect(() => {
-        fetch(fetchurl, {credentials: 'include',})
-        .then(response => response.json(),
-            error => console.error(error))
-        .then(json => {
-            setDesigns(json)
-        })
-        .then(
-            setLoading(false)
-        )
-    }, []);
+const DesignBestPage = ({}) => {
+  const [ loading, setLoading ] = useState(true);
+  const [ designList, setDesignList ] = useState(null);
 
-    if(loading) return(<div>로딩중요</div>)
-    else return(
-        <Grid container direction="column">
-            <DesignSubheader />
-            <Grid item container>
-                <Typography variant="h4">BEST 디자인</Typography>
-            </Grid>
-            <Divider />
-            <DesignList designs={designs} />
-        </Grid>
-    )
+  useEffect(() => {
+    if(loading){
+      fetch(fetchurl, {credentials: 'include',})
+      .then(
+        response => response.json(),
+        error => console.error(error)
+      )
+      .then(designs => {
+        setDesignList(
+          <DesignList designs={designs} reload={() => setLoading(true)} />
+        )
+        setLoading(false)
+      })
+    }
+  }, [loading]);
+
+  return(
+    <Grid container direction="column">
+      <DesignSubheader />
+      <Typography variant="h4">BEST 디자인</Typography>
+      <Divider />
+      {designList}
+    </Grid>
+  )
 }
 
 DesignBestPage.propTypes = {
-    //pathname: PropTypes.string,
-    //search: PropTypes.string,
-    //hash: PropTypes.string,
 }
 
-
-const mapStateToProps = state => ({
-    //pathname: state.router.location.pathname,
-    //search: state.router.location.search,
-    //hash: state.router.location.hash,
-})
-
-const mapDispatchToProps = (dispatch) => ({
-    designSetLikeList: (designs) => dispatch(designSetLikeList(designs)),
-    followSetList: (users) => dispatch(followSetList(users)),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(DesignBestPage)
+export default DesignBestPage

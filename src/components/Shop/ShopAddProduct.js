@@ -36,7 +36,8 @@ import clsx from 'clsx'
 import { useSnackbar } from 'notistack'
 import { yujinserver } from '../../restfulapi'
 import ShopSubheader from './ShopSubheader'
-import ImageInput from '../Product/ImageInput'
+import ImageInput from '../common/ImageInput'
+import InputTable from './InputTable'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -90,6 +91,7 @@ const ShopAddProduct = ({backButtonAction, dispatchPush}) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const { register, handleSubmit } = useForm();
+  const [ fetching, setFetching ] = useState(false)
 
   const [ previews, setPreviews ] = useState([]);
   const [thumbnail, setThumbnail] = useState([])
@@ -148,25 +150,45 @@ const ShopAddProduct = ({backButtonAction, dispatchPush}) => {
   }
 
   const productSubmit = (data) => {
-    if(thumbnail.length && description.length){
-      let form = new FormData()
-      form.append("photo", thumbnail[0])
-      form.append("photo", description[0])
-      previews.forEach((image) => {form.append("photo", image)})
-      console.log(data)
-      fetch(yujinserver+"/shop/img",{
-        method: "POST",
-        body: form,
-        credentials: 'include',
-      })
-      .then(
-        response => response.json(),
-        error => console.log(error)
-      )
-      .then((images) => {
-        const sending = sendByCategory(data, images)
-        console.log(sending)
-        fetch(yujinserver+"/shop/addproduct",{
+    if(!fetching){
+      if(category === "0"){
+        enqueueSnackbar("상품 카테고리를 선택해주세요.",{"variant": "error"});
+      }
+      else if(data.gender === ""){
+        enqueueSnackbar("상품 타겟 성별을 선택해주세요.",{"variant": "error"});
+      }
+      else if(colorArray.some((color) => color === "")){
+        enqueueSnackbar("색상 입력란을 모두 적어주세요. 이름붙일 색상이 없어도 \"기본색\" 등의 이름을 붙여주세요.",{"variant": "error"});
+      }
+      else if(!disableSize && sizeArray.some((size) => size === "")){
+        enqueueSnackbar("사이즈 입력란을 모두 적어주세요. 이름붙일 사이즈가 없어도 \"프리사이즈\" 등의 이름을 붙여주세요.",{"variant": "error"});
+      }
+      else if(quantityArray.some((quantityByColor) => quantityByColor.some((quantity) => quantity === ""))){
+        enqueueSnackbar("재고를 모두 적어주세요. 해당하는 재고가 없으면 0을 입력하세요",{"variant": "error"});
+      }
+      else if(!(thumbnail.length && description.length && previews.length === colorArray.length)){
+        enqueueSnackbar("이미지를 모두 첨부해주세요. 또 색상 개수와 누끼이미지 개수가 일치해야 합니다.",{"variant": "error"});
+      }
+      else{
+        setFetching(true)
+        let form = new FormData()
+        form.append("photo", thumbnail[0])
+        form.append("photo", description[0])
+        previews.forEach((image) => {form.append("photo", image)})
+        console.log(data)
+        fetch(yujinserver+"/shop/img",{
+          method: "POST",
+          body: form,
+          credentials: 'include',
+        })
+        .then(
+          response => response.json(),
+          error => console.log(error)
+        )
+        .then((images) => {
+          const sending = sendByCategory(data, images)
+          console.log(sending)
+          fetch(yujinserver+"/shop/addproduct",{
             method: "POST",
             headers: {
               'Accept': 'application/json',
@@ -175,22 +197,23 @@ const ShopAddProduct = ({backButtonAction, dispatchPush}) => {
             },
             body: sending,
             credentials: 'include',
-        })
-        .then(
-          response => response.text(),
-          error => console.log(error)
-        )
-        .then((text) => {
+          })
+          .then(
+            response => response.text(),
+            error => console.log(error)
+          )
+          .then((text) => {
             if(text === "add product success"){
-                enqueueSnackbar("성공이요",{"variant": "success"});
-                dispatchPush("/shop/mypage/")
+              enqueueSnackbar("상품 등록에 성공했습니다.",{"variant": "success"});
+              dispatchPush("/shop/mypage/")
             }
             else{
-                enqueueSnackbar("실패따리",{"variant": "error"});
+              enqueueSnackbar("상품 등록에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요",{"variant": "error"});
             }
-            console.log(text)
+            setFetching(false)
+          })
         })
-      })
+      }
     }
   }
   
@@ -222,124 +245,6 @@ const ShopAddProduct = ({backButtonAction, dispatchPush}) => {
   const handleCategoryChange = (event) => {
     setCategory(event.target.value);
   }
-  const handleSizeChange = (event, index) => {
-    const newArray = [...sizeArray]
-    newArray[index] = event.target.value
-    setSizeArray(newArray)
-  }
-  const handleColorChange = (event, index) => {
-    const newArray = [...colorArray]
-    newArray[index] = event.target.value
-    setColorArray(newArray)
-  }
-  const handleQuantityChange = (event, colorIndex, sizeIndex) => {
-    const newArray = [...quantityArray]
-    newArray[colorIndex][sizeIndex] = event.target.value
-    setQuantityArray(newArray)
-  }
-  const handleSizeAdd = () => {
-    setSizeArray([...sizeArray, ""])
-    setQuantityArray(quantityArray.map((quantityByColor) => [...quantityByColor, ""]))
-  }
-  const handleColorAdd = () => {
-    if(colorArray.length < MAX_COLOR_COUNT){
-      setColorArray([...colorArray, ""])
-      setQuantityArray([...quantityArray, sizeArray.reduce((result) => {
-        result = [...result, ""]
-        return result
-      },[])])
-    }
-  }
-  const handleSizeRemove = (sizeIndex) => {
-    setSizeArray([...sizeArray.slice(0,sizeIndex), ...sizeArray.slice(sizeIndex+1)])
-    setQuantityArray(quantityArray.map((quantityByColor) => [...quantityByColor.slice(0,sizeIndex), ...quantityByColor.slice(sizeIndex+1)]))
-  }
-  const handleColorRemove = (colorIndex) => {
-    setColorArray([...colorArray.slice(0,colorIndex), ...colorArray.slice(colorIndex+1)])
-    setQuantityArray([...quantityArray.slice(0,colorIndex), ...quantityArray.slice(colorIndex+1)])
-  }
-
-  const inputTable = (
-    <Table className={clsx({
-      [classes.hide]: category === "0"
-    })}>
-      <TableRow className={clsx({
-        [classes.hide]: category === "3"
-      })}>
-        <TableCell />
-        {sizeArray.map((size, sizeIndex) => {
-          return (
-            <TableCell>
-              <Tooltip title="사이즈 삭제~" className={clsx({
-                [classes.hide]: sizeArray.length <= 1 || disableSize
-              })}>
-                <IconButton size="small" onClick={() => handleSizeRemove(sizeIndex)}>
-                  <Remove />
-                </IconButton>
-              </Tooltip>
-              <TextField
-              disabled={disableSize}
-              variant="outlined"
-              id="size"
-              size="small"
-              value={size}
-              onChange={(event) => handleSizeChange(event, sizeIndex)}
-              label={"사이즈"} />
-            </TableCell>
-          )
-        })}
-        <TableCell rowSpan={colorArray.length+1} className={clsx({
-          [classes.hide]: sizeArray.length >= MAX_SIZE_COUNT || disableSize
-        })}>
-          <Tooltip title="사이즈 추가">
-            <IconButton onClick={handleSizeAdd}>
-              <Add />
-            </IconButton>
-          </Tooltip>
-        </TableCell>
-      </TableRow>
-      {colorArray.map((color, colorIndex) => {
-        return <TableRow>
-          <Box display="flex" alignItems="center" component={TableCell}>
-              <Tooltip title="색상 삭제~" className={clsx({
-                [classes.hide]: colorArray.length <= 1
-              })}>
-                <IconButton size="small" onClick={() => handleColorRemove(colorIndex)}>
-                  <Remove />
-                </IconButton>
-              </Tooltip>
-              <Box flexGrow={1} component={TextField}
-              variant="outlined"
-              id="color"
-              size="small"
-              value={color}
-              onChange={(event) => handleColorChange(event, colorIndex)}
-              label={"색상"} />
-            </Box>
-          {quantityArray[colorIndex].map((quantity, sizeIndex) => {
-            return <TableCell component={TextField} 
-            variant="outlined"
-            id="quantity"
-            size="small"
-            value={quantity}
-            onChange={(event) => handleQuantityChange(event, colorIndex, sizeIndex)}
-            label={"재고"} />
-          })}
-        </TableRow>
-      })}
-      <TableRow className={clsx({
-        [classes.hide]: colorArray.length >= MAX_COLOR_COUNT
-      })}>
-        <TableCell colSpan={sizeArray.length+1}>
-          <Tooltip title="색상 추가~">
-            <IconButton onClick={handleColorAdd}>
-              <Add />
-            </IconButton>
-          </Tooltip>
-        </TableCell>
-      </TableRow>
-    </Table>
-  )
     
   return(
     <Container maxWidth="md">
@@ -380,7 +285,7 @@ const ShopAddProduct = ({backButtonAction, dispatchPush}) => {
               <Typography>상세이미지넣으세요</Typography>
               <ImageInput name="description" images={description} setImages={setDescription} maxInput={1} />
             </Box>
-            <FormControl required component="fieldset" variant="outlined">
+            <FormControl component="fieldset" variant="outlined">
               <FormLabel>카테고리</FormLabel>
               <RadioGroup row aria-label="categoryId" name="categoryId" value={category} onChange={handleCategoryChange}>
                 <FormControlLabel 
@@ -393,23 +298,32 @@ const ShopAddProduct = ({backButtonAction, dispatchPush}) => {
                 value="4" control={<Radio />} label="신발" />
               </RadioGroup>
             </FormControl>
-            <FormControl required component="fieldset" variant="outlined">
+            <FormControl component="fieldset" variant="outlined">
               <FormLabel>성별</FormLabel>
               <RadioGroup row aria-label="gender" name="gender" >
                 <FormControlLabel 
-                inputRef={register({required: true})} value="M" control={<Radio />} label="남성" />
+                inputRef={register()} value="M" control={<Radio />} label="남성" />
                 <FormControlLabel 
-                inputRef={register({required: true})} value="W" control={<Radio />} label="여성" />
+                inputRef={register()} value="W" control={<Radio />} label="여성" />
                 <FormControlLabel 
-                inputRef={register({required: true})} value="U" control={<Radio />} label="남녀공용" />
+                inputRef={register()} value="U" control={<Radio />} label="남녀공용" />
               </RadioGroup>
             </FormControl>
-            {inputTable}
+            <InputTable 
+            category={category} 
+            colorArray={colorArray} 
+            setColorArray={setColorArray} 
+            sizeArray={sizeArray} 
+            setSizeArray={setSizeArray} 
+            quantityArray={quantityArray} 
+            setQuantityArray={setQuantityArray} 
+            disableSize={disableSize} 
+            setDisableSize={setDisableSize} />
             <Box>
               <Typography>색상누끼이미지넣으세요</Typography>
               <ImageInput name="preview" images={previews} setImages={setPreviews} maxInput={MAX_COLOR_COUNT} />
             </Box>
-            <Button type="submit" fillWidth variant="contained" color="primary">Submit</Button>
+            <Button disabled={fetching} type="submit" fullWidth variant="contained" color="primary">상품등록</Button>
           </Grid>
         </form>
       </Grid>

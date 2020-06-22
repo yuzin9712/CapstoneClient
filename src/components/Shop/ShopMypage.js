@@ -47,7 +47,7 @@ const ShopMypage = ({}) => {
             return result
         }, {})
         setShopProductList(
-          <ShopProductList products={json.products} options={options} previews={parsedPreviews} reload={() => setLoading(true)} />
+          <ShopProductList products={json.products.filter((product) => product.deletedAt === null)} options={options} previews={parsedPreviews} reload={() => setLoading(true)} />
         )
         setLoading(false)
       })

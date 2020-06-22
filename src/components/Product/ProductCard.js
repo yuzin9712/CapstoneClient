@@ -18,7 +18,7 @@ import {
   Avatar
 } from '@material-ui/core';
 import { AddShoppingCart, Palette } from '@material-ui/icons';
-import TryButton from './TryButton';
+import TryButton from '../common/TryButton.js';
 
 const useStyles = makeStyles((theme) => ({
     // card: {

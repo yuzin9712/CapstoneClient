@@ -19,6 +19,7 @@ import {
   withWidth,
   Popover,
   ButtonBase,
+  Paper,
 } from '@material-ui/core';
 import {
   FavoriteBorder as FavoriteBorderIcon,
@@ -41,10 +42,14 @@ import { requestDesignLikes, requestDesignLikesCancel } from '../../actions/desi
 import { requestUnfollow, requestFollow } from '../../actions/follow';
 import { push } from 'connected-react-router';
 import ChipInput from 'material-ui-chip-input';
-import FollowButton from '../Community/FollowButton';
+import FollowButton from '../common/FollowButton';
 import RawNameAvatar from '../common/RawNameAvatar';
 import ConfirmPopover from '../common/ConfirmPopover';
 import NameAvatarButton from '../common/NameAvatarButton';
+import moment from 'moment';
+import DesignLikeButton from './DesignLikeButton';
+import TagInput from '../common/TagInput';
+import TryButton from '../common/TryButton';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -77,46 +82,18 @@ const useStyles = makeStyles((theme) => ({
   product: {
     display: "flex",
   },
-  productMedia: {
-      paddingTop: "100%",
-  },
-  likes: {
-    color: 'red',
-  },
-  follow: {
-    color: theme.palette.info.main,
-  }
 }));
 
 
-const DesignCard = ({sessionId, width, design, designStore, followStore, requestDesignLikes, requestDesignLikesCancel, requestFollow, requestUnfollow, dispatchPush}) => {
+const DesignCard = ({sessionId, width, design, dispatchPush, reload}) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const initialLikes = designStore.likeDesign.some((designId) => (designId === design.id));
   const [expanded, setExpanded] = useState(false);
-  const [likes, setLikes] = useState(initialLikes);
   const [hashtags, setHashtags] = useState(design.hashtags.map((tag) => tag.title))
-  const [hashtagEdit, setHashtagEdit] = useState(false)
-  const [hashtagFormValue, setHashtagFormValue] =useState([])
-  const [cardSize, setCardSize] = useState(1)
+  const [edit, setEdit] = useState(false)
+  const [editTags, setEditTags] = useState([])
   const [popoverTarget, setPopoverTarget] = useState(null)
   // const [ userPopoverAnchor, setUserPopoverAnchor ] = useState(null)
-
-  
-
-  useEffect(() => {
-    if(designStore.fetching !== "FAILURE"){
-      if(designStore.likeDesign.some((designId) => (designId === design.id))) setLikes(true)
-      else setLikes(false)
-    }
-    else{
-      enqueueSnackbar("좋아요처리 실패",{"variant": "error"});
-    }
-  }, [designStore])
-
-  useEffect(() => {
-    setCardSize(cardSizeLookup[width])
-  }, [width])
 
   const cardSizeLookup = {
     xs: 1,
@@ -125,112 +102,79 @@ const DesignCard = ({sessionId, width, design, designStore, followStore, request
     lg: 1/3,
     xl: 1/3,
   }
-  const createdAt = new Date(design.createdAt)
-  const updatedAt = new Date(design.updatedAt)
+  useEffect(() => {
+    setEditTags(hashtags)
+  }, [edit])
+  
+  const hashtagEditForm = (
+    <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="space-between" alignItems="center">
+      <TagInput tags={editTags} setTags={(tags) => setEditTags(tags)} />
+      <Box flexGrow={1} display="flex" flexDirection="row" justifyContent="flex-end" alignItems="center">
+        <Tooltip title="수정 취소">
+          <IconButton onClick={() => setEdit(false)}>
+            <Clear />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="적용">
+          <IconButton onClick={() => submitHashtagEdit()} >
+            <Done />
+          </IconButton>
+        </Tooltip>
+      </Box>
+    </Box>
+  )
+  const hashtagView = (
+    <Box display="flex" flexGrow={1} alignItems="center">
+      <Box flexGrow={1} alignItems="center">
+        {hashtags.map((tag) => {
+          return <Chip
+          key={design.id+"-tag-"+tag}
+          className={classes.chips}
+          avatar={<Avatar>#</Avatar>}
+          label={tag}
+          clickable
+          onClick={() => dispatchPush("/design/hashtag/"+tag)}
+          />
+        })}
+      </Box>
+    </Box>
+  )
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
-  
-  const handleLikes = () => {
-    if(likes){
-      requestDesignLikesCancel(design.id)
-    }
-    else{
-      requestDesignLikes(design.id)
-    }
-  }
-  
-  
 
-  const hashtagChips = hashtags.map((tag) => {
-    return <Chip
-      className={classes.chips}
-      avatar={<Avatar>#</Avatar>}
-      label={tag}
-      clickable
-      onClick={() => dispatchPush("/design/hashtag/"+tag)}
-    />
-  })
-
-  const handleHashtagEdit = () => {
-    if(sessionId !== design.user.id){
-      enqueueSnackbar("자기 글만 수정합시다",{"variant": "error"});
-    }
-    else setHashtagEdit(!hashtagEdit)
-  }
-
-  const hashtagView = (
-    <Box display="flex" flexGrow={1} alignItems="center">
-      <Box flexGrow={1} alignItems="center">
-        {hashtagChips}
-      </Box>
-      {sessionId === design.user.id?(
-        <React.Fragment>
-          <Tooltip title="수정">
-            <IconButton onClick={handleHashtagEdit}>
-              <EditIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="삭제">
-            <IconButton onClick={(event) => setPopoverTarget(event.target)}>
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-          <ConfirmPopover text="정말 삭제하시겠습니까?" target={popoverTarget} action={() => deleteDesign()} cancel={() => setPopoverTarget(null)} />
-        </React.Fragment>
-      ):null}
-    </Box>
-  )
-  const hashtagEditForm = (
-    <Box display="flex" flexGrow={1}>
-      <Box flexGrow={1} component={ChipInput}
-      label="태그 수정"
-      fullWidth
-      defaultValue={hashtags}
-      onChange={(chips) => setHashtagFormValue(chips)}
-      />
-      <Tooltip title="수정 취소">
-        <IconButton onClick={() => setHashtagEdit(false)}>
-          <Clear />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="적용">
-        <IconButton onClick={() => submitHashtagEdit()} >
-          <Done />
-        </IconButton>
-      </Tooltip>
-    </Box>
-  )
   const submitHashtagEdit = () => {
-    if(sessionId !== design.user.id){
-      enqueueSnackbar("자기 글만 수정합시다",{"variant": "error"});
+    if(editTags !== hashtags){
+      if(sessionId !== design.user.id){
+        enqueueSnackbar("자기 글만 수정합시다",{"variant": "error"});
+      }
+      fetch(yujinserver+"/design/"+design.id, {
+        method: 'PUT',
+        headers: {
+          'Accept': 'application/json',
+          "Content-Type": "application/json",
+          'Cache': 'no-cache'
+        },
+        body: JSON.stringify({
+            content: editTags,
+        }),
+        credentials: 'include',
+      })
+      .then(response => response.text(),
+          error => console.error(error))
+      .then(text => {
+          if(text === 'success'){
+            enqueueSnackbar("태그를 수정했습니다.",{"variant": "success"});
+            setHashtags(editTags)
+          }
+          else enqueueSnackbar("수정에 실패했습니다. 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
+      })
     }
-    fetch(yujinserver+"/design/"+design.id, {
-      method: 'PUT',
-      headers: {
-        'Accept': 'application/json',
-        "Content-Type": "application/json",
-        'Cache': 'no-cache'
-      },
-      body: JSON.stringify({
-          content: hashtagFormValue,
-      }),
-      credentials: 'include',
-    })
-    .then(response => response.text(),
-        error => console.error(error))
-    .then(text => {
-        if(text === 'success'){
-          enqueueSnackbar("태그를 수정했습니다.",{"variant": "success"});
-          setHashtags(hashtagFormValue)
-        }
-        else enqueueSnackbar("삭제에 실패했습니다. 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
-        setHashtagEdit(false)
-    })
+    setEdit(false)
   }
   const deleteDesign = () => {
-    if(sessionId !== design.user.id){
+    if(sessionId !== design.userId){
       enqueueSnackbar("자기 글만 삭제합시다",{"variant": "error"});
     }
     fetch(yujinserver+"/design/"+design.id, {
@@ -245,80 +189,87 @@ const DesignCard = ({sessionId, width, design, designStore, followStore, request
           reload()
         }
         else enqueueSnackbar("삭제에 실패했습니다. 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
-        setHashtagEdit(false)
+        setEdit(false)
     })
   }
+  // const owner = design.user !== null?design.user:{id: design.userId, name: "탈퇴된 유저"}
 
   return (
-    <Box container={Card} width={cardSize} className={classes.card} variant="outlined">
-      <Grid container direction="row">
-        <Grid item container xs={12} md={8} component={Box} alignItems="center">
-          <Grid item>
-            <NameAvatarButton name={design.user.name} userId={design.user.id} />
-          </Grid>
-          <Box>
-            <Typography>{design.user.name}</Typography>
-            <Typography variant="body2">
-              {updatedAt.getTime()>createdAt.getTime()?updatedAt.toLocaleString()+" (수정됨)" : createdAt.toLocaleString()}
-            </Typography>
+    <Box width={cardSizeLookup[width]} p={1}>
+      <Box p={1} display="flex" flexDirection="column" component={Paper} variant="outlined">
+        <Box p={1} display="flex" flexDirection="row" flexWrap="wrap" justifyContent="space-between" alignItems="center" >
+          <Box display="flex" flexDirection="row" alignItems="center">
+            <NameAvatarButton name={design.user.name} userId={design.userId} />
+            <Typography component={Box}>{design.user.name}</Typography>
           </Box>
-        </Grid>
-        <Grid item container xs={12} md={4} direction="row" justify="flex-end" alignItems="center">
-          <FollowButton targetuserid={design.user.id} />
-          <Tooltip placement="top" title={likes?"좋아요 취소":"좋아요"}>
-            <IconButton aria-label="like" onClick={handleLikes}>
-              {likes?<FavoriteIcon className={classes.likes}/>:<FavoriteBorderIcon />}
-            </IconButton>
-          </Tooltip>
-          <Typography>{design.likecount}</Typography>
-        </Grid>
-      </Grid>
-        
-      <CardActionArea>
-        {/* <CardMedia
-          className={classes.cardMedia}
-          image={design.img}
-        /> */}
+          <Box flexGrow={1} display="flex" flexDirection="row" justifyContent="flex-end" alignItems="center">
+            <DesignLikeButton target={design.id} count={design.likecount} />
+          </Box>
+        </Box>
         <Avatar
-          src={design.img} 
-          variant="rounded"
-          className={classes.cardMedia} />
-      </CardActionArea>
-      <CardActions disableSpacing>
-        {hashtagEdit? hashtagEditForm : hashtagView}
-        <Tooltip title="사용된 상품">
-          <IconButton
-            className={clsx(classes.expand, {
-              [classes.expandOpen]: expanded,
-            })}
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="show more"
-          >
-            <ExpandMoreIcon />
-          </IconButton>
-        </Tooltip>
-      </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          {design.closet !== null?design.closet.products.map((product) => {
-            return(
-              <Box component={Card} width={1} elevation={0} className={classes.product}>
-                <Link component={CardActionArea} to={"/productDetail/"+product.id} style={{width: "25%"}}>
-                  <CardMedia
-                    className={classes.productMedia}
-                    image={product.img}
-                  />
-                </Link>
-                <CardContent style={{flexGrow:1}}>
-                  <Typography gutterBottom>{product.pname}</Typography>
-                  <Typography gutterBottom variant="body2">{product.price}원</Typography>
-                </CardContent>
-              </Box>
-            )
-          }) : null}
-        </CardContent>
-      </Collapse>
+        src={design.img} 
+        variant="rounded"
+        className={classes.cardMedia} />
+        <Box p={1} display="flex" flexDirection="row" flexWrap="wrap" justifyContent="space-between" alignItems="center" >
+          <Box display="flex" flexDirection="row" alignItems="center">
+            {edit? hashtagEditForm : hashtagView}
+          </Box>
+          <Box flexGrow={1} display="flex" flexDirection="row" justifyContent="flex-end" alignItems="center">
+            {!edit && (sessionId === design.userId)?(
+              <React.Fragment>
+                <Tooltip title="수정">
+                  <IconButton onClick={() => setEdit(true)}>
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="삭제">
+                  <IconButton onClick={(event) => setPopoverTarget(event.target)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+                <ConfirmPopover text="정말 삭제하시겠습니까?" target={popoverTarget} action={() => deleteDesign()} cancel={() => setPopoverTarget(null)} />
+              </React.Fragment>
+            ):null}
+            <Tooltip title="사용된 상품">
+              <IconButton
+                className={clsx(classes.expand, {
+                  [classes.expandOpen]: expanded,
+                })}
+                onClick={handleExpandClick}
+                aria-expanded={expanded}
+                aria-label="show more"
+              >
+                <ExpandMoreIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        </Box>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <Grid container direction="column">
+            {design.closet !== null?design.closet.products.map((product, index) => {
+              return(
+                <Box key={design.id+"-product-"+index} p={1} display="flex" flexDirection="row" alignItems="center">
+                  <Box flexGrow={1} display="flex" flexDirection="row" justifyContent="flex-start" alignItems="center" >
+                    <Button component={Link} to={"/productDetail/"+product.id} style={{width: "25%"}}>
+                      <Avatar
+                      src={product.img}
+                      variant="rounded"
+                      />
+                    </Button>
+                    <Box flexGrow={1} display="flex" flexDirection="column">
+                      <Typography>{product.pname}</Typography>
+                      <Typography variant="body2">{product.price}원</Typography>
+                    </Box>
+                  </Box>
+                  <Box flexGrow={1} display="flex" flexDirection="row" justifyContent="flex-end" alignItems="center" >
+                    <TryButton pid={product.id} previews={product.imgByColors} />
+                  </Box>
+                </Box>
+              )
+            }) : null}
+          </Grid>
+        </Collapse>
+      </Box>
     </Box>
   );
 }
@@ -329,18 +280,12 @@ DesignCard.propTypes = {
   
 const mapStateToProps = state => ({
   sessionId: state.auth.currentId,
-  designStore: state.design,
-  followStore: state.follow,
   //pathname: state.router.location.pathname,
   //search: state.router.location.search,
   //hash: state.router.location.hash,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  requestDesignLikes: (designId) => dispatch(requestDesignLikes(designId)),
-  requestDesignLikesCancel: (designId) => dispatch(requestDesignLikesCancel(designId)),
-  requestFollow: (userId) => dispatch(requestFollow(userId)),
-  requestUnfollow: (userId) => dispatch(requestUnfollow(userId)),
   dispatchPush: (url) => dispatch(push(url))
 })
 

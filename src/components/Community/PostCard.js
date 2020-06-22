@@ -16,8 +16,9 @@ import {
   CardMedia,
   CardActions,
 } from '@material-ui/core'
-import FollowButton from './FollowButton';
+import FollowButton from '../common/FollowButton';
 import NameAvatarButton from '../common/NameAvatarButton';
+import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
     card: {
@@ -49,8 +50,9 @@ const PostCard = ({post}) => {
     const summary = content.length>100?content.substring(0,100) + "...":content
     const thumbnail = post.Pimgs.length?post.Pimgs[0].img : ""
 
-    const createdAt = new Date(post.createdAt)
-    const updatedAt = new Date(post.updatedAt)
+    // const createdAt = new Date(post.createdAt)
+    // const updatedAt = new Date(post.updatedAt)
+    const edited = moment(post.createdAt).isBefore(post.updatedAt)
     const commentcount = post.commentcount
 
     if(!post) return <div>ㅇㅅㅇ</div>
@@ -74,7 +76,7 @@ const PostCard = ({post}) => {
                       <Box display="flex" flexDirection="column" flexGrow={1}>
                         <Typography variant="body2" color="textSecondary">{post.user.name}</Typography>
                         <Typography variant="body2" color="textSecondary">
-                          {updatedAt.getTime()>createdAt.getTime()?updatedAt.toLocaleString()+" (수정됨)" : createdAt.toLocaleString()}
+                          {(moment(post.createdAt).toDate().toLocaleString())+(edited?" ("+moment(post.updatedAt).fromNow()+" 수정됨)":"")}
                         </Typography>
                       </Box>
                       <Typography>💬댓글 {commentcount}개 / 💗좋아요 {post.likecount}개</Typography>

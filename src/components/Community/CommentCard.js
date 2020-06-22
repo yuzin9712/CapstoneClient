@@ -23,7 +23,7 @@ import {
 import PostTitle from './PostTitle'
 import { yujinserver } from '../../restfulapi';
 import CommentWrite from './CommentWrite';
-import FollowButton from './FollowButton';
+import FollowButton from '../common/FollowButton';
 import PostLikeButton from './PostLikeButton';
 import ClosetDetail from './ClosetDetail';
 import { Edit, Delete, AccountBox, Done, Clear } from '@material-ui/icons';
@@ -32,6 +32,7 @@ import { useSnackbar } from 'notistack';
 import ConfirmPopover from '../common/ConfirmPopover';
 import NameAvatarButton from '../common/NameAvatarButton';
 import { useForm } from 'react-hook-form';
+import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
   commentImage: {
@@ -48,8 +49,7 @@ const CommentCard = ({authStore, comment, reload}) => {
   const [edit, setEdit] = useState(false)
   const [popoverTarget, setPopoverTarget] = useState(null)
   const [fetching, setFetching] = useState(false)
-  // const createdAt = new Date(post.createdAt)
-  // const updatedAt = new Date(post.updatedAt)
+  const edited = Date.parse(comment.createdAt) < Date.parse(comment.updatedAt)
 
   useEffect(() => {
     if(!edit){
@@ -161,7 +161,10 @@ const CommentCard = ({authStore, comment, reload}) => {
       </Box>
       <Box p={1} flexDirection="column" flexGrow={1} component={Paper}>
         <Box display="flex" flexDirection="row" alignItems="center">
-          <Typography component={Box} flexGrow={1}><strong>{comment.user.name}</strong>님의 댓글</Typography>
+          <Box flexGrow={1} display="flex" flexDirection="row" alignItems="flex-end">
+            <Typography><strong>{comment.user.name}</strong>님의 댓글</Typography>
+            <Typography variant="body2" color="textSecondary">{" ー "+(moment(comment.updatedAt).fromNow()) + (edited?" (수정됨)":"")}</Typography>
+          </Box>
           {comment.user.id === authStore.currentId?(
             edit?(
               <Box display="flex" flexDirection="row" justifyContent="flex-end">

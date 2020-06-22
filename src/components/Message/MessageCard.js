@@ -10,12 +10,21 @@ import {
 import NameAvatarButton from '../common/NameAvatarButton';
 import MessageRoom from './MessageRoom';
 import { push } from 'connected-react-router';
+import moment from 'moment';
 
+const useStyles = makeStyles((theme) => ({
+  button: {
+    display: 'flex',
+    width: '100%',
+  },
+}));
 
-const MessageCard = ({room, reload, authStore, push}) => {
+const MessageCard = ({room, counter, reload, authStore, push}) => {
+  const classes = useStyles();
   // const [open, setOpen] = useState(false)
-  const lastMessage = room.chatLines[0]
-  const counter = authStore.currentId === room.user1Id? ({id: room.user2Id, name: room.user2}) : ({id: room.user1Id, name: room.user1})
+  const lastMessage = [...room.chatLines].pop()
+  const summary = lastMessage.lines.length>20? lastMessage.lines.slice(0,20)+"…":lastMessage.lines
+  const timestamp = moment(lastMessage.createdAt).fromNow()
 
   return(
     <React.Fragment>
@@ -23,12 +32,14 @@ const MessageCard = ({room, reload, authStore, push}) => {
         <Box>
           <NameAvatarButton name={counter.name} userId={counter.id} />
         </Box>
-        <ButtonBase onClick={() => push('/message/'+authStore.currentId+'?to='+counter.id)} component={Box} p={1} flexGrow={1} display="flex" flexDirection="column">
-          <Box flexGrow={1} display="flex" flexDirection="row" alignItems="center">
-            <Typography component={Box} flexGrow={1}><strong>{counter.name}</strong>님과의 쪽지</Typography>
-            <Typography variant="body2">{new Date(lastMessage.createdAt).toLocaleString()}</Typography>
+        <ButtonBase className={classes.button} onClick={() => push('/message/'+authStore.currentId+'?to='+counter.id)}>
+          <Box p={1} flexGrow={1} display="flex" flexDirection="column">
+            <Box flexGrow={1} display="flex" flexDirection="row" alignItems="center">
+              <Typography align="left" component={Box} flexGrow={1}><strong>{counter.name}</strong></Typography>
+              <Typography align="right" variant="body2" color="textSecondary">{timestamp}</Typography>
+            </Box>
+            <Typography align="left" variant="body2">{summary}</Typography>
           </Box>
-          <Typography>{lastMessage.lines}</Typography>
         </ButtonBase>
       </Box>
       <MessageRoom counter={counter} handleClose={() => push('/message/'+authStore.currentId)} room={room} reload={reload} />

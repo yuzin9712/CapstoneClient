@@ -26,7 +26,7 @@ import { useForm, Controller } from 'react-hook-form'
 import clsx from 'clsx'
 import { useSnackbar } from 'notistack'
 import { yujinserver } from '../../restfulapi'
-import ImageInput from '../Product/ImageInput'
+import ImageInput from '../common/ImageInput'
 
 
 const useStyles = makeStyles((theme) => ({

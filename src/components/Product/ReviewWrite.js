@@ -26,8 +26,8 @@ import {yujinserver, sangminserver} from '../../restfulapi'
 import clsx from 'clsx';
 import ChipInput from 'material-ui-chip-input'
 import { push } from 'connected-react-router';
-import ImageInput from './ImageInput';
 import { useForm } from 'react-hook-form';
+import ImageInput from '../common/ImageInput';
 
 const useStyles = makeStyles((theme) => ({
   hide: {

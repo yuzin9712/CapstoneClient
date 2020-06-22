@@ -22,7 +22,7 @@ import {
 import PostTitle from './PostTitle'
 import { yujinserver } from '../../restfulapi';
 import CommentWrite from './CommentWrite';
-import FollowButton from './FollowButton';
+import FollowButton from '../common/FollowButton';
 import PostLikeButton from './PostLikeButton';
 import ClosetDetail from './ClosetDetail';
 import { Edit, Delete } from '@material-ui/icons';
@@ -31,6 +31,7 @@ import { useSnackbar } from 'notistack';
 import ConfirmPopover from '../common/ConfirmPopover';
 import NameAvatarButton from '../common/NameAvatarButton';
 import CommentCard from './CommentCard';
+import moment from 'moment'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -83,8 +84,9 @@ const PostDetailPage = ({authStore, pathname, push, match}) => {
 
     if(loading || !post) return(<div>loading~</div>)
     else {
-      const createdAt = new Date(post.createdAt)
-      const updatedAt = new Date(post.updatedAt)
+      // const createdAt = new Date(post.createdAt)
+      // const updatedAt = new Date(post.updatedAt)
+      const edited = moment(post.createdAt).isBefore(post.updatedAt)
         const images = post.Pimgs.map((image) => {
             if(image.closet){
                 // closet
@@ -151,7 +153,7 @@ const PostDetailPage = ({authStore, pathname, push, match}) => {
                         <Box display="flex" flexDirection="column" flexGrow={1}>
                           <Typography>{post.user.name}</Typography>
                           <Typography variant="body2" color="textSecondary">
-                            {updatedAt.getTime()>createdAt.getTime()?updatedAt.toLocaleString()+" (수정됨)" : createdAt.toLocaleString()}
+                            {(moment(post.createdAt).toDate().toLocaleString())+(edited?" ("+moment(post.updatedAt).fromNow()+" 수정됨)":"")}
                           </Typography>
                         </Box>
                           <Typography>💬댓글 {post.commentcount}개</Typography>
@@ -167,9 +169,8 @@ const PostDetailPage = ({authStore, pathname, push, match}) => {
                         })}
                       </Box>
                       <Container maxWidth="xs">
-                          <Box display="flex" flexDirection="row" flexGrow={1} component={Paper} variant="outlined" justifyContent="space-around">
+                          <Box mx={10} display="flex" flexDirection="row" flexGrow={1} component={Paper} variant="outlined" justifyContent="space-around">
                               <PostLikeButton targetpostid={post.id} initialLike={post.likecount} />
-                              <Button>공유</Button>
                           </Box>
                       </Container>
 

@@ -9,15 +9,12 @@ import {
   Grid,
   Typography,
   Divider,
-  Button
 } from '@material-ui/core'
 
 import DesignList from './DesignList'
-import DesignWrite from './DesignWrite'
 import DesignSubheader from './DesignSubheader'
 import {yujinserver} from '../../restfulapi'
 
-import { designSetLikeList } from '../../actions/design'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -28,53 +25,40 @@ const useStyles = makeStyles((theme) => ({
 
 const fetchurl = yujinserver+"/design/like";
 
-const DesignMypage = ({ designSetLikeList }) => {
-    const classes = useStyles();
-    const [ loading, setLoading ] = useState(true);
-    const [ designs, setDesigns ] = useState([]);
-    // const [ bestDesigns, setBestDesigns ] = useState([]);
-    const [ writeDialogOpened, setWriteDialogOpened] = useState(false)
-    useEffect(() => {
-        fetch(fetchurl, {credentials: 'include',})
-        .then(response => response.json(),
-            error => console.error(error))
-        .then(json => {
-            // design만오고있다!!
-            setDesigns(json)
-            // console.log(json.likeInfo)
-            // designSetLikeList(json.likeInfo)
-        })
-        setLoading(false)
-    }, []);
+const DesignLikePage = ({}) => {
+  const [ loading, setLoading ] = useState(true);
+  const [ designList, setDesignList ] = useState(null);
 
-    if(loading) return(<div>로딩중요</div>)
-    else return(
-        <Grid container direction="column">
-            <DesignSubheader />
-            <Grid item container>
-                <Typography variant="h4">좋아요 표시한 디자인</Typography>
-            </Grid>
-            <Divider />
-            <DesignList designs={designs} />
-        </Grid>
-    )
+  useEffect(() => {
+    if(loading){
+      fetch(fetchurl, {credentials: 'include',})
+      .then(
+        response => response.json(),
+        error => console.error(error)
+      )
+      .then(designs => {
+        setDesignList(
+          <DesignList designs={designs} reload={() => setLoading(true)} />
+        )
+        setLoading(false)
+      })
+    }
+  }, [loading]);
+
+  return(
+    <Grid container direction="column">
+      <DesignSubheader />
+      <Typography variant="h4">좋아요 표시한 디자인</Typography>
+      <Divider />
+      {designList}
+    </Grid>
+  )
 }
 
-DesignMypage.propTypes = {
+DesignLikePage.propTypes = {
     //pathname: PropTypes.string,
     //search: PropTypes.string,
     //hash: PropTypes.string,
 }
 
-
-const mapStateToProps = state => ({
-    //pathname: state.router.location.pathname,
-    //search: state.router.location.search,
-    //hash: state.router.location.hash,
-})
-
-const mapDispatchToProps = (dispatch) => ({
-    designSetLikeList: (designs) => dispatch(designSetLikeList(designs))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(DesignMypage)
+export default DesignLikePage

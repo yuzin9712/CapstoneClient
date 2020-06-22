@@ -39,7 +39,7 @@ import {
 import ReviewCard from './ReviewCard';
 import {sangminserver, yujinserver} from '../../restfulapi';
 import { useForm, Controller } from 'react-hook-form'
-import TryButton from './TryButton'
+import TryButton from '../common/TryButton.js';
 import ReviewWrite from './ReviewWrite'
 
 const useStyles = makeStyles((theme) => ({

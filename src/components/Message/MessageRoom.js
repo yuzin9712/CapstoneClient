@@ -12,8 +12,9 @@ import { yujinserver } from '../../restfulapi';
 import NameAvatarButton from '../common/NameAvatarButton';
 import { useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
-import { Sync } from '@material-ui/icons';
+import { Sync, Close } from '@material-ui/icons';
 import queryString from 'query-string'
+import moment from 'moment'
 
 const useStyles = makeStyles((theme) => ({
   // textfield: {
@@ -38,10 +39,22 @@ const MessageRoom = ({counter, handleClose, room, reload, search}) => {
   const [textline, setTextline] = useState("")
   const [fetching, setFetching] = useState(false)
   const [open, setOpen] = useState(false)
-  const topScroll = useRef(null)
+  const bottom = useRef(null)
+  const [chatMessages, setChatMessages] = useState([])
   useEffect(() => {
     setOpen(parseInt(queryString.parse(search).to) === counter.id)
   }, [search])
+  const scrollToBottom = () => {
+    if(bottom.current !== null){
+      bottom.current.scrollIntoView({ behavior: "auto" })
+    }
+  }
+  useEffect(() => {
+    reload()
+  }, [open])
+  useEffect(() => {
+    scrollToBottom()
+  }, [chatMessages])
 
   const sendMessage = (event) => {
     event.preventDefault()
@@ -68,7 +81,6 @@ const MessageRoom = ({counter, handleClose, room, reload, search}) => {
           // enqueueSnackbar("성공이요",{"variant": "success"});
           reload()
           setTextline("")
-          topScroll.current.scrollIntoView({ behavior: "smooth" })
         }
         else{
           enqueueSnackbar("쪽지보내기에 실패했습니다. 에러가 계속되면 관리자에게 문의해주세요",{"variant": "error"});
@@ -77,6 +89,41 @@ const MessageRoom = ({counter, handleClose, room, reload, search}) => {
       })
     }
   }
+  useEffect(() => {
+    if(room !== undefined) {
+      setChatMessages(room.chatLines.map((line, index) => {
+        const createdAt = moment(line.createdAt).fromNow()
+        // const lastItem = (index === room.chatLines.length - 1)
+        //  ref={lastItem?bottom:null}
+        if(line.user.id === counter.id) return( // 상대 쪽지
+          <Box width={1} py={1} flexGrow={1} display="flex" flexDirection="row" alignItems="flex-end">
+            <Box alignSelf="flex-start">
+              <NameAvatarButton name={counter.name} userId={counter.id} />
+            </Box>
+            <Box p={1} display="flex" flexDirection="column">
+              <Typography>{counter.name}</Typography>
+              <Box flexShrink={1} p={1} display="flex" flexDirection="column" component={Paper}>
+                {line.lines.split('\n').map((i, key) => {
+                  return <Typography key={line.id+"-"+key} variant="body1">{i}</Typography>;
+                })}
+              </Box>
+            </Box>
+            <Typography variant="body2" color="textSecondary" component={Box} flexShrink={0} p={1}>{createdAt}</Typography>
+          </Box>
+        )
+        else return( // 내가보낸 쪽지
+          <Box width={1} py={1} flexGrow={1} display="flex" flexDirection="row-reverse" alignItems="flex-end" >
+            <Box flexShrink={1} p={1} display="flex" flexDirection="column" component={Paper} className={classes.themeColor}>
+              {line.lines.split('\n').map((i, key) => {
+                return <Typography key={line.id+"-"+key} variant="body1">{i}</Typography>;
+              })}
+            </Box>
+            <Typography variant="body2" color="textSecondary" component={Box} flexShrink={0} p={1}>{createdAt}</Typography>
+          </Box>
+        )
+      }))
+    }
+  }, [room.chatLines])
 
   return(
     <Dialog 
@@ -88,60 +135,27 @@ const MessageRoom = ({counter, handleClose, room, reload, search}) => {
     >
       <Box flexGrow={1} className={classes.dialog} p={1} display="flex" flexDirection="column">
         <Box flexShrink={0} display="flex" flexDirection="column">
-          <Box px={3} display="flex" flexDirection="row" alignItems="center">
-            <Typography component={Box} flexGrow={1}><strong>{counter.name}</strong>님과의 쪽지</Typography>
-            <Tooltip title="새로고침">
-              <IconButton onClick={() => {
-                reload()
-                topScroll.current.scrollIntoView({ behavior: "smooth" })
-              }}>
-                <Sync />
-              </IconButton>
-            </Tooltip>
+          <Box pb={1} pl={2} display="flex" flexDirection="row" alignItems="center">
+            <Typography><strong>{counter.name}</strong>님과의 쪽지</Typography>
+            <Box flexGrow={1} display="flex" flexDirection="row" justifyContent="flex-end" alignItems="center">
+              <Tooltip title="새로고침">
+                <IconButton onClick={() => reload()}>
+                  <Sync />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="닫기">
+                <IconButton onClick={() => handleClose()}>
+                  <Close />
+                </IconButton>
+              </Tooltip>
+            </Box>
           </Box>
           <Divider />
         </Box>
         <Box flexGrow={1} className={classes.body} display="flex" flexDirection="column">
           <Grid container component={Box} p={1}>
-            <div ref={topScroll} ></div>
-            {room !== undefined? room.chatLines.map((line) => {
-              const createdAt = new Date(line.createdAt)
-              if(line.user.id === counter.id) return( // 상대 쪽지
-                <Box width={1} py={1} flexGrow={1} display="flex" flexDirection="row" alignItems="flex-end">
-                  <Box alignSelf="flex-start">
-                    <NameAvatarButton name={counter.name} userId={counter.id} />
-                  </Box>
-                  <Box p={1} display="flex" flexDirection="column">
-                    <Typography>{counter.name}</Typography>
-                    <Box p={1} flexGrow={1} display="flex" flexDirection="column" component={Paper}>
-                      {line.lines.split('\n').map((i, key) => {
-                        return <Typography key={key} variant="body1">{i}</Typography>;
-                      })}
-                    </Box>
-                  </Box>
-                  <Box px={1} display="flex" flexDirection="column">
-                    <Typography variant="body2">{createdAt.toLocaleDateString()}</Typography>
-                    <Typography variant="body2">{createdAt.toLocaleTimeString()}</Typography>
-                  </Box>
-                  <Box flexGrow={1} />
-                </Box>
-              )
-              else return( // 내가보낸 쪽지
-                <Box width={1} py={1} flexGrow={1} display="flex" flexDirection="row-reverse" alignItems="flex-end" >
-                  <Box p={1} display="flex" flexDirection="column" component={Paper} className={classes.themeColor}>
-                    {line.lines.split('\n').map((i, key) => {
-                      return <Typography key={key} variant="body1">{i}</Typography>;
-                    })}
-                  </Box>
-                  <Box px={1} display="flex" flexDirection="column" alignItems="flex-end">
-                    <Typography variant="body2">{createdAt.toLocaleDateString()}</Typography>
-                    <Typography variant="body2">{createdAt.toLocaleTimeString()}</Typography>
-                  </Box>
-                  <Box flexGrow={1} />
-                </Box>
-              )
-            })
-            :null}
+            {chatMessages}
+            <div ref={bottom}/>
           </Grid>
         </Box>
         <form onSubmit={(event) => sendMessage(event)}>
@@ -153,9 +167,10 @@ const MessageRoom = ({counter, handleClose, room, reload, search}) => {
             margin="normal"
             required
             id="line"
-            name="line"
             label="내용"
             autoFocus
+            multiline
+            autoComplete="off"
             // className={classes.textfield}
             component={Box} flexGrow={1}
             />

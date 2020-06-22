@@ -51,8 +51,9 @@ const MessagePage = ({authStore, match, search, push}) => {
   }, [loading])
   useEffect(() => {
     setMessageRoomCards(openedRooms.map((messageRoom) => {
+      const counter = authStore.currentId === messageRoom.user1Id? ({id: messageRoom.user2Id, name: messageRoom.user2}) : ({id: messageRoom.user1Id, name: messageRoom.user1})
       return(
-        <MessageCard key={messageRoom.user2Id} room={messageRoom} reload={() => setLoading(true)} />
+        <MessageCard counter={counter} key={counter.id} room={messageRoom} reload={() => setLoading(true)} />
       )
     }))
   }, [openedRooms])
@@ -107,7 +108,7 @@ const MessagePage = ({authStore, match, search, push}) => {
   return(
     <Box display="flex" flexDirection="column">
       <MypageSubheader userId={authStore.currentId} getFollowings={(list) => setFollowingMembers(list)} />
-      <Box p={1} component={Container} maxWidth="sm">
+      <Container maxWidth="sm">
         <Box display="flex" flexDirection="row" alignItems="center">
           <Typography variant="h5" component={Box} flexGrow={1}>쪽지함</Typography>
           <Tooltip title="새로고침">
@@ -122,7 +123,7 @@ const MessagePage = ({authStore, match, search, push}) => {
           {newMessageRoom}
           {messageRoomCards}
         </Grid>
-      </Box>
+      </Container>
     </Box>
   )
 }

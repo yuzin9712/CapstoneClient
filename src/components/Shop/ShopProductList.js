@@ -22,9 +22,15 @@ const useStyles = makeStyles((theme) => ({
 const ShopProductList = ({products, options, previews, reload}) => {
   const classes = useStyles();
 
-  const productList = products.map((product) => (
-    <ShopProductItem product={product} options={options[product.id]} previews={previews[product.id]} reload={reload} />
-  ))
+  const defaultOptions = [{optionId: -1, color: '누끼없음', size: '사이즈없음', cnt: 0}]
+  const defaultPreviews = [{color: '누끼없음', img: ''}]
+  const productList = products.map((product) => {
+    const productOptions = options[product.id] !== undefined? options[product.id]: defaultOptions
+    const productPreviews = previews[product.id] !== undefined? previews[product.id]: defaultPreviews
+    return(
+      <ShopProductItem product={product} options={productOptions} previews={productPreviews} reload={reload} />
+    )
+  })
 
   return(
     <Grid container>

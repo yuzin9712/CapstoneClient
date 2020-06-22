@@ -1,9 +1,7 @@
 import React from 'react'
 import { Route, Switch } from 'react-router'
 
-import Home from '../components/Home'
-import Hello from '../components/Hello'
-import Counter from '../components/Counter'
+import MainPage from '../components/MainPage'
 import ProductCategoryPage from '../components/Product/ProductCategoryPage'
 import ProductDetailPage from '../components/Product/ProductDetailPage'
 import ProductSearchPage from '../components/Product/ProductSearchPage'
@@ -49,12 +47,10 @@ import MessagePage from '../components/Message/MessagePage'
 
 const routes = (
       <Switch>
-        <Route exact path="/" component={Home} />
+        <Route exact path="/" component={MainPage} />
         {/* <Route path="/login" component={LoginPage} />
         <Route path="/logintest" component={LoginTest} /> */}
         {/* <Route path="/auth" component={AuthPage} /> */}
-        <Route path="/hello" component={Hello} />
-        <Route path="/counter" component={Counter} />  
         <Route path="/productList/category/:id" component={ProductCategoryPage} /> 
         <Route path="/productList/search" component={ProductSearchPage} /> 
         <Route path="/productDetail/:id" component={ProductDetailPage} /> 
@@ -69,7 +65,7 @@ const routes = (
         <Route path="/design/mydesign" component={DesignMypage} /> 
         <Route path="/design/like" component={DesignLikepage} />
         <Route path="/design/follow" component={DesignFollowPage} /> 
-        <Route path="/design/hashtag" component={DesignHashtagSearchPage} /> 
+        <Route path="/design/hashtag/:tag" component={DesignHashtagSearchPage} /> 
         <Route path="/design/" component={DesignBestPage} /> 
 
         <Route path="/community/write" component={PostWritePage}/> 

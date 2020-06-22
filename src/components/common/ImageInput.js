@@ -34,6 +34,7 @@ const ImageInput = ({name = "photo", images, setImages, maxInput = 3}) => {
     const handleImageInput = (event) => {
         if(images.length < maxInput){
           if(event.target.files[0] !== undefined){
+            // console.log(event.target.files[0].size)
             setImages([...images, event.target.files[0]]);
           }
         }
@@ -87,15 +88,4 @@ ImageInput.propTypes = {
     //hash: PropTypes.string,
 }
 
-
-const mapStateToProps = state => ({
-    //pathname: state.router.location.pathname,
-    //search: state.router.location.search,
-    //hash: state.router.location.hash,
-})
-
-const mapDispatchToProps = (dispatch) => ({
-    
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(ImageInput)
+export default ImageInput

@@ -32,7 +32,7 @@ import clsx from 'clsx';
 import ChipInput from 'material-ui-chip-input'
 import { push } from 'connected-react-router';
 import { Link } from 'react-router-dom';
-import TryButton from '../Product/TryButton.js';
+import TryButton from '../common/TryButton.js';
 
 const useStyles = makeStyles((theme) => ({
   image: {

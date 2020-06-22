@@ -26,6 +26,7 @@ import {yujinserver} from '../../restfulapi'
 import clsx from 'clsx';
 import ChipInput from 'material-ui-chip-input'
 import { push } from 'connected-react-router';
+import TagInput from '../common/TagInput';
 
 const useStyles = makeStyles((theme) => ({
   gridList: {
@@ -156,11 +157,7 @@ const DesignWrite = ({ authStore, dispatchPush }) => {
           <GridList className={classes.gridList} cols={2.5}>
             {closetComponentList}
           </GridList>
-          <ChipInput 
-            label="태그 입력"
-            fullWidth
-            onChange={(chips) => setTags(chips)}
-          />
+          <TagInput tags={tags} setTags={(tags) => setTags(tags)} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>취소</Button>

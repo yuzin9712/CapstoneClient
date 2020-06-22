@@ -19,6 +19,7 @@ import {
   TextField,
   ButtonBase,
   Tooltip,
+  Divider,
 } from '@material-ui/core'
 import { yujinserver, sangminserver } from '../../restfulapi';
 import ShopSubheader from './ShopSubheader';
@@ -29,7 +30,10 @@ import { useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme) => ({
-
+  productImage: {
+    width: theme.spacing(10),
+    height: theme.spacing(10),
+  },
 }));
 
 const ShopProductItem = ({product, options, previews, reload}) => {
@@ -64,24 +68,27 @@ const ShopProductItem = ({product, options, previews, reload}) => {
   useEffect(() => {
     if(editInfo.length !== 0){
       // console.log(editInfo)
-      setOptionComponents(options.map((option) => 
-        <Box display="flex" alignItems="center" p={1}>
-          <Avatar src={(previews.find((preview) => preview.color === option.color)).img} variant="rounded" />
-          <Box flexGrow={1} component={Typography} gutterBottom variant="body1">{option.color} / {option.size}:</Box>
-          <Typography gutterBottom variant="body1" align="right">{option.cnt}개 → </Typography>
-          <TextField 
-          size="small" 
-          className={classes.textFieldQuantity}
-          type="number"
-          value={editInfo[option.optionId].quantity}
-          onChange={(event) => handleChange(event, option.optionId)}
-          inputProps={{
-            style: { textAlign: "right" },
-            min: "1", max: "10000", step: "1",
-          }}
-          />
-        </Box>
-      ))
+      setOptionComponents(options.map((option) => {
+        const preview = (previews.find((preview) => preview.color === option.color))
+        return(
+          <Box display="flex" alignItems="center" p={1}>
+            <Avatar src={preview !== undefined? preview.img: ''} variant="rounded" />
+            <Box flexGrow={1} component={Typography} gutterBottom variant="body1">{option.color} / {option.size}:</Box>
+            <Typography gutterBottom variant="body1" align="right">{option.cnt}개 → </Typography>
+            <TextField 
+            size="small" 
+            className={classes.textFieldQuantity}
+            type="number"
+            value={editInfo[option.optionId].quantity}
+            onChange={(event) => handleChange(event, option.optionId)}
+            inputProps={{
+              style: { textAlign: "right" },
+              min: "1", max: "10000", step: "1",
+            }}
+            />
+          </Box>
+        )
+      }))
     }
   }, [editInfo])
 
@@ -161,19 +168,13 @@ const ShopProductItem = ({product, options, previews, reload}) => {
 
   return(
     <React.Fragment>
-      <Box width={1/2} display="flex" alignItems="center" p={1}>
+      <Box width={1/2} display="flex" alignItems="center" p={1} component={Button} onClick={handleOpen}>
         <Box flexGrow={1} display="flex" flexDirection="row" alignItems="center" >
-          <ButtonBase component={Link} to={"/productDetail/"+product.id}>
-            <Avatar src={product.img} variant="rounded" />
-            <Box px={1} component={Typography} gutterBottom variant="body1">{product.pname}</Box>
-          </ButtonBase>
+          <Avatar src={product.img} variant="rounded" />
+          <Box px={1} component={Typography} gutterBottom variant="body1">{product.pname}</Box>
         </Box>
         <Box px={1} component={Typography} gutterBottom variant="body2">{product.price}원</Box>
-        <Tooltip title="수정">
-          <ButtonBase onClick={handleOpen}>
-            <Edit />
-          </ButtonBase>
-        </Tooltip>
+        <Edit />
       </Box>
       <Dialog 
         fullWidth
@@ -182,16 +183,28 @@ const ShopProductItem = ({product, options, previews, reload}) => {
         onClose={handleClose}
         aria-labelledby="design-write-dialog"
       >
-        <DialogTitle>상품정보 수정</DialogTitle>
-        <DialogContent>
-          <Typography gutterBottom>재고 수정하세요</Typography>
-          {optionComponents}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>닫기</Button>
-          <Button variant="contained" color="warning" onClick={deleteProduct}>상품 삭제</Button>
-          <Button onClick={submitQuantity}>재고 수정</Button>
-        </DialogActions>
+        <Box display="flex" flexDirection="column" p={1}>
+          <Box display="flex" flexDirection="row" flexWrap="wrap" alignItems="center">
+            <Box display="flex" flexDirection="row" alignItems="center">
+              <Avatar src={product.img} variant="rounded" className={classes.productImage} />
+              <Box px={1} component={Typography} gutterBottom variant="h5">{product.pname}</Box>
+            </Box>
+            <Box flexGrow={1} display="flex" justifyContent="flex-end" alignItems="center">
+              <Button variant="outlined" component={Link} to={'/productDetail/'+product.id}>상품 판매 페이지</Button>
+            </Box>
+          </Box>
+          <Divider />
+          <Box py={1}>
+            <Typography gutterBottom variant="h6">재고 수정</Typography>
+            {optionComponents}
+          </Box>
+          <Divider />
+          <Box pt={1} display="flex" flexDirection="row" justifyContent="flex-end">
+            <Box ml={1} component={Button} variant="outlined" onClick={handleClose}>닫기</Box>
+            <Box ml={1} component={Button} variant="outlined" onClick={deleteProduct}>상품 삭제</Box>
+            <Box ml={1} component={Button} variant="outlined" onClick={submitQuantity}>재고 수정</Box>
+          </Box>
+        </Box>
       </Dialog>
     </React.Fragment>
   )

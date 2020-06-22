@@ -28,44 +28,34 @@ const useStyles = makeStyles((theme) => ({
 
 const fetchurl = yujinserver+"/page/design";
 
-const DesignRecentPage = ({ designSetLikeList }) => {
-    const classes = useStyles();
-    const [ loading, setLoading ] = useState(true);
-    const [ fullDesigns, setFullDesigns ] = useState([]);
-    // const [ bestDesigns, setBestDesigns ] = useState([]);
-    const [ writeDialogOpened, setWriteDialogOpened] = useState(false)
-    useEffect(() => {
-        // design & 
-        // fetch(yujinserver+"/design/best", {credentials: 'include',})
-        // .then(response => response.json(),
-        //     error => console.error(error))
-        // .then(json => {
-        //     setBestDesigns(json.designs)
-        // })
-        fetch(fetchurl, {credentials: 'include',})
-        .then(response => response.json(),
-            error => console.error(error))
-        .then(json => {
-            setFullDesigns(json)
-        })
+const DesignRecentPage = ({}) => {
+  const [ loading, setLoading ] = useState(true);
+  const [ designList, setDesignList ] = useState(null);
+
+  useEffect(() => {
+    if(loading){
+      fetch(fetchurl, {credentials: 'include',})
+      .then(
+        response => response.json(),
+        error => console.error(error)
+      )
+      .then(designs => {
+        setDesignList(
+          <DesignList designs={designs} reload={() => setLoading(true)} />
+        )
         setLoading(false)
-    }, []);
-
-    const handleWriteButton = () => {
-        setWriteDialogOpened(true)
+      })
     }
+  }, [loading]);
 
-    if(loading) return(<div>로딩중요</div>)
-    else return(
-        <Grid container direction="column">
-            <DesignSubheader />
-            <Grid item container>
-                <Typography variant="h4">모두의 최신 코디</Typography>
-            </Grid>
-            <Divider />
-            <DesignList designs={fullDesigns} />
-        </Grid>
-    )
+  return(
+    <Grid container direction="column">
+      <DesignSubheader />
+      <Typography variant="h4">모두의 최신 디자인</Typography>
+      <Divider />
+      {designList}
+    </Grid>
+  )
 }
 
 DesignRecentPage.propTypes = {

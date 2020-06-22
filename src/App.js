@@ -16,6 +16,7 @@ import { red, purple, teal, indigo } from '@material-ui/core/colors'
 import { 
   fetchLoginStatus,
   getLoginStatus } from './actions/auth'
+import moment from 'moment'
 //xtx12354
 // A custom theme for this app
 const theme = createMuiTheme({
@@ -52,7 +53,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column"
   },
   context: {
-    padding: theme.spacing(1),
     overflowY: "auto",
     height: 0,
   },
@@ -87,6 +87,7 @@ const App = ({ history, pathname, authStore, fetchLoginStatus, dispatchPush }) =
       break
     }
   }, [pathname])
+  moment.locale('ko')
 
   return (
     <ConnectedRouter history={history} noInitialPop>
@@ -98,7 +99,7 @@ const App = ({ history, pathname, authStore, fetchLoginStatus, dispatchPush }) =
             <React.Fragment key={authStore.currentId}>
               <Box p={1} component={Container} maxWidth="lg" className={classes.main}>
                 <NavBar menus={menus} mode={authStore.session} />
-                <Box flexGrow={1} className={classes.context} key={authStore.currentId}>
+                <Box px={5} my={1} flexGrow={1} className={classes.context} key={authStore.currentId}>
                   { routes }
                 </Box>
               </Box>

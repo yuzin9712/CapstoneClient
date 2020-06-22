@@ -29,45 +29,49 @@ const useStyles = makeStyles((theme) => ({
 
 const fetchurl = yujinserver+"/design/hashtag";
 
-const DesignHashtagSearchPage = ({ pathname, designSetLikeList, followSetList }) => {
-    const classes = useStyles();
-    const [ loading, setLoading ] = useState(true);
-    const [ designs, setDesigns ] = useState([]);
-    
-    const currentTag = pathname.substring(pathname.lastIndexOf('/') + 1)
+const DesignHashtagSearchPage = ({ match, }) => {
+  const [ loading, setLoading ] = useState(true);
+  const [ designList, setDesignList ] = useState(null);
+  const currentTag = match.params.tag
 
-    useEffect(() => {
-        fetch(fetchurl, {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json',
-              "Content-Type": "application/json",
-              'Cache': 'no-cache'
-            },
-            body: JSON.stringify({
-                hashtag: currentTag,
-            }),
-            credentials: 'include',
-        })
-        .then(response => response.json(),
-            error => console.error(error))
-        .then(json => {
-            setDesigns(json)
-        })
+  useEffect(() => {
+    if(loading){
+      fetch(fetchurl, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          "Content-Type": "application/json",
+          'Cache': 'no-cache'
+        },
+        body: JSON.stringify({
+          hashtag: currentTag,
+        }),
+        credentials: 'include',
+      })
+      .then(
+        response => response.json(),
+        error => console.error(error)
+      )
+      .then(designs => {
+        setDesignList(
+          <DesignList designs={designs} reload={() => setLoading(true)} />
+        )
         setLoading(false)
-    }, []);
+      })
+    }
+  }, [loading]);
+  useEffect(() => {
+    setLoading(true)
+  }, [currentTag])
 
-    if(loading) return(<div>로딩중요</div>)
-    else return(
-        <Grid container direction="column">
-            <DesignSubheader />
-            <Grid item container>
-    <Typography variant="h4">#{currentTag}으로 검색</Typography>
-            </Grid>
-            <Divider />
-            <DesignList designs={designs} />
-        </Grid>
-    )
+  return(
+    <Grid container direction="column">
+      <DesignSubheader />
+        <Typography variant="h4">#{currentTag}</Typography>
+      <Divider />
+      {designList}
+    </Grid>
+  )
 }
 
 DesignHashtagSearchPage.propTypes = {

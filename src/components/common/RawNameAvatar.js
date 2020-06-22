@@ -37,7 +37,7 @@ const RawNameAvatar = ({name, size = 5}) => {
 }
 
 RawNameAvatar.propTypes = {
-    pathname: PropTypes.string.isRequired,
+    // pathname: PropTypes.string.isRequired,
     //search: PropTypes.string,
     //hash: PropTypes.string,
 }

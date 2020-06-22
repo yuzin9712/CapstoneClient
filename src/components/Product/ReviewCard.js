@@ -32,7 +32,7 @@ import { useForm } from 'react-hook-form';
 import { connect } from 'react-redux';
 import { sangminserver } from '../../restfulapi';
 import { useSnackbar } from 'notistack';
-import FollowButton from '../Community/FollowButton';
+import FollowButton from '../common/FollowButton';
 import ReviewComment from './ReviewComment';
 
 const useStyles = makeStyles((theme) => ({
