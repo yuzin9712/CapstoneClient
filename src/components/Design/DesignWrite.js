@@ -63,10 +63,9 @@ const DesignWrite = ({ authStore, dispatchPush }) => {
       fetch(yujinserver+"/page/closet/"+authStore.currentId, { credentials: 'include', })
       .then(
         response => response.json(),
-        error => console.log(error)
+        error => console.error(error)
       )
       .then(json => {
-        // console.log(json)
         setClosetData(json)
         setLoading(false)
       })
@@ -123,7 +122,7 @@ const DesignWrite = ({ authStore, dispatchPush }) => {
           })
           .then(
             response => response.text(),
-            error => console.log(error)
+            error => console.error(error)
           )
           .then((text) => {
               if(text === "success"){

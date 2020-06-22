@@ -3,8 +3,6 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import clsx from 'clsx'
 import { connect } from 'react-redux'
-// import { handleDrawer } from '../actions/sketch'
-import Scatch from './Scatch'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import {
   Box,
@@ -43,10 +41,6 @@ const useStyles = makeStyles((theme) => ({
 const SketchDrawer = function({drawerOpen, handleDrawer}){
   const theme = useTheme();
   const classes = useStyles();
-
-  // useEffect(() => {
-  //   console.log(drawerOpen)
-  // }, [drawerOpen])
 
   return(
     <Box className={clsx({

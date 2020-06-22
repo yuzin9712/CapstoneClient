@@ -37,7 +37,7 @@ const OrderMypage = ({}) => {
               credentials: "include",
           })
           .then((res) => res.json(),
-          (err) => {console.log(err)})
+          (error) => {console.error(error)})
           .then((data) => {
               setOrders(data)
               setLoading(false)
@@ -54,7 +54,6 @@ const OrderMypage = ({}) => {
     if(loading || (orders.length === 0) || (carriers.length === 0)) return(<div>기달요</div>)
     else{
         // status: 1= 주문접수, 2= 입금확인, 3= 배송준비중, 4= 발송, 5= 배송완료
-        // console.log(orders)
         return(
             <Container maxWidth="md">
                 <Typography>내 주문내역</Typography>
@@ -107,18 +106,6 @@ const OrderMypage = ({}) => {
                                     )
                                 })}
                             </Grid>
-                            {/* <OrderList orders={order.orderDetails.map((option) => {
-                                const detail = {
-                                    img: option.product.img,
-                                    pname: option.product.pname,
-                                    price: option.price,
-                                    quantity: option.cnt,
-                                    color: option.color,
-                                    size: option.size,
-                                }
-                                console.log(detail)
-                                return detail
-                            })} /> */}
                         </Box>
                     )
                 })}

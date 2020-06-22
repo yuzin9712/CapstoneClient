@@ -39,7 +39,6 @@ const ShopOrders = ({}) => {
         (error) => console.error(error)
       )
       .then((data) => {
-        console.log(data)
         setOrderList(<OrderList orders={data} carriers={carriers} reload={() => setLoading(true)} />)
         setLoading(false)
       })

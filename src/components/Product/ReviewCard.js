@@ -125,10 +125,9 @@ const ReviewCard = ({authStore, width, review, reload}) => {
     })
     .then(
       response => response.json(),
-      error => console.log(error)
+      error => console.error(error)
     )
     .then((json) => {
-      // console.log(json.comments)
       setComments(json.comments.map((comment) => {
         return(
           <ReviewComment comment={comment} reload={() => fetchComments()} />
@@ -153,7 +152,6 @@ const ReviewCard = ({authStore, width, review, reload}) => {
     setExpanded(!expanded);
   };
   const submitComment = (data) => {
-    console.log(data)
     fetch(sangminserver+"/review/comment/"+review.id,{
       method: "POST",
       headers: {
@@ -166,17 +164,16 @@ const ReviewCard = ({authStore, width, review, reload}) => {
     })
     .then(
       response => response.text(),
-      error => console.log(error)
+      error => console.error(error)
     )
     .then((text) => {
         if(text === "OK"){
-            enqueueSnackbar("성공이요",{"variant": "success"});
+            enqueueSnackbar("댓글을 작성했습니다.",{"variant": "success"});
             fetchComments()
         }
         else{
-            enqueueSnackbar("실패따리",{"variant": "error"});
+            enqueueSnackbar("댓글 작성에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
         }
-        console.log(text)
     })
   }
   const submitReviewEdit = (data) => {
@@ -196,7 +193,7 @@ const ReviewCard = ({authStore, width, review, reload}) => {
       })
       .then(
         response => response.text(),
-        error => console.log(error)
+        error => console.error(error)
       )
       .then((text) => {
         if(text === 'update review complete'){
@@ -250,7 +247,7 @@ const ReviewCard = ({authStore, width, review, reload}) => {
     })
     .then(
       response => response.text(),
-      error => console.log(error)
+      error => console.error(error)
     )
     .then((text) => {
         if(text === 'delete review done'){

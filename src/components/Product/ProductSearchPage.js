@@ -42,10 +42,9 @@ const ProductSearchPage = ({pathname, search}) => {
         })
         .then(
             (res) => res.json(),
-            (err) => { console.error(err) }
+            (error) => { console.error(error) }
         )
         .then((json) => {
-            console.log(json)
             // TODO: preview 누락!!
             if(json.productRows.length){
                 setProductList(<ProductList products={json.productRows.filter((product) => product.deletedAt === null)} />)

@@ -16,7 +16,6 @@ const useStyles = makeStyles((theme) => ({
 
 const DesignList = ({designs, reload}) => {
     if(!designs.length) return(<div>불러온 디자인이 없어요</div>)
-    // console.log(designs)
 
     const designCards = designs.map((data) => {
       return <DesignCard key={data.id} design={data} reload={reload} />

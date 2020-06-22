@@ -90,7 +90,7 @@ const PostWritePage = ({authStore, originalPost, backButtonAction, dispatchPush}
             fetch(yujinserver+"/page/closet/"+authStore.currentId, { credentials: 'include', })
             .then(
               response => response.json(),
-              error => console.log(error)
+              error => console.error(error)
             )
             .then(json => {
               setClosetData(json.map((closet) => ({
@@ -101,7 +101,6 @@ const PostWritePage = ({authStore, originalPost, backButtonAction, dispatchPush}
             })
           }
           else {
-            // console.log(originalPost)
             setLoading(false)
           }
         }
@@ -109,7 +108,6 @@ const PostWritePage = ({authStore, originalPost, backButtonAction, dispatchPush}
 
       const submitPostWrite  = (data) => {
         const selectedClosetIds = closetData.filter((closet) => closet.selected).map((closet) => closet.closet.id)
-        console.log(selectedClosetIds)
         let form = new FormData()
         images.forEach((image) => {form.append("img", image)})
 
@@ -120,7 +118,7 @@ const PostWritePage = ({authStore, originalPost, backButtonAction, dispatchPush}
           })
           .then(
             response => response.json(),
-            error => console.log(error)
+            error => console.error(error)
           )
           .then((json) => {
             const images = json;
@@ -141,15 +139,15 @@ const PostWritePage = ({authStore, originalPost, backButtonAction, dispatchPush}
             })
             .then(
               response => response.json(),
-              error => console.log(error)
+              error => console.error(error)
             )
             .then((json) => {
                 if(json.postId !== undefined){
-                  enqueueSnackbar("성공이요",{"variant": "success"});
+                  enqueueSnackbar("글 작성 완료!",{"variant": "success"});
                   dispatchPush("/community/post/"+json.postId)
                 }
                 else{
-                    enqueueSnackbar("실패따리",{"variant": "error"});
+                  enqueueSnackbar("글 작성에 실패했습니다. 에러가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
                 }
             })
           })
@@ -168,7 +166,7 @@ const PostWritePage = ({authStore, originalPost, backButtonAction, dispatchPush}
       })
       .then(
         response => response.text(),
-        error => console.log(error)
+        error => console.error(error)
       )
       .then((text) => {
         if(text === '수정완료'){

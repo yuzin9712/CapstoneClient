@@ -83,11 +83,10 @@ export default class Trade extends React.Component {
 
     }
    componentDidMount(){
-     //  console.log(this.state.member);
        callApi()
-       .then(alianced => {this.setState({customers:alianced}); console.log(this.state.customers.alianced); console.log(this.state.customers.notAlianced) })
+       .then(alianced => {this.setState({customers:alianced})})
      
-       .catch(err => console.log(err));
+       .catch(error => console.error(error));
 
 
    }
@@ -177,7 +176,6 @@ export default class Trade extends React.Component {
 const callApi = async () => {
     const response = await fetch(yujinserver+'/admin')
     const body = await response.json();
-   // console.log(body); //consolelog찍어보면 res로 image경로가 제대로넘어오긴한다 근데 나오질않는다 시발!!!
     return body;
 }
 

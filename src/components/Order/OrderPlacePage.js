@@ -56,10 +56,6 @@ const OrderPlacePage = ({orderList, authStore, push}) => {
   const [address, setAddress] = useState("")
   const [openPostcodeEditor, setOpenPostcodeEditor] = useState(false)
 
-  useEffect(() => {
-    console.log(orderList)
-    
-  }, [orderList]);
   if(!orderList) return(<div />)
 
   let total = 0;
@@ -71,9 +67,7 @@ const OrderPlacePage = ({orderList, authStore, push}) => {
     if(data.checkout_method === "card"){
       IMP.init(code);
       setIsPurchasing(true)
-      // console.log(data.checkout_method)
       const pname = orderList.length <= 1?orderList[0].pname : (orderList[0].pname+" 외 "+(orderList.length-1)+"개")
-      console.log(pname)
       // const reducedPrice = Math.ceil(total/1000)*10
       const deliveryInfo = sameAsPurchaser?{
         name: data.purchaser_name,
@@ -102,7 +96,6 @@ const OrderPlacePage = ({orderList, authStore, push}) => {
           msg += '상점 거래ID : ' + rsp.merchant_uid;
           msg += '결제 금액 : ' + rsp.paid_amount;
           msg += '카드 승인번호 : ' + rsp.apply_num;
-          console.log(msg)
 
           ///
           fetch(yujinserver+"/order",{
@@ -138,7 +131,7 @@ const OrderPlacePage = ({orderList, authStore, push}) => {
           })
           .then(
             response => response.text(),
-            error => console.log(error)
+            error => console.error(error)
           )
           .then((text) => {
             if(text === "success"){
@@ -154,7 +147,6 @@ const OrderPlacePage = ({orderList, authStore, push}) => {
         }
         else {
           var msg = '결제에 실패하였습니다. 에러내용 : ' + rsp.error_msg
-          console.log(msg)
           enqueueSnackbar(msg,{"variant": "error"});
           setIsPurchasing(false)
         }
@@ -170,7 +162,6 @@ const OrderPlacePage = ({orderList, authStore, push}) => {
     setOpenPostcodeEditor(false)
   }
   const handlePostcodeComplete = (data) => {
-    // console.log(data)
     setZipcode(data.zonecode)
     setAddress(data.address)
     closePostcodeWindow()

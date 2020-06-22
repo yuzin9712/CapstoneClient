@@ -189,7 +189,7 @@ const ProductDetail = ({product, options, previews, pushToOrderList, cleanOrderL
         })
         .then(
           res => res.text(),
-          err => {console.error(err);}
+          error => {console.error(error);}
         )
         .then(text => {
           if(text === 'success'){

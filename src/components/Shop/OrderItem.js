@@ -29,6 +29,8 @@ import {
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yujinserver } from '../../restfulapi';
+import NameAvatarButton from '../common/NameAvatarButton';
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme) => ({
     root:{
@@ -66,6 +68,7 @@ const useStyles = makeStyles((theme) => ({
 
 const OrderList = ({order, carriers, reload}) => {
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
   const [zipCode, setZipCode] = useState("")
   const { register, handleSubmit, errors } = useForm();
 
@@ -95,17 +98,18 @@ const OrderList = ({order, carriers, reload}) => {
       )
       .then((text) => {
         if(text === 'Success') {
-          console.log("성공이요")
+          enqueueSnackbar("배송 정보를 등록했습니다.",{"variant": "success"});
           reload()
         }
-        else console.log("실패요")
+        else{
+          enqueueSnackbar("배송 정보 등록에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
+        }
       })
     }
   }
   const handleZipcodeChange = (event) => {
     setZipCode(event.target.value)
   }
-  console.log(carriers.carrierList)
   const carrierName = (order.zipCode !== null?
     (carriers.carrierList.find((carrier) => carrier.id === order.zipCode)).name
     : ""
@@ -144,26 +148,40 @@ const OrderList = ({order, carriers, reload}) => {
   )
 
   return (
-    <Box p={1} flexGrow={1} display="flex" flexDirection="row" alignItems="center">
-      <ButtonBase component={Link} to={"/productDetail/"+order.product.id}>
-        <Avatar src={order.product.img} variant="rounded" />
-      </ButtonBase>
-      <Box flexGrow={1}>
-        <Typography gutterBottom>{order.product.pname}</Typography>
-        <Typography gutterBottom variant="body2">{order.color}, {order.size} ／ {order.product.price}원 ✕ {order.cnt} ＝ {order.price}원</Typography>
+    <Box py={1} px={10}>
+      <Box p={1} flexGrow={1} display="flex" flexDirection="column"
+      component={Paper}>
+        <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
+          <Box display="flex" flexDirection="row" alignItems="center">
+            <ButtonBase component={Link} to={"/productDetail/"+order.product.id}>
+              <Avatar src={order.product.img} variant="rounded" />
+            </ButtonBase>
+            <Box display="flex" flexDirection="column">
+              <Typography gutterBottom>{order.product.pname}</Typography>
+              <Typography gutterBottom variant="body2">{order.color}, {order.size} ／ {order.product.price}원 ✕ {order.cnt} ＝ {order.price}원</Typography>
+            </Box>
+          </Box>
+          <Typography>상태: {statusLookup[order.status-1]}</Typography>
+        </Box>
+        <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
+          <Box display="flex" flexDirection="row" justifyContent="flex-end" alignItems="center">
+            <Typography>구매자: </Typography>
+            <NameAvatarButton name={order.order.user.name} userId={order.order.user.id} />
+            <Typography>{order.order.user.name}</Typography>
+          </Box>
+          {invoiceForm}
+        </Box>
+        {/* <Stepper activeStep={order.status-1}>
+          {statusLookup.map((label, index) => {
+              const completed = (index < order.status)
+              return(
+              <Step>
+                  <StepLabel completed={completed}>{label}</StepLabel>
+              </Step>
+              ) 
+          })}
+        </Stepper> */}
       </Box>
-      {invoiceForm}
-      {/* <Stepper activeStep={order.status-1}>
-        {statusLookup.map((label, index) => {
-            const completed = (index < order.status)
-            return(
-            <Step>
-                <StepLabel completed={completed}>{label}</StepLabel>
-            </Step>
-            ) 
-        })}
-      </Stepper> */}
-      <Box p={1} component={Typography} gutterBottom>{statusLookup[order.status-1]}</Box>
     </Box>
   )
 }

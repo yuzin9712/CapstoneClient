@@ -29,7 +29,6 @@ const ProductList = ({products, previews}) => {
             <ProductCard product={product} preview={parsedPreviews[product.id]} key={product.id}/>
         )
     });
-    // console.log(data);
 
     return (
         <Grid container spacing={1}>

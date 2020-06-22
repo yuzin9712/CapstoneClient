@@ -7,7 +7,7 @@ export const requestDesignLikes = (designId) => {
     })
     .then(
       response => response.text(),
-      error => console.log(error)
+      error => console.error(error)
     )
     .then((text) => {
         if(text === "추천 코디 게시물 좋아요 누르기 성공") dispatch(designLikeSuccess(designId))
@@ -24,7 +24,7 @@ export const requestDesignLikesCancel = (designId) => {
     })
     .then(
       response => response.text(),
-      error => console.log(error)
+      error => console.error(error)
     )
     .then((text) => {
         if(text === "추천 코디 게시물 좋아요 취소하기 성공") dispatch(designLikeCancelSuccess(designId))

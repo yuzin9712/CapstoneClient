@@ -56,25 +56,6 @@ export default class Chart extends React.Component {
       ]
     }
 }
-/*
-[{
-    sales: "",
-    product: "",
-  },{
-    sales: "",
-    product: "",
-  },{
-    sales: "",
-    product: "",
-  },{
-    sales: "",
-    product: "",
-  }]
-callApi()
-.then(res => {this.setState({chat:res}); console.log(this.state.chat); })
-
-.catch(err => console.log(err));
-*/
 
 componentDidMount(){
   callApi1()
@@ -84,7 +65,7 @@ componentDidMount(){
       pieData: convertedData
     });
   })
-  .catch(err => console.log(err));
+  .catch(error => console.error(error));
 
  callApi2()
   .then(res => {
@@ -93,17 +74,16 @@ componentDidMount(){
       barData: convertedData
     });
   })
-  .catch(err => console.log(err));
+  .catch(error => console.error(error));
 
  callApi3()
   .then(res => {
-    console.log(res)
     const convertedData = this.convertResDataToChartGrap(res);
     this.setState({
       grapData: convertedData
     });
   })
-  .catch(err => console.log(err));
+  .catch(error => console.error(error));
   }
 
   render() {
@@ -273,7 +253,6 @@ const callApi1 = async () => {
     credentials: 'include'
   })
   const body = await response.json();
- // console.log(body); //consolelog찍어보면 res로 image경로가 제대로넘어오긴한다 근데 나오질않는다 시발!!!
   return body;
 }
   const callApi2 = async () => {
@@ -281,7 +260,6 @@ const callApi1 = async () => {
       credentials: 'include'
     })
     const body = await response.json();
-   // console.log(body); //consolelog찍어보면 res로 image경로가 제대로넘어오긴한다 근데 나오질않는다 시발!!!
     return body;
   }
   
@@ -291,7 +269,6 @@ const callApi1 = async () => {
       credentials: 'include'
     })
     const body = await response.json();
-   // console.log(body); //consolelog찍어보면 res로 image경로가 제대로넘어오긴한다 근데 나오질않는다 시발!!!
     return body;
   }
   

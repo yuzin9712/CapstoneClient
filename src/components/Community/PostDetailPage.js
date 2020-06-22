@@ -61,7 +61,6 @@ const PostDetailPage = ({authStore, pathname, push, match}) => {
     useEffect(() => {
         if(loading){
             const id = match.params.id;
-            console.log('id값은???', id)
             const postid = pathname.substring(pathname.lastIndexOf('/') + 1);
             fetch(yujinserver+"/post/"+id, {
                 credentials: 'include',
@@ -69,7 +68,6 @@ const PostDetailPage = ({authStore, pathname, push, match}) => {
             .then(response => response.json())
             .then(json => {
                 setPost(json)
-                // console.log(json.post)
                 setLoading(false)
             })
         }
@@ -127,7 +125,7 @@ const PostDetailPage = ({authStore, pathname, push, match}) => {
           })
           .then(
             response => response.text(),
-            error => console.log(error)
+            error => console.error(error)
           )
           .then((text) => {
             if(text === 'success'){

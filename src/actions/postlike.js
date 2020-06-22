@@ -7,7 +7,7 @@ export const requestPostLikes = (postId) => {
     })
     .then(
       response => response.text(),
-      error => console.log(error)
+      error => console.error(error)
     )
     .then((text) => {
         if(text === "success") dispatch(postLikeSuccess(postId))
@@ -24,7 +24,7 @@ export const requestPostLikesCancel = (postId) => {
     })
     .then(
       response => response.text(),
-      error => console.log(error)
+      error => console.error(error)
     )
     .then((text) => {
         if(text === "success") dispatch(postLikeCancelSuccess(postId))

@@ -51,11 +51,8 @@ const ReviewWrite = ({ pid, reload }) => {
   }
 
   const reviewSubmit = (data) => {
-    // console.log(data)
     let form = new FormData()
-    // form.append("content", data.content)
     images.forEach((image) => {form.append("img", image)})
-    console.log(form.keys())
     fetch(sangminserver+"/review/img",{
       method: "POST",
       body: form,
@@ -63,10 +60,9 @@ const ReviewWrite = ({ pid, reload }) => {
     })
     .then(
       response => response.json(),
-      error => console.log(error)
+      error => console.error(error)
     )
     .then((json) => {
-      console.log(json)
       const images = json
       fetch(sangminserver+"/review/post/"+pid,{
         method: "POST",
@@ -83,17 +79,16 @@ const ReviewWrite = ({ pid, reload }) => {
       })
       .then(
         response => response.text(),
-        error => console.log(error)
+        error => console.error(error)
       )
       .then((text) => {
           if(text === "OK"){
-              enqueueSnackbar("성공이요",{"variant": "success"});
+              enqueueSnackbar("리뷰를 작성했습니다.",{"variant": "success"});
               reload()
           }
           else{
-              enqueueSnackbar("실패따리",{"variant": "error"});
+              enqueueSnackbar("리뷰 작성에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
           }
-          console.log(text)
       })
     handleClose()
     }

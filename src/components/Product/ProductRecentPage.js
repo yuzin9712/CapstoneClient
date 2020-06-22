@@ -37,7 +37,7 @@ const ProductCategoryPage = ({pathname, search}) => {
           })
           .then(
               (res) => res.json(),
-              (err) => console.error(err)
+              (error) => console.error(error)
           )
           .then((json) => {
             const recentProducts = (json.productRows.sort((a,b) => Math.max(new Date(b.createdAt), new Date(b.updatedAt)) - Math.max(new Date(a.createdAt), new Date(a.updatedAt)))).slice(0,8)
@@ -49,45 +49,11 @@ const ProductCategoryPage = ({pathname, search}) => {
         }
     }, [loading])
 
-    // useEffect(() => {
-    //     // console.log(search)
-    //     if(!loading) setLoading(true)
-    // }, [search])
-
     useEffect(() => {
         setProductListComponent(
             <ProductList products={products} previews={previews} />
         )
-    }, [products])
-
-    // useEffect(() => {
-    //     if(loading){
-    //         const categoryId = queryString.parse(search).category
-    //         // console.log(categoryId)
-    //         setCategory(
-    //             categoryLookup[categoryId]
-    //         )
-    //         while(category === 0){
-    //             fetch(sangminserver+"/product/category/"+categoryId, {
-    //                 credentials: 'include',
-    //             })
-    //             .then(
-    //                 (res) => res.json(),
-    //                 (err) => { console.error(err) }
-    //             )
-    //             .then((json) => {
-    //                 console.log()
-    //                 setPreviews(json.imgArr)
-    //                 setInitialProducts(json.productRows)
-    //                 setProducts(json.productRows)
-    //                 setLoading(false)
-    //             })
-    //             break;
-    //         }
-    //     }
-    // }, [loading])
-
-    
+    }, [products])    
 
   return(
     <Container maxWidth="md">

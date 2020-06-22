@@ -134,7 +134,6 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem }) =>
   useEffect(() => {
     if(sketchItems.length !== 0){
       setSketchItemComponents(sketchItems.map((product) => {
-        // console.log(product.pid)
           return(
               <Box p={1} position="relative">
                 <Avatar alt={product.pid} draggable={true} className={classes.paletteImage} src={product.src} variant="rounded" onDragStart={handleDragStart} />
@@ -162,7 +161,6 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem }) =>
   }, [sketchItems])
 
   const storebasket = (product) => { //버튼클릭하면 해당 상품 장바구니 DB로 연결
-    // console.log(product);
     fetch(sangminserver+'/cart/toolbar',{
       method: "POST",
       body: JSON.stringify({
@@ -225,7 +223,7 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem }) =>
         })
         .then(
           res => res.json(),
-          err => console.error(err)
+          error => console.error(error)
         )
         .then((image) => {
           fetch(yujinserver+'/closet/',{
@@ -243,7 +241,7 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem }) =>
           })
           .then(
             res => res.text(),
-            err => console.error(err)
+            error => console.error(error)
           )
           .then((text) => {
             if(text === "success"){
@@ -271,7 +269,6 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem }) =>
           canvas.add(img)
           img.scaleToWidth(100)
           img.set({borderColor: 'black', cornerColor: 'black'})
-          // console.log(canvas.toJSON().objects)
         }, {
           left: x - dragInfo.x,
           top: y - dragInfo.y,

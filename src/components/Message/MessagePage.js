@@ -41,7 +41,7 @@ const MessagePage = ({authStore, target, match, push}) => {
       fetch(yujinserver+"/message", {credentials: "include"})
       .then(
         (res) => res.json(),
-        (err) => console.error(err)
+        (error) => console.error(error)
       )
       .then((messageRooms) => {
         setOpenedRooms(messageRooms)

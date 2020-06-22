@@ -115,7 +115,7 @@ const ReviewComment = ({authStore, comment, reload}) => {
       })
       .then(
         response => response.text(),
-        error => console.log(error)
+        error => console.error(error)
       )
       .then((text) => {
         if(text === 'update comment success'){
@@ -147,7 +147,7 @@ const ReviewComment = ({authStore, comment, reload}) => {
     })
     .then(
       response => response.text(),
-      error => console.log(error)
+      error => console.error(error)
     )
     .then((text) => {
         if(text === 'delete comment done'){

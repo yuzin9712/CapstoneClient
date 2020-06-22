@@ -43,16 +43,14 @@ const ProductCategoryPage = ({pathname, search, match}) => {
     useEffect(() => {
         if(loading){
             const id = match.params.id;
-            console.log('id값은???', id);
             const categoryId = pathname.substring(pathname.lastIndexOf('/') + 1)
-            console.log(categoryId)
             setCategory(categoryLookup[categoryId])
             fetch(sangminserver+"/product/category/"+id, {
                 credentials: 'include',
             })
             .then(
                 (res) => res.json(),
-                (err) => console.error(err)
+                (error) => console.error(error)
             )
             .then((json) => {
               const recentProducts = json.productRows.filter((product) => product.deletedAt === null).sort((a,b) => Math.max(new Date(b.createdAt), new Date(b.updatedAt)) - Math.max(new Date(a.createdAt), new Date(a.updatedAt))).slice()

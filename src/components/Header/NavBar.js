@@ -57,7 +57,6 @@ const NavBar = ({menus, authStore, sketchOpened, handleDrawer, requestLogout, pu
   const id = open ? 'simple-popover' : undefined;
 
   useEffect(() => {
-    // console.log(authStore.shopAdmin)
     if(authStore.session === "shopadmin"){
       setAdminMenu(
         <Link onClick={() => {push("/shop/")}} color="primary" >📈쇼핑몰 관리 페이지</Link>

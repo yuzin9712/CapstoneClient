@@ -175,7 +175,6 @@ const ShopAddProduct = ({backButtonAction, dispatchPush}) => {
         form.append("photo", thumbnail[0])
         form.append("photo", description[0])
         previews.forEach((image) => {form.append("photo", image)})
-        console.log(data)
         fetch(yujinserver+"/shop/img",{
           method: "POST",
           body: form,
@@ -183,11 +182,10 @@ const ShopAddProduct = ({backButtonAction, dispatchPush}) => {
         })
         .then(
           response => response.json(),
-          error => console.log(error)
+          error => console.error(error)
         )
         .then((images) => {
           const sending = sendByCategory(data, images)
-          console.log(sending)
           fetch(yujinserver+"/shop/addproduct",{
             method: "POST",
             headers: {
@@ -200,7 +198,7 @@ const ShopAddProduct = ({backButtonAction, dispatchPush}) => {
           })
           .then(
             response => response.text(),
-            error => console.log(error)
+            error => console.error(error)
           )
           .then((text) => {
             if(text === "add product success"){

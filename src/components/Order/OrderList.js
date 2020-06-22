@@ -46,7 +46,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const OrderList = ({orders, edit}) => {
-  console.log(orders)
   const classes = useStyles();
 
 

@@ -74,7 +74,7 @@ const MessageRoom = ({counter, handleClose, room, reload, search}) => {
       })
       .then(
         response => response.text(),
-        error => console.log(error)
+        error => console.error(error)
       )
       .then((text) => {
         if(text === "쪽지보내기 성공!"){

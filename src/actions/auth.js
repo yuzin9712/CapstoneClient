@@ -37,7 +37,6 @@ export const requestLogin = (email, password) => {
 }
 
 export const fetchLoginStatus = (initialId) => {
-  console.log(initialId)
   return (dispatch) => {
     dispatch(login());
     return fetch(yujinserver+"/auth/status", {

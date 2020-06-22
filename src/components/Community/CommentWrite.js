@@ -87,7 +87,7 @@ const CommentWrite = ({ authStore, postid, reload }) => {
       fetch(yujinserver+"/page/closet/"+authStore.currentId, { credentials: 'include', })
       .then(
         response => response.json(),
-        error => console.log(error)
+        error => console.error(error)
       )
       .then(json => {
         setClosetData(json.map((closet) => ({
@@ -163,7 +163,7 @@ const CommentWrite = ({ authStore, postid, reload }) => {
     })
     .then(
       response => response.json(),
-      error => console.log(error)
+      error => console.error(error)
     )
     .then((json) => {
       const uploadedImages = json;
@@ -183,7 +183,7 @@ const CommentWrite = ({ authStore, postid, reload }) => {
       })
       .then(
         response => response.text(),
-        error => console.log(error)
+        error => console.error(error)
       )
       .then((text) => {
           if(text === "댓글 등록 성공!!!"){

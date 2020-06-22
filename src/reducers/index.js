@@ -1,6 +1,5 @@
 import { combineReducers } from 'redux'
 import { connectRouter } from 'connected-react-router'
-import counterReducer from './counter'
 import sketchReducer from './sketch'
 import orderListReducer from './orderList'
 import designReducer from './design'
@@ -9,7 +8,6 @@ import followReducer from './follow'
 import authReducer from './auth'
 
 const rootReducer = (history) => combineReducers({
-  count: counterReducer,
   sketch: sketchReducer,
   orderList: orderListReducer,
   auth: authReducer,

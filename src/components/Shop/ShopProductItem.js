@@ -67,7 +67,6 @@ const ShopProductItem = ({product, options, previews, reload}) => {
 
   useEffect(() => {
     if(editInfo.length !== 0){
-      // console.log(editInfo)
       setOptionComponents(options.map((option) => {
         const preview = (previews.find((preview) => preview.color === option.color))
         return(
@@ -123,7 +122,7 @@ const ShopProductItem = ({product, options, previews, reload}) => {
         })
         .then(
           (res) => res.text(),
-          (err) => console.error(error)
+          (error) => console.error(error)
         )
         .then((text) => {
           if(text === 'update success'){

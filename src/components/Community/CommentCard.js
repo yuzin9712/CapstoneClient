@@ -107,7 +107,7 @@ const CommentCard = ({authStore, comment, reload}) => {
       })
       .then(
         response => response.text(),
-        error => console.log(error)
+        error => console.error(error)
       )
       .then((text) => {
         if(text === 'success'){
@@ -136,7 +136,7 @@ const CommentCard = ({authStore, comment, reload}) => {
       })
       .then(
         response => response.text(),
-        error => console.log(error)
+        error => console.error(error)
       )
       .then((text) => {
         if(text === 'success'){
