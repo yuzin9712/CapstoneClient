@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { goBack, push } from 'connected-react-router'
 import { useSnackbar } from 'notistack';
 import { useForm, Controller } from 'react-hook-form'
+import kakaologo from '../../../public/kakao_login_medium_wide.png'
 
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -125,8 +126,8 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
           로그인
         </Button>
       </form>
-      <a href={"http://localhost:8001/api/auth/kakao"}>
-          <img alt={"kakao_login"} src={"https://kauth.kakao.com/public/widget/login/kr/kr_02_medium.png"}/>
+      <a href={"http://www.softjs2.com/api/auth/kakao"}>
+          <img alt={"kakao_login"} src={kakaologo}/>
 </a>
     </div>
 
