@@ -48,7 +48,7 @@ const ProductSearchPage = ({pathname, search}) => {
             console.log(json)
             // TODO: preview 누락!!
             if(json.productRows.length){
-                setProductList(<ProductList products={json.productRows} />)
+                setProductList(<ProductList products={json.productRows.filter((product) => product.deletedAt === null)} />)
             }
             else setProductList(<div>결과없어요~</div>)
             

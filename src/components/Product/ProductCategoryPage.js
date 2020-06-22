@@ -55,10 +55,10 @@ const ProductCategoryPage = ({pathname, search, match}) => {
                 (err) => console.error(err)
             )
             .then((json) => {
-              const recentProducts = json.productRows.sort((a,b) => Math.max(new Date(b.createdAt), new Date(b.updatedAt)) - Math.max(new Date(a.createdAt), new Date(a.updatedAt))).slice()
-                setPreviews(json.imgArr)
-                setInitialProducts(recentProducts)
-                setProducts(recentProducts)
+              const recentProducts = json.productRows.filter((product) => product.deletedAt === null).sort((a,b) => Math.max(new Date(b.createdAt), new Date(b.updatedAt)) - Math.max(new Date(a.createdAt), new Date(a.updatedAt))).slice()
+              setPreviews(json.imgArr)
+              setInitialProducts(recentProducts)
+              setProducts(recentProducts)
             })
             setLoading(false)
         }
