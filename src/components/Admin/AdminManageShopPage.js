@@ -8,18 +8,35 @@ import {
   Grid, Box, Container,
 } from '@material-ui/core'
 import Trade from '../Trade'
+import AdminSubheader from './ShopSubheader';
+import { useSnackbar } from 'notistack';
+import { push } from 'connected-react-router';
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
-
+  hide: {
+    display: 'none'
+  },
 }));
 
-const AdminManageShopPage = ({post}) => {
+const AdminManageShopPage = ({authStore, push}) => {
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    if(authStore.session !== 'admin'){
+      enqueueSnackbar("권한이 없습니다.",{"variant": "error"});
+      push("/")
+    }
+  }, [authStore])
 
   return(
-    <Container maxWidth="md">
+    <Box display="flex" flexDirection="column" className={clsx({
+      [classes.hide]: authStore.session !== 'admin'
+    })}>
+      <AdminSubheader />
       <Trade />
-    </Container>
+    </Box>
   )
 }
 
@@ -31,13 +48,14 @@ AdminManageShopPage.propTypes = {
 
 
 const mapStateToProps = state => ({
+  authStore: state.auth
   //pathname: state.router.location.pathname,
   //search: state.router.location.search,
   //hash: state.router.location.hash,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  
+  push: (url) => dispatch(push(url))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AdminManageShopPage)

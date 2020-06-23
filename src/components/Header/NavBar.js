@@ -59,12 +59,12 @@ const NavBar = ({menus, authStore, sketchOpened, handleDrawer, requestLogout, pu
   useEffect(() => {
     if(authStore.session === "shopadmin"){
       setAdminMenu(
-        <Link onClick={() => {push("/shop/")}} color="primary" >📈쇼핑몰 관리 페이지</Link>
+        <Link onClick={() => {pushTo("/shop/")}} color="primary" variant="h6" >📈쇼핑몰 관리 페이지</Link>
       )
     }
     else if(authStore.session === "admin"){
       setAdminMenu(
-        <Link onClick={() => {push("/admin/")}} color="primary" >📈플랫폼 관리 페이지</Link>
+        <Link onClick={() => {pushTo("/admin/")}} color="primary" variant="h6" >📈플랫폼 관리 페이지</Link>
       )
     }
     else {
@@ -113,9 +113,10 @@ const NavBar = ({menus, authStore, sketchOpened, handleDrawer, requestLogout, pu
             <ProductSearchBar />
           </Box>
           <Box flexGrow={1} display="flex" justifyContent="flex-end" alignItems="center">
-            <IconButton onClick={(event) => setPopoverTarget(event.target)}>
-              <MenuIcon />
-            </IconButton>
+            <Button onClick={(event) => setPopoverTarget(event.target)} variant="contained" color="secondary" size="small"
+            component={Box} mr={1}>
+              <MenuIcon /> 마이페이지
+            </Button>
             {designMenu}
           </Box>
         </Toolbar>
@@ -149,7 +150,7 @@ const NavBar = ({menus, authStore, sketchOpened, handleDrawer, requestLogout, pu
           </Box>
           <Divider />
           <Box display="flex" flexDirection="column" p={1}>
-            <Link onClick={() => pushTo("/mypage/"+authStore.currentId)} component={Typography} variant="h6" color="inherit" >마이페이지</Link>
+            <Link onClick={() => pushTo("/mypage/"+authStore.currentId)} variant="h6" color="inherit" >마이페이지</Link>
             <Link onClick={() => pushTo("/mypage/"+authStore.currentId+"?design")} color="inherit" >💎추천코디 공유글</Link>
             <Link onClick={() => pushTo("/mypage/"+authStore.currentId+"?community")} color="inherit" >👀커뮤니티 게시글</Link>
             <Link onClick={() => pushTo("/message/"+authStore.currentId)} color="inherit" >📬쪽지함</Link>
@@ -158,11 +159,11 @@ const NavBar = ({menus, authStore, sketchOpened, handleDrawer, requestLogout, pu
           <Divider />
           <Box display="flex" flexDirection="column" p={1}>
             <Link onClick={() => pushTo("/order/cart")} color="inherit" >🛒장바구니</Link>
-            <Link onClick={() => pushTo("/order/myorder")} color="inherit" >🚀배송조회</Link>
-            {adminMenu}
+            <Link onClick={() => pushTo("/order/myorder")} color="inherit" >🚀주문현황 / 배송조회</Link>
           </Box>
           <Divider />
           <Box display="flex" flexDirection="column" p={1}>
+            {adminMenu}
             <Link onClick={handleLogout} color="inherit" >🔓로그아웃</Link>
           </Box>
         </Box>
