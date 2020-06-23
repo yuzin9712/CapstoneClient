@@ -126,11 +126,11 @@ const ShopProductItem = ({product, options, previews, reload}) => {
         )
         .then((text) => {
           if(text === 'update success'){
-            enqueueSnackbar("성공이요",{"variant": "success", preventDuplicate: true});
+            enqueueSnackbar("등록된 재고를 수정했습니다.",{"variant": "success", preventDuplicate: true});
             reload()
           }
           else{
-            enqueueSnackbar("실패따리",{"variant": "error", preventDuplicate: true});
+            enqueueSnackbar("재고 수정 작업에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error", preventDuplicate: true});
           }
         })
       }

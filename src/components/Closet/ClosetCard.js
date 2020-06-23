@@ -27,6 +27,7 @@ import {
 } from '@material-ui/icons'
 import { yujinserver } from '../../restfulapi';
 import { useSnackbar } from 'notistack';
+import ConfirmPopover from '../common/ConfirmPopover';
 
 const useStyles = makeStyles((theme) => ({
     card: {
@@ -57,10 +58,8 @@ const ClosetCard = ({closet, reload, width}) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [expanded, setExpanded] = useState(false);
-  const [confirmPopoverAnchorEl, setConfirmPopoverAnchorEl] = useState(null);
-  const open = Boolean(confirmPopoverAnchorEl);
+  const [popoverTarget, setPopoverTarget] = useState(null)
   const [cardSize, setCardSize] = useState(1)
-  const id = open ? 'simple-popover' : undefined;
 
   useEffect(() => {
     setCardSize(cardSizeLookup[width])
@@ -68,20 +67,14 @@ const ClosetCard = ({closet, reload, width}) => {
   const cardSizeLookup = {
     xs: 1/2,
     sm: 1/3,
-    md: 1/4,
-    lg: 1/4,
-    xl: 1/4,
+    md: 1/3,
+    lg: 1/3,
+    xl: 1/3,
   }
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
-  const handleDeleteIconClick = (event) => {
-    setConfirmPopoverAnchorEl(event.currentTarget)
-  }
-  const handleConfirmPopoverClose = () => {
-    setConfirmPopoverAnchorEl(null)
-  }
   const handleRemove = () => {
     fetch(yujinserver+"/closet/"+closet.id,{
       method: 'DELETE',
@@ -93,11 +86,11 @@ const ClosetCard = ({closet, reload, width}) => {
     )
     .then((data) => {
       if(data === 'success'){
-        enqueueSnackbar("지웠어요",{"variant": "success"});
+        enqueueSnackbar("저장한 작업을 삭제했습니다.",{"variant": "success"});
         reload()
       }
     })
-    handleConfirmPopoverClose()
+    setPopoverTarget(null)
   }
 
   return (
@@ -109,20 +102,10 @@ const ClosetCard = ({closet, reload, width}) => {
         />
       </CardActionArea>
       <CardActions disableSpacing>
-        <IconButton aria-label="delete" onClick={handleDeleteIconClick}>
+        <IconButton aria-label="delete" onClick={(event) => setPopoverTarget(event.target)}>
             <Delete />
           </IconButton>
-          <Popover
-            id={id}
-            open={open}
-            anchorEl={confirmPopoverAnchorEl}
-            onClose={handleConfirmPopoverClose}
-            anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
-            transformOrigin={{vertical: 'top', horizontal: 'left'}}>
-              <Typography gutterBottom>진짜지울래?</Typography>
-              <Button onClick={handleRemove}>ㅇㅇ</Button>
-              <Button onClick={handleConfirmPopoverClose}>ㄴㄴ</Button>
-            </Popover>
+          <ConfirmPopover text="정말 삭제하시겠습니까?" target={popoverTarget} action={() => handleRemove()} cancel={() => setPopoverTarget(null)} />
           <Button
             className={clsx(classes.expand, {
               [classes.expandOpen]: expanded,

@@ -14,6 +14,7 @@ import { brown, yellow, grey, red, pink, purple, deepPurple, indigo, blue, light
 import { useSnackbar } from 'notistack';
 import grid from '../../../public/grid.png'
 import {GithubPicker} from 'react-color'
+import { push } from 'connected-react-router';
 // import fabric from 'fabric'
 const fabric = window.fabric
 const OBJECT_COUNT_MAX = 25
@@ -50,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem }) => {
+const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem, authStore, push }) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [canvas, setCanvas] = useState(null)
@@ -177,10 +178,10 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem }) =>
     .then((res) => res.text())
     .then((text) => {
       if(text === "success"){
-        enqueueSnackbar("장바구니 넣었어요",{"variant": "success"});
+        enqueueSnackbar("장바구니에 넣었습니다.",{"variant": "success"});
       }
       else{
-        enqueueSnackbar("실패따리",{"variant": "error"});
+        enqueueSnackbar("장바구니에 넣지 못했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
       }
     })
   }
@@ -245,10 +246,14 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem }) =>
           )
           .then((text) => {
             if(text === "success"){
-              enqueueSnackbar("나의옷장 저장이요",{"variant": "success"});
+              enqueueSnackbar("작업을 나의옷장에 저장했습니다.",{"variant": "success", action: () => (
+                <Button onClick={() => push("/closet/"+authStore.currentId)}>
+                  <Typography variant="button" color="textSecondary">바로가기</Typography>
+                </Button>
+              )});
             }
             else{
-              enqueueSnackbar("실패따리",{"variant": "error"});
+              enqueueSnackbar("작업을 저장하지 못했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
             }
           })
         })
@@ -337,7 +342,8 @@ SketchComponent.propTypes = {
 
 
 const mapStateToProps = state => ({
-  sketchItems: state.sketch.list
+  sketchItems: state.sketch.list,
+  authStore: state.auth,
   //pathname: state.router.location.pathname,
   //search: state.router.location.search,
   //hash: state.router.location.hash,
@@ -346,6 +352,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch) => ({
   sketchResetItems: () => dispatch(sketchResetItems()),
   sketchRemoveItem: (src) => dispatch(sketchRemoveItem(src)),
+  push: (url) => dispatch(push(url))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SketchComponent)

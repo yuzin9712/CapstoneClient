@@ -187,11 +187,11 @@ const CommentWrite = ({ authStore, postid, reload }) => {
       )
       .then((text) => {
           if(text === "댓글 등록 성공!!!"){
-              enqueueSnackbar("댓글을 달았어요",{"variant": "success"});
+              enqueueSnackbar("댓글을 달았어요.",{"variant": "success"});
               reload()
           }
           else{
-              enqueueSnackbar("실패따리",{"variant": "error"});
+              enqueueSnackbar("댓글 작성에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
           }
       })
     })
