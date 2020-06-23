@@ -85,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const DesignCard = ({sessionId, width, design, dispatchPush, reload}) => {
+const DesignCard = ({authStore, width, design, dispatchPush, reload}) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [expanded, setExpanded] = useState(false);
@@ -146,51 +146,57 @@ const DesignCard = ({sessionId, width, design, dispatchPush, reload}) => {
 
   const submitHashtagEdit = () => {
     if(editTags !== hashtags){
-      if(sessionId !== design.user.id){
-        enqueueSnackbar("자기 글만 수정합시다",{"variant": "error"});
+      if(authStore.currentId !== design.user.id){
+        enqueueSnackbar("권한이 없습니다.",{"variant": "error"});
+        reload()
       }
+      else{
+        fetch(yujinserver+"/design/"+design.id, {
+          method: 'PUT',
+          headers: {
+            'Accept': 'application/json',
+            "Content-Type": "application/json",
+            'Cache': 'no-cache'
+          },
+          body: JSON.stringify({
+              content: editTags,
+          }),
+          credentials: 'include',
+        })
+        .then(response => response.text(),
+            error => console.error(error))
+        .then(text => {
+            if(text === 'success'){
+              enqueueSnackbar("태그를 수정했습니다.",{"variant": "success"});
+              setHashtags(editTags)
+            }
+            else enqueueSnackbar("수정에 실패했습니다. 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
+        })
+      }
+    }
+    setEdit(false)
+  }
+  const deleteDesign = () => {
+    setEdit(false)
+    if(authStore.currentId !== design.userId && authStore.session !== 'admin'){
+      enqueueSnackbar("권한이 없습니다.",{"variant": "error"});
+      reload()
+    }
+    else{
       fetch(yujinserver+"/design/"+design.id, {
-        method: 'PUT',
-        headers: {
-          'Accept': 'application/json',
-          "Content-Type": "application/json",
-          'Cache': 'no-cache'
-        },
-        body: JSON.stringify({
-            content: editTags,
-        }),
+        method: 'DELETE',
         credentials: 'include',
       })
       .then(response => response.text(),
           error => console.error(error))
       .then(text => {
           if(text === 'success'){
-            enqueueSnackbar("태그를 수정했습니다.",{"variant": "success"});
-            setHashtags(editTags)
+            enqueueSnackbar("공유한 코디를 삭제했습니다.",{"variant": "success"});
+            reload()
           }
-          else enqueueSnackbar("수정에 실패했습니다. 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
+          else enqueueSnackbar("삭제에 실패했습니다. 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
       })
     }
-    setEdit(false)
-  }
-  const deleteDesign = () => {
-    if(sessionId !== design.userId){
-      enqueueSnackbar("자기 글만 삭제합시다",{"variant": "error"});
-    }
-    fetch(yujinserver+"/design/"+design.id, {
-      method: 'DELETE',
-      credentials: 'include',
-    })
-    .then(response => response.text(),
-        error => console.error(error))
-    .then(text => {
-        if(text === 'success'){
-          enqueueSnackbar("공유한 코디를 삭제했습니다.",{"variant": "success"});
-          reload()
-        }
-        else enqueueSnackbar("삭제에 실패했습니다. 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
-        setEdit(false)
-    })
   }
   // const owner = design.user !== null?design.user:{id: design.userId, name: "탈퇴된 유저"}
 
@@ -215,20 +221,26 @@ const DesignCard = ({sessionId, width, design, dispatchPush, reload}) => {
             {edit? hashtagEditForm : hashtagView}
           </Box>
           <Box flexGrow={1} display="flex" flexDirection="row" justifyContent="flex-end" alignItems="center">
-            {!edit && (sessionId === design.userId)?(
-              <React.Fragment>
-                <Tooltip title="수정">
-                  <IconButton onClick={() => setEdit(true)}>
-                    <EditIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="삭제">
-                  <IconButton onClick={(event) => setPopoverTarget(event.target)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </Tooltip>
-                <ConfirmPopover text="정말 삭제하시겠습니까?" target={popoverTarget} action={() => deleteDesign()} cancel={() => setPopoverTarget(null)} />
-              </React.Fragment>
+            {!edit?(
+              <>
+                {authStore.currentId === design.userId?(
+                  <Tooltip title="수정">
+                    <IconButton onClick={() => setEdit(true)}>
+                      <EditIcon />
+                    </IconButton>
+                  </Tooltip>
+                ):null}
+                {(authStore.currentId === design.userId) || (authStore.session === 'admin')?(
+                  <>
+                    <Tooltip title="삭제">
+                      <IconButton onClick={(event) => setPopoverTarget(event.target)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <ConfirmPopover text="정말 삭제하시겠습니까?" target={popoverTarget} action={() => deleteDesign()} cancel={() => setPopoverTarget(null)} />
+                  </>
+                ):null}
+              </>
             ):null}
             <Tooltip title="사용된 상품">
               <IconButton
@@ -279,7 +291,7 @@ DesignCard.propTypes = {
 }
   
 const mapStateToProps = state => ({
-  sessionId: state.auth.currentId,
+  authStore: state.auth,
   //pathname: state.router.location.pathname,
   //search: state.router.location.search,
   //hash: state.router.location.hash,

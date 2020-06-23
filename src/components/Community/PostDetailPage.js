@@ -111,35 +111,47 @@ const PostDetailPage = ({authStore, pathname, push, match}) => {
         })
 
         const editPost = () => {
-          push('/community/write',{originalPost: post})
+          if(post.userId !== authStore.currentId){
+            enqueueSnackbar("권한이 없습니다.",{"variant": "error"});
+            push("/community/")
+          }
+          else{
+            push('/community/write',{originalPost: post})
+          }
         }
         const deletePost = () => {
-          fetch(yujinserver+"/post/"+post.id,{
-            method: "DELETE",
-            headers: {
-              'Accept': 'application/json',
-              "Content-Type": "application/json",
-              'Cache': 'no-cache'
-            },
-            credentials: 'include',
-          })
-          .then(
-            response => response.text(),
-            error => console.error(error)
-          )
-          .then((text) => {
-            if(text === 'success'){
-              enqueueSnackbar("게시물을 삭제했습니다.",{"variant": "success"});
-              push("/community/")
-            }
-            else if(text === '없는 게시물!'){
-              enqueueSnackbar("잘못된 접근입니다.",{"variant": "error"});
-              push("/community/")
-            }
-            else{
-              enqueueSnackbar("게시물 삭제에 실패했습니다. 에러가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
-            }
-          })
+          if((post.userId !== authStore.currentId)&&(authStore.session !== 'admin')){
+            enqueueSnackbar("권한이 없습니다.",{"variant": "error"});
+            push("/community/")
+          }
+          else{
+            fetch(yujinserver+"/post/"+post.id,{
+              method: "DELETE",
+              headers: {
+                'Accept': 'application/json',
+                "Content-Type": "application/json",
+                'Cache': 'no-cache'
+              },
+              credentials: 'include',
+            })
+            .then(
+              response => response.text(),
+              error => console.error(error)
+            )
+            .then((text) => {
+              if(text === 'success'){
+                enqueueSnackbar("게시물을 삭제했습니다.",{"variant": "success"});
+                push("/community/")
+              }
+              else if(text === '없는 게시물!'){
+                enqueueSnackbar("잘못된 접근입니다.",{"variant": "error"});
+                push("/community/")
+              }
+              else{
+                enqueueSnackbar("게시물 삭제에 실패했습니다. 에러가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
+              }
+            })
+          }
         }
 
         return(
@@ -167,26 +179,29 @@ const PostDetailPage = ({authStore, pathname, push, match}) => {
                         })}
                       </Box>
                       <Container maxWidth="xs">
-                          <Box mx={10} display="flex" flexDirection="row" flexGrow={1} component={Paper} variant="outlined" justifyContent="space-around">
-                              <PostLikeButton targetpostid={post.id} initialLike={post.likecount} />
+                          <Box mx={10} display="flex" flexDirection="column" flexGrow={1} component={Paper} variant="outlined" alignItems="center">
+                            <PostLikeButton targetpostid={post.id} initialLike={post.likecount} />
+                            <Box display="flex" flexDirection="row">
+                              {post.userId === authStore.currentId?(
+                                <Tooltip title="수정">
+                                  <IconButton onClick={editPost}>
+                                    <Edit />
+                                  </IconButton>
+                                </Tooltip>
+                              ):null}
+                              {(post.userId === authStore.currentId)||(authStore.session === 'admin')?(
+                                <>
+                                  <Tooltip title="삭제">
+                                    <IconButton onClick={(event) => setPopoverTarget(event.target)}>
+                                      <Delete />
+                                    </IconButton>
+                                  </Tooltip>
+                                  <ConfirmPopover text="정말 삭제하시겠습니까?" target={popoverTarget} action={deletePost} cancel={() => setPopoverTarget(null)} />
+                                </>
+                              ):null}
+                            </Box>
                           </Box>
                       </Container>
-
-                      {post.userId === authStore.currentId?(
-                        <Box display="flex" flexDirection="row" justifyContent="flex-end">
-                          <Tooltip title="수정">
-                            <IconButton onClick={editPost}>
-                              <Edit />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="삭제">
-                            <IconButton onClick={(event) => setPopoverTarget(event.target)}>
-                              <Delete />
-                            </IconButton>
-                          </Tooltip>
-                          <ConfirmPopover text="정말 삭제하시겠습니까?" target={popoverTarget} action={deletePost} cancel={() => setPopoverTarget(null)} />
-                        </Box>
-                      ):null}
                     </Box>
                 </Grid>
                 <Grid container direction="column">
