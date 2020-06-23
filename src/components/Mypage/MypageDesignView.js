@@ -12,6 +12,7 @@ const DesignMypage = ({ targetId }) => {
     const [ loading, setLoading ] = useState(true);
     const [ designs, setDesigns ] = useState([]);
     useEffect(() => {
+      if(loading){
         fetch(fetchurl+targetId, {credentials: 'include',})
         .then(response => response.json(),
             error => console.error(error))
@@ -19,11 +20,12 @@ const DesignMypage = ({ targetId }) => {
             setDesigns(json)
         })
         setLoading(false)
-    }, [targetId]);
+      }
+    }, [loading, targetId]);
 
     if(loading) return(<div>로딩중요</div>)
     else return(
-      <DesignList designs={designs} />
+      <DesignList designs={designs} reload={() => setLoading(true)} />
     )
 }
 

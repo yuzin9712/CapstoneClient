@@ -151,10 +151,10 @@ const NavBar = ({menus, authStore, sketchOpened, handleDrawer, requestLogout, pu
           <Divider />
           <Box display="flex" flexDirection="column" p={1}>
             <Link onClick={() => pushTo("/mypage/"+authStore.currentId)} variant="h6" color="inherit" >마이페이지</Link>
-            <Link onClick={() => pushTo("/mypage/"+authStore.currentId+"?design")} color="inherit" >💎추천코디 공유글</Link>
-            <Link onClick={() => pushTo("/mypage/"+authStore.currentId+"?community")} color="inherit" >👀커뮤니티 게시글</Link>
-            <Link onClick={() => pushTo("/message/"+authStore.currentId)} color="inherit" >📬쪽지함</Link>
-            <Link onClick={() => pushTo("/closet/"+authStore.currentId)} color="inherit" >✨나의옷장</Link>
+            <Link onClick={() => pushTo("/mypage/"+authStore.currentId+"?page=design")} color="inherit" >💎추천코디 공유글</Link>
+            <Link onClick={() => pushTo("/mypage/"+authStore.currentId+"?page=community")} color="inherit" >👀커뮤니티 게시글</Link>
+            <Link onClick={() => pushTo("/mypage/"+authStore.currentId+"?page=message")} color="inherit" >📬쪽지함</Link>
+            <Link onClick={() => pushTo("/mypage/"+authStore.currentId+"?page=closet")} color="inherit" >✨나의옷장</Link>
           </Box>
           <Divider />
           <Box display="flex" flexDirection="column" p={1}>

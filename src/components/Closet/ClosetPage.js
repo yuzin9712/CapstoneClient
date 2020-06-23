@@ -23,40 +23,31 @@ const useStyles = makeStyles((theme) => ({
 
 const fetchurl=yujinserver+"/page/closet/"
 
-const ClosetPage = ({authStore, match}) => {
+const ClosetPage = ({actor, match}) => {
   const classes = useStyles();
   const [ loading, setLoading ] = useState(true);
   const [ closetList, setClosetList ] = useState(null);
 
   useEffect(() => {
     if(loading){
-      const userId = parseInt(match.params.id);
-      if(userId !== authStore.currentId){
+      fetch(fetchurl+actor, {credentials: 'include',})
+      .then(response => response.json(),
+        error => console.error(error))
+      .then(json => {
         setClosetList(
-          <Typography>다른 유저의 옷장을 볼 권한이 없어요</Typography>
+            <ClosetList closets={json} reload={() => setLoading(true)} />
         )
-      }
-      else(
-        fetch(fetchurl+authStore.currentId, {credentials: 'include',})
-        .then(response => response.json(),
-          error => console.error(error))
-        .then(json => {
-          setClosetList(
-              <ClosetList closets={json} reload={() => setLoading(true)} />
-          )
-          setLoading(false)
-        })
-      )
+        setLoading(false)
+      })
     }
   }, [loading]);
 
   return(
-    <Box display="flex" flexDirection="column" component={Container} maxWidth="md">
-      <MypageSubheader userId={authStore.currentId} />
+    <Container maxWidth="md">
       <Typography variant="h4">나의 옷장</Typography>
       <Divider />
       {closetList}
-    </Box>
+    </Container>
   )
 }
 

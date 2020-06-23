@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MessageCard = ({room, counter, reload, authStore, push}) => {
+const MessageCard = ({actor, room, counter, reload, push}) => {
   const classes = useStyles();
   // const [open, setOpen] = useState(false)
   const lastMessage = [...room.chatLines].pop()
@@ -32,7 +32,7 @@ const MessageCard = ({room, counter, reload, authStore, push}) => {
         <Box>
           <NameAvatarButton name={counter.name} userId={counter.id} />
         </Box>
-        <ButtonBase className={classes.button} onClick={() => push('/message/'+authStore.currentId+'?to='+counter.id)}>
+        <ButtonBase className={classes.button} onClick={() => push('/mypage/'+actor+'?page=message&to='+counter.id)}>
           <Box p={1} flexGrow={1} display="flex" flexDirection="column">
             <Box flexGrow={1} display="flex" flexDirection="row" alignItems="center">
               <Typography align="left" component={Box} flexGrow={1}><strong>{counter.name}</strong></Typography>
@@ -42,7 +42,7 @@ const MessageCard = ({room, counter, reload, authStore, push}) => {
           </Box>
         </ButtonBase>
       </Box>
-      <MessageRoom counter={counter} handleClose={() => push('/message/'+authStore.currentId)} room={room} reload={reload} />
+      <MessageRoom counter={counter} handleClose={() => push('/mypage/'+actor+'?page=message')} room={room} reload={reload} />
     </React.Fragment>
   )
 }

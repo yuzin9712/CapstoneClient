@@ -9,7 +9,8 @@ import { yujinserver } from '../../restfulapi'
 import FollowButton from '../common/FollowButton'
 import Logo from '../../../public/logo.png'
 import { Chat, LocalPharmacyRounded } from '@material-ui/icons'
-import { push } from 'connected-react-router'
+import { push, goBack } from 'connected-react-router'
+import { useSnackbar } from 'notistack'
 
 const useStyles = makeStyles((theme) => ({
   background: {
@@ -31,73 +32,53 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const MypageSubheader = ({authStore, userId, getFollowings, push }) => {
+const MypageSubheader = ({actor, target, isOwner, push }) => {
   const classes = useStyles();
-  const [menus, setMenus] = useState([])
-  const [namePlate, setNamePlate] = useState(null)
-  const isOwner = parseInt(userId) === authStore.currentId
-  useEffect(() => {
-    fetch(yujinserver+"/user/"+userId, {credentials: "include"})
-    .then(
-      (res) => res.json(),
-      (error) => console.error(error)
-    )
-    .then((user) => {
-      setNamePlate(
-        <Box p={3} display="flex" flexDirection="row" alignItems="center" className={classes.user}>
-          <RawNameAvatar size={10} name={user.name} />
-          <Box px={2} display="flex" flexDirection="column">
-            <Box display="flex" flexDirection="row" alignItems="center">
-              <Typography variant="h5">{user.name}</Typography>
-              {!isOwner?
-              <React.Fragment>
-                <FollowButton targetuserid={parseInt(userId)} />
-                <Tooltip title="쪽지보내기">
-                  <IconButton onClick={() => push("/message/"+authStore.currentId+"?to="+userId, {target: user.name})}>
-                    <Chat />
-                  </IconButton>
-                </Tooltip>
-              </React.Fragment>
-              :null}
-            </Box>
-            <Box pt={1} display="flex" flexDirection="row">
-              <Box pr={2} display="flex" flexDirection="column">
-                <Typography variant="body2">팔로잉 수</Typography>
-                <Divider />
-                <Typography align="right" variant="h6">{user.Followingnum}</Typography>
-              </Box>
-              <Box pr={2} display="flex" flexDirection="column">
-                <Typography variant="body2">팔로워 수</Typography>
-                <Divider />
-                <Typography align="right" variant="h6">{user.Followernum}</Typography>
-              </Box>
-            </Box>
-          </Box>
-        </Box>
-      )
-      if(getFollowings !== undefined){
-        getFollowings(user.Followings)
-      }
-    })
-    if(isOwner){
-      setMenus([
-        {component: "💎추천코디 공유글", path: "/mypage/"+userId+"?design"},
-        {component: "👀커뮤니티 게시글", path: "/mypage/"+userId+"?community"},
-        {component: "📬쪽지함", path: "/message/"+userId},
-        {component: "✨나의 옷장", path: "/closet/"+userId},
-      ])
-    }
-    else setMenus([
-      {component: "💎추천코디 공유글", path: "/mypage/"+userId+"?design"},
-      {component: "👀커뮤니티 게시글", path: "/mypage/"+userId+"?community"},
-    ])
-  }, [userId])
+
+  const menus = isOwner?[
+    {component: "💎추천코디 공유글", path: "/mypage/"+target.id+"?page=design"},
+    {component: "👀커뮤니티 게시글", path: "/mypage/"+target.id+"?page=community"},
+    {component: "📬쪽지함", path: "/mypage/"+target.id+"?page=message"},
+    {component: "✨나의 옷장", path: "/mypage/"+target.id+"?page=closet"},
+  ]:[
+    {component: "💎추천코디 공유글", path: "/mypage/"+target.id+"?page=design"},
+    {component: "👀커뮤니티 게시글", path: "/mypage/"+target.id+"?page=community"},
+  ]
 
   return(
     <Box display="flex" flexDirection="column">
       <Box className={classes.background}>
         <Box px={6} py={3} display="flex" className={classes.filter}>
-          {namePlate}
+          <Box p={3} display="flex" flexDirection="row" alignItems="center" className={classes.user}>
+            <RawNameAvatar size={10} name={target.name} />
+            <Box px={2} display="flex" flexDirection="column">
+              <Box display="flex" flexDirection="row" alignItems="center">
+                <Typography variant="h5">{target.name}</Typography>
+                {!isOwner?
+                <React.Fragment>
+                  <FollowButton targetuserid={parseInt(target.id)} />
+                  <Tooltip title="쪽지보내기">
+                    <IconButton onClick={() => push("/mypage/"+actor+"?page=message&to="+target.id, {target: target.name})}>
+                      <Chat />
+                    </IconButton>
+                  </Tooltip>
+                </React.Fragment>
+                :null}
+              </Box>
+              <Box pt={1} display="flex" flexDirection="row">
+                <Box pr={2} display="flex" flexDirection="column">
+                  <Typography variant="body2">팔로잉 수</Typography>
+                  <Divider />
+                  <Typography align="right" variant="h6">{target.Followingnum}</Typography>
+                </Box>
+                <Box pr={2} display="flex" flexDirection="column">
+                  <Typography variant="body2">팔로워 수</Typography>
+                  <Divider />
+                  <Typography align="right" variant="h6">{target.Followernum}</Typography>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
         </Box>
       </Box>
       <Subheader menus={menus} additionalButton={null}/>
@@ -113,14 +94,14 @@ MypageSubheader.propTypes = {
 
 
 const mapStateToProps = state => ({
-  authStore: state.auth,
   //pathname: state.router.location.pathname,
   //search: state.router.location.search,
   //hash: state.router.location.hash,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  push: (url, props) => dispatch(push(url, props))
+  push: (url, props) => dispatch(push(url, props)),
+  goBack: () => dispatch(goBack())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(MypageSubheader)

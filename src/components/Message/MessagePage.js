@@ -25,8 +25,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const MessagePage = ({authStore, target, match, push}) => {
-  const userId = parseInt(match.params.id);
+const MessagePage = ({actor, target, match, search, push}) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(true)
   const [edit, setEdit] = useState(false)
@@ -34,7 +33,6 @@ const MessagePage = ({authStore, target, match, push}) => {
   const [messageRoomCards, setMessageRoomCards] = useState([])
   const [newMessageButton, setNewMessageButton] = useState(null)
   const [newMessageRoom, setNewMessageRoom] = useState(null)
-  const [followingMembers, setFollowingMembers] = useState([])
 
   useEffect(() => {
     if(loading){
@@ -51,9 +49,9 @@ const MessagePage = ({authStore, target, match, push}) => {
   }, [loading])
   useEffect(() => {
     setMessageRoomCards(openedRooms.map((messageRoom) => {
-      const counter = authStore.currentId === messageRoom.user1Id? ({id: messageRoom.user2Id, name: messageRoom.user2}) : ({id: messageRoom.user1Id, name: messageRoom.user1})
+      const counter = actor.id === messageRoom.user1Id? ({id: messageRoom.user2Id, name: messageRoom.user2}) : ({id: messageRoom.user1Id, name: messageRoom.user1})
       return(
-        <MessageCard counter={counter} key={counter.id} room={messageRoom} reload={() => setLoading(true)} />
+        <MessageCard actor={actor.id} counter={counter} key={counter.id} room={messageRoom} reload={() => setLoading(true)} />
       )
     }))
   }, [openedRooms])
@@ -76,10 +74,10 @@ const MessagePage = ({authStore, target, match, push}) => {
           </Tooltip>
         </Box>
         <Grid container>
-          {followingMembers.map((member) => {
+          {actor.Followings.map((member) => {
             return(
               <Box p={1} m={1} width={1} display="flex" flexDirection="row" justifyContent="flex-start" alignItems="center"
-              component={Button} onClick={() => push("/message/"+authStore.currentId+"?to="+member.id, {target: member.name})}>
+              component={Button} onClick={() => push("/mypage/"+actor.id+"?page=message&to="+member.id, {target: member.name})}>
                 <RawNameAvatar name={member.name} />
                 <Typography component={Box} px={1}>{member.name}</Typography>
               </Box>
@@ -88,13 +86,13 @@ const MessagePage = ({authStore, target, match, push}) => {
         </Grid>
       </Box>
     )
-  }, [edit, followingMembers])
+  }, [edit, actor])
 
   useEffect(() => { 
     if(!openedRooms.some((room) => (target.id === room.user1Id) || (target.id === room.user2Id))){
       // create new room
       setNewMessageRoom(
-        <EmptyMessageRoom key={target.id} target={target} reload={() => setLoading(true)} />
+        <EmptyMessageRoom actor={actor.id} key={target.id} target={target} reload={() => setLoading(true)} />
       )
     }
     else{
@@ -103,25 +101,22 @@ const MessagePage = ({authStore, target, match, push}) => {
   }, [target, openedRooms])
 
   return(
-    <Box display="flex" flexDirection="column">
-      <MypageSubheader userId={authStore.currentId} getFollowings={(list) => setFollowingMembers(list)} />
-      <Container maxWidth="sm">
-        <Box display="flex" flexDirection="row" alignItems="center">
-          <Typography variant="h5" component={Box} flexGrow={1}>쪽지함</Typography>
-          <Tooltip title="새로고침">
-            <IconButton onClick={() => setLoading(true)}>
-              <Sync />
-            </IconButton>
-          </Tooltip>
-        </Box>
-        <Divider />
-        <Grid container>
-          {newMessageButton}
-          {newMessageRoom}
-          {messageRoomCards}
-        </Grid>
-      </Container>
-    </Box>
+    <Container maxWidth="sm">
+      <Box display="flex" flexDirection="row" alignItems="center">
+        <Typography variant="h5" component={Box} flexGrow={1}>쪽지함</Typography>
+        <Tooltip title="새로고침">
+          <IconButton onClick={() => setLoading(true)}>
+            <Sync />
+          </IconButton>
+        </Tooltip>
+      </Box>
+      <Divider />
+      <Grid container>
+        {newMessageButton}
+        {newMessageRoom}
+        {messageRoomCards}
+      </Grid>
+    </Container>
   )
 }
 
@@ -143,9 +138,8 @@ const mapStateToProps = state => {
   })
   return({
     //pathname: state.router.location.pathname,
-    //search: state.router.location.search,
+    search: state.router.location.search,
     //hash: state.router.location.hash,
-    authStore: state.auth,
     target: target,
   })
 }

@@ -12,7 +12,7 @@ import { yujinserver } from '../../restfulapi';
 import NameAvatarButton from '../common/NameAvatarButton';
 import { useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
-import { Sync } from '@material-ui/icons';
+import { Sync, Close } from '@material-ui/icons';
 import queryString from 'query-string'
 import { push } from 'connected-react-router';
 
@@ -33,18 +33,17 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const EmptyMessageRoom = ({authStore, target, reload, search, push}) => {
+const EmptyMessageRoom = ({actor, target, reload, search, push}) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [textline, setTextline] = useState("")
   const [fetching, setFetching] = useState(false)
   const [open, setOpen] = useState(false)
-  const topScroll = useRef(null)
   useEffect(() => {
     setOpen(parseInt(queryString.parse(search).to) === target.id)
   }, [search])
   const handleClose = () => {
-    push('/message/'+authStore.currentId)
+    push('/mypage/'+actor+"?page=message")
   }
 
   const sendMessage = (event) => {
@@ -95,21 +94,24 @@ const EmptyMessageRoom = ({authStore, target, reload, search, push}) => {
     >
       <Box flexGrow={1} className={classes.dialog} p={1} display="flex" flexDirection="column">
         <Box flexShrink={0} display="flex" flexDirection="column">
-          <Box px={3} display="flex" flexDirection="row" alignItems="center">
-            <Typography component={Box} flexGrow={1}><strong>{target.name}</strong>님과의 쪽지</Typography>
-            <Tooltip title="새로고침">
-              <IconButton onClick={() => {
-                reload()
-                topScroll.current.scrollIntoView({ behavior: "smooth" })
-              }}>
-                <Sync />
-              </IconButton>
-            </Tooltip>
+          <Box pb={1} pl={2} display="flex" flexDirection="row" alignItems="center">
+            <Typography><strong>{target.name}</strong>님과의 쪽지</Typography>
+            <Box flexGrow={1} display="flex" flexDirection="row" justifyContent="flex-end" alignItems="center">
+              <Tooltip title="새로고침">
+                <IconButton onClick={() => reload()}>
+                  <Sync />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="닫기">
+                <IconButton onClick={() => handleClose()}>
+                  <Close />
+                </IconButton>
+              </Tooltip>
+            </Box>
           </Box>
           <Divider />
         </Box>
         <Box flexGrow={1} className={classes.body} display="flex" flexDirection="column">
-          <Grid container component={Box} p={1} />
         </Box>
         <form onSubmit={(event) => sendMessage(event)}>
           <Box flexShrink={0} display="flex" flexDirection="row" alignItems="center">
@@ -142,7 +144,6 @@ EmptyMessageRoom.propTypes = {
 
 
 const mapStateToProps = state => ({
-  authStore: state.auth,
   //pathname: state.router.location.pathname,
   search: state.router.location.search,
   //hash: state.router.location.hash,

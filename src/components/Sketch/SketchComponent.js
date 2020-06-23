@@ -156,7 +156,10 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem, auth
     }
     else{
       setSketchItemComponents(
-        <Typography gutterBottom variant="h5">없어요</Typography>
+        <Box>
+          <Typography>상품 목록👔이나 추천코디💎, 커뮤니티👀에서</Typography>
+          <Typography><Palette /> 아이콘을 찾아 여기에 상품을 올려보세요.</Typography>
+        </Box>
       )
     }
   }, [sketchItems])
@@ -247,7 +250,7 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem, auth
           .then((text) => {
             if(text === "success"){
               enqueueSnackbar("작업을 나의옷장에 저장했습니다.",{"variant": "success", action: () => (
-                <Button onClick={() => push("/closet/"+authStore.currentId)}>
+                <Button onClick={() => push("/mypage/"+authStore.currentId+"?page=closet")}>
                   <Typography variant="button" color="textSecondary">바로가기</Typography>
                 </Button>
               )});

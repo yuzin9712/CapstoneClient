@@ -28,7 +28,7 @@ const NameAvatarButton = ({authStore, name, userId, size = 5, push}) => {
     closePopover()
   }
   const messageToUser = () => {
-    push("/message/"+authStore.currentId+"?to="+userId, {target: name})
+    push("/mypage/"+authStore.currentId+"?page=message&to="+userId, {target: name})
     closePopover()
   }
 

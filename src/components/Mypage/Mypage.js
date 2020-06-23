@@ -9,30 +9,89 @@ import {
 import MypageSubheader from './MypageSubheader'
 import MypageDesignView from './MypageDesignView'
 import MypageCommunityView from './MypageCommunityView'
+import { yujinserver } from '../../restfulapi'
+import queryString from 'query-string'
+import MessagePage from '../Message/MessagePage'
+import ClosetPage from '../Closet/ClosetPage'
+import { push } from 'connected-react-router'
 
 
-const Mypage = ({authStore, search, match}) => {
+const Mypage = ({authStore, search, match, push, goBack}) => {
+  const isOwner = authStore.currentId === parseInt(match.params.id)
   const [currentView, setCurrentView] = useState(null)
+  const [subheader, setSubheader] = useState(null)
+  const [target, setTarget] = useState({
+    type: "fetching"
+  })
 
   useEffect(() => {
-    switch(search){
-      case "?community": {
-        setCurrentView(
-          <MypageCommunityView targetId={match.params.id} />
-        )
-        break
+    fetch(yujinserver+"/user/"+match.params.id, {credentials: "include"})
+    .then(
+      (res) => res.json(),
+      (error) => console.error(error)
+    )
+    .then((json) => {
+      if(json.type === 'deleted'){
+        enqueueSnackbar("탈퇴한 회원입니다.",{"variant": "error"});
+        goBack()
       }
-      default: {
-        setCurrentView(
-          <MypageDesignView targetId={match.params.id} />
-        )
+      else{
+        setTarget({
+          ...json.userInfo,
+          type: json.type,
+        })
+      }
+    })
+  }, [match])
+
+  useEffect(() => {
+    if(target.type !== "fetching"){
+      setSubheader(
+        <MypageSubheader 
+        actor={authStore.currentId}
+        target={target}
+        isOwner={isOwner} />
+      )
+    }
+  }, [target])
+
+  useEffect(() => {
+    const parse = queryString.parse(search)
+    if(target.type !== "fetching"){
+      switch(parse.page){
+        case "community": {
+          setCurrentView(
+            <MypageCommunityView targetId={target.id} />
+          )
+          break
+        }
+        case "message": {
+          if(isOwner) setCurrentView(
+            <MessagePage actor={target} />
+          )
+          else push("/mypage/"+authStore.currentId+search)
+          break
+        }
+        case "closet": {
+          if(isOwner) setCurrentView(
+            <ClosetPage actor={target.id} />
+          )
+          else push("/mypage/"+authStore.currentId+search)
+          break
+        }
+        default: {
+          setCurrentView(
+            <MypageDesignView targetId={target.id} />
+          )
+        }
       }
     }
-  }, [search])
+  }, [search, target])
 
   return(
     <Box display="flex" flexDirection="column">
-      <MypageSubheader userId={match.params.id}/>
+      {subheader}
+      {/* <MypageSubheader userId={match.params.id}/> */}
       {currentView}
     </Box>
   )
@@ -53,7 +112,8 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  
+  push: (url) => dispatch(push(url)),
+  goBack: () => dispatch(goBack()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Mypage)
