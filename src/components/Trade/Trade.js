@@ -174,7 +174,7 @@ export default class Trade extends React.Component {
 
 
 const callApi = async () => {
-    const response = await fetch(yujinserver+'/admin')
+    const response = await fetch(yujinserver+'/admin/shops')
     const body = await response.json();
     return body;
 }

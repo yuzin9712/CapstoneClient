@@ -36,7 +36,7 @@ export default class TradeApply extends React.Component {
     }
     
     addCustomer(){
-      const url = yujinserver+'/admin/'+this.props.id;
+      const url = yujinserver+'/admin/shops/'+this.props.id;
     const formData = new FormData();
     const emailC = {
       title: '멋쟁이마당 제휴 승인 메일입니다.',

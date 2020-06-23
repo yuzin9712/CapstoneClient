@@ -38,7 +38,7 @@ export default class Trademember extends React.Component {
   ////////////////////////////////////////
 
  dCustomer(){
-   const url = yujinserver+'/admin/'+this.props.id;
+   const url = yujinserver+'/admin/shops/'+this.props.id;
  const formData = new FormData();
 
 
