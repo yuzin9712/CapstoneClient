@@ -14,10 +14,12 @@ import queryString from 'query-string'
 import MessagePage from '../Message/MessagePage'
 import ClosetPage from '../Closet/ClosetPage'
 import { push } from 'connected-react-router'
+import { useSnackbar } from 'notistack'
 
 
 const Mypage = ({authStore, search, match, push, goBack}) => {
   const isOwner = authStore.currentId === parseInt(match.params.id)
+  const { enqueueSnackbar } = useSnackbar();
   const [currentView, setCurrentView] = useState(null)
   const [subheader, setSubheader] = useState(null)
   const [target, setTarget] = useState({

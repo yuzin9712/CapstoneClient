@@ -3,6 +3,7 @@ import {yujinserver} from '../restfulapi'
 import { designInitialization, designSetLikeList } from './design'
 import { followInitialization, followSetList } from './follow'
 import { postSetLikeList } from './postlike'
+import { handleDrawerClose, sketchResetItems } from './sketch'
 
 export const requestLogin = (email, password) => {
   return (dispatch) => {
@@ -29,6 +30,8 @@ export const requestLogin = (email, password) => {
         dispatch(designSetLikeList(data.designLike))
         dispatch(postSetLikeList(data.postLike))
         dispatch(followSetList(data.followingInfo))
+        dispatch(handleDrawerClose())
+        dispatch(sketchResetItems())
         return dispatch(loginSuccess(data.name, data.id, data.shopStatus))
       }
       else return dispatch(loginFailure(data.name));
@@ -74,6 +77,8 @@ export const requestLogout = () => {
     .then(data => {
       dispatch(designInitialization())
       dispatch(followInitialization())
+      dispatch(handleDrawerClose())
+      dispatch(sketchResetItems())
       return dispatch(logoutSuccess())
     })
   }
