@@ -82,6 +82,10 @@ const MessageRoom = ({counter, handleClose, room, reload, search}) => {
           reload()
           setTextline("")
         }
+        else if(text === "삭제된 유저"){
+          enqueueSnackbar("탈퇴한 회원입니다.",{"variant": "error"});
+          handleClose()
+        }
         else{
           enqueueSnackbar("쪽지보내기에 실패했습니다. 에러가 계속되면 관리자에게 문의해주세요",{"variant": "error"});
         }

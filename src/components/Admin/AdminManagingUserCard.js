@@ -85,11 +85,13 @@ const AdminManagingUserCard = ({user, reload, authStore, push}) => {
               <Typography variant="body2" color="textSecondary">{user.email}</Typography>
             </Box>
           </Box>
-          <Tooltip title="유저 탈퇴처리">
-            <IconButton onClick={(event) => setPopoverTarget(event.target)}>
-              <Clear />
-            </IconButton>
-          </Tooltip>
+          <Box flexGrow={1} display="flex" flexDirection="row" justifyContent="flex-end">
+            <Tooltip title="유저 탈퇴처리">
+              <IconButton onClick={(event) => setPopoverTarget(event.target)}>
+                <Clear />
+              </IconButton>
+            </Tooltip>
+          </Box>
         </Box>
       </Box>
       <ConfirmPopover text="정말 탈퇴처리하시겠습니까? 이 작업은 복구할 수 없습니다." target={popoverTarget} action={deleteUser} cancel={() => setPopoverTarget(null)} />

@@ -12,24 +12,6 @@ import { push } from 'connected-react-router';
 import { Mail, Chat } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
-  avatar: {
-    // https://stackoverflow.com/questions/3426404/create-a-hexadecimal-colour-based-on-a-string-with-javascript
-    backgroundColor: props => {
-      var hash = 0;
-      for (var i = 0; i < props.name.length; i++) {
-        hash = props.name.charCodeAt(i) + ((hash << 5) - hash);
-      }
-      var colour = '#';
-      for (var i = 0; i < 3; i++) {
-        var value = (hash >> (i * 8)) & 0xFF;
-        colour += ('00' + value.toString(16)).substr(-2);
-      }
-      return colour;
-    },
-    width: props => theme.spacing(props.size),
-    height: props => theme.spacing(props.size),
-    fontSize: props => theme.spacing(props.size * 0.55),
-  }
 }));
 
 const NameAvatarButton = ({authStore, name, userId, size = 5, push}) => {
@@ -52,8 +34,8 @@ const NameAvatarButton = ({authStore, name, userId, size = 5, push}) => {
 
   return(
     <React.Fragment>
-      <IconButton onClick={(event) => setPopoverTarget(event.target)}>
-        <RawNameAvatar name={name} size={size} />
+      <IconButton disabled={name === null} onClick={(event) => setPopoverTarget(event.target)}>
+        <RawNameAvatar name={name !== null?name:"탈퇴한 유저"} size={size} />
       </IconButton>
       <Popover
       id={id}
@@ -64,10 +46,10 @@ const NameAvatarButton = ({authStore, name, userId, size = 5, push}) => {
       transformOrigin={{vertical: 'top', horizontal: 'left'}}>
           <Box display="flex" flexDirection="column" px={10} py={3} alignItems="center" justifyContent="center">
             <IconButton onClick={() => pushTo("/mypage/"+userId)} >
-                  <RawNameAvatar name={name} size={10} />
+                  <RawNameAvatar name={name !== null?name:"탈퇴한 유저"} size={10} />
             </IconButton>
             <Box display="flex" flexDirection="row" alignItems="center">
-              <Typography variant="h6">{name}</Typography>
+              <Typography variant="h6">{name !== null?name:"탈퇴한 유저"}</Typography>
               <FollowButton targetuserid={parseInt(userId)} />
             </Box>
             {authStore.currentId !== userId?(
