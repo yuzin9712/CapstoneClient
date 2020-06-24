@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const menus = [
-  {component: "👔상의", path: `/productList/category/${1}`},
+  {component: "👔상의입니다!!", path: `/productList/category/${1}`},
   {component: "👖하의", path: `/productList/category/${2}`},
   {component: "🎀패션잡화", path: `/productList/category/${3}`},
   {component: "🥾신발", path: `/productList/category/${4}`},
