@@ -1,9 +1,20 @@
 import React from 'react'
+import { Box, Button } from '@material-ui/core'
 
-const NoMatch = () => (
-  <div>
-    No Match
-  </div>
-)
+const NoMatch = ({goBack}) => {
+  return(
+    <Box>
+      잘못된 주소입니다.
+      <Button onClick={() => goBack()}>뒤로가기</Button>
+    </Box>
+  )
+}
 
-export default NoMatch
+const mapStateToProps = state => ({
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  goBack: () => dispatch(goBack()),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(NoMatch)

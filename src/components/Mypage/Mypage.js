@@ -13,7 +13,7 @@ import { yujinserver } from '../../restfulapi'
 import queryString from 'query-string'
 import MessagePage from '../Message/MessagePage'
 import ClosetPage from '../Closet/ClosetPage'
-import { push } from 'connected-react-router'
+import { push, goBack } from 'connected-react-router'
 import { useSnackbar } from 'notistack'
 
 
