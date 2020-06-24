@@ -23,11 +23,18 @@ const useStyles = makeStyles((theme) => ({
 
 const fetchurl=yujinserver+"/page/closet/"
 
-const ClosetPage = ({actor, match}) => {
+const ClosetPage = ({actor, match, state}) => {
   const classes = useStyles();
   const [ loading, setLoading ] = useState(true);
   const [ closetList, setClosetList ] = useState(null);
 
+  useEffect(() => {
+    if(state !== undefined){
+      if(state.reload){
+        setLoading(true)
+      }
+    }
+  }, [state])
   useEffect(() => {
     if(loading){
       fetch(fetchurl+actor, {credentials: 'include',})
@@ -61,6 +68,7 @@ ClosetPage.propTypes = {
 const mapStateToProps = state => ({
     authStore: state.auth,
     pathname: state.router.location.pathname,
+    state: state.router.location.state,
     //search: state.router.location.search,
     //hash: state.router.location.hash,
 })

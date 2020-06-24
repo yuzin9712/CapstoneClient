@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const OrderCartPage = ({pushToOrderList, cleanOrderList, push}) => {
+const OrderCartPage = ({pushToOrderList, cleanOrderList, push, state}) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   
@@ -46,6 +46,13 @@ const OrderCartPage = ({pushToOrderList, cleanOrderList, push}) => {
   const [cartListComponent, setCartListComponent] = useState([])
   const [total, setTotal] = useState(0)
 
+  useEffect(() => {
+    if(state !== undefined){
+      if(state.reload){
+        setLoading(true)
+      }
+    }
+  }, [state])
   useEffect(() => {
     if(loading){
       fetch(yujinserver+"/cart",{
@@ -82,15 +89,25 @@ const OrderCartPage = ({pushToOrderList, cleanOrderList, push}) => {
   }, [loading])
 
   useEffect(() => {
-    setCartListComponent(cartList.orders.map(order => {
-      return(
-        <CartItem key={order.id+"-"+order.color+"-"+order.size+"-"+order.cnt} order={order} product={cartList.products[order.productId]} options={cartList.options[order.productId]} reload={() => setLoading(true)} />
+    if(cartList.orders.length === 0){
+      setCartListComponent(
+        <Box p={5} textAlign="center">
+          장바구니에 상품이 없습니다!🤔
+        </Box>
       )
-    }))
-    setTotal(cartList.orders.reduce((result, order) => {
-      result += cartList.products[order.productId].price * order.cnt
-      return result
-    }, 0))
+      setTotal(0)
+    }
+    else{
+      setCartListComponent(cartList.orders.map(order => {
+        return(
+          <CartItem key={order.id+"-"+order.color+"-"+order.size+"-"+order.cnt} order={order} product={cartList.products[order.productId]} options={cartList.options[order.productId]} reload={() => setLoading(true)} />
+        )
+      }))
+      setTotal(cartList.orders.reduce((result, order) => {
+        result += cartList.products[order.productId].price * order.cnt
+        return result
+      }, 0))
+    }
   }, [cartList])
 
   const purchaseCart = () => {
@@ -131,6 +148,7 @@ const OrderCartPage = ({pushToOrderList, cleanOrderList, push}) => {
 }
 
 const mapStateToProps = state => ({
+  state: state.router.location.state,
   // pathname: state.router.location.pathname,
   //search: state.router.location.search,
   //hash: state.router.location.hash,

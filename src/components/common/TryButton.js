@@ -42,7 +42,7 @@ const TryButton = ({pid, previews, fullButton, addItem, openDrawer, variant, han
   const handleTry = (preview) => {
     const proxyImage = preview.img.replace('https://swcap02.s3.ap-northeast-2.amazonaws.com','/images')
     addItem(pid, preview.color, proxyImage)
-    enqueueSnackbar("코디해보기 메뉴에 들어갔어요.",{variant:"success", action: () => <Button onClick={() => handleDrawerOpen()}>코디툴 열기</Button>})
+    enqueueSnackbar("코디툴에 넣었습니다.",{variant:"success", action: () => <Button onClick={() => handleDrawerOpen()}>코디툴 열기</Button>})
     handleClose()
   }
 

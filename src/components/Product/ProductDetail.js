@@ -193,7 +193,7 @@ const ProductDetail = ({product, options, previews, pushToOrderList, cleanOrderL
         )
         .then(text => {
           if(text === 'success'){
-            enqueueSnackbar(product.pname+": 장바구니에 담았습니다.",{"variant": "success"})
+            enqueueSnackbar(product.pname+": 장바구니에 담았습니다.",{"variant": "success", action: () => <Button onClick={() => push("/order/cart")}>바로가기</Button>})
           }
         })
       })

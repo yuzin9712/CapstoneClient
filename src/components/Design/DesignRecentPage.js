@@ -28,10 +28,15 @@ const useStyles = makeStyles((theme) => ({
 
 const fetchurl = yujinserver+"/page/design";
 
-const DesignRecentPage = ({}) => {
+const DesignRecentPage = ({state}) => {
   const [ loading, setLoading ] = useState(true);
   const [ designList, setDesignList ] = useState(null);
 
+  useEffect(() => {
+    if(state !== undefined){
+      if(state.reload) setLoading(true)
+    }
+  }, [state])
   useEffect(() => {
     if(loading){
       fetch(fetchurl, {credentials: 'include',})
@@ -66,6 +71,7 @@ DesignRecentPage.propTypes = {
 
 
 const mapStateToProps = state => ({
+  state: state.router.location.state,
     //pathname: state.router.location.pathname,
     //search: state.router.location.search,
     //hash: state.router.location.hash,

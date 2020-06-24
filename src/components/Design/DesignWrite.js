@@ -128,7 +128,7 @@ const DesignWrite = ({ authStore, dispatchPush }) => {
               if(text === "success"){
                 enqueueSnackbar("코디를 공유했습니다.",{"variant": "success"});
                 setOpen(false)
-                dispatchPush("/design/recent")
+                dispatchPush("/design/recent", {reload: true})
               }
               else{
                 enqueueSnackbar("코디 공유에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
@@ -182,7 +182,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  dispatchPush: (url) => dispatch(push(url))
+  dispatchPush: (url, props) => dispatch(push(url, props))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(DesignWrite)

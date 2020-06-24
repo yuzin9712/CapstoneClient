@@ -46,7 +46,7 @@ const FollowButton = ({target, count = 0, sessionId, designStore, requestDesignL
       requestDesignLikes(target)
       .then(() => {
         if(designStore.fetching === "FAILURE"){
-          enqueueSnackbar("좋아요처리 실패. 문제가 계속되면 관리자에게 문의해주세요",{"variant": "error"});
+          enqueueSnackbar("좋아요 처리에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
         }
         else if(designStore.fetching === "SUCCESS"){
           setLikes(true)

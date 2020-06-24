@@ -15,6 +15,7 @@ import { useSnackbar } from 'notistack';
 import grid from '../../../public/grid.png'
 import {GithubPicker} from 'react-color'
 import { push } from 'connected-react-router';
+import queryString from 'query-string'
 import SketchGuide from './SketchGuide';
 import costume_tuto1 from '../../../public/costume_tuto1.png'
 import costume_tuto2 from '../../../public/costume_tuto2.png'
@@ -60,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem, authStore, push, handleDrawerClose }) => {
+const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem, authStore, pathname, search, push, handleDrawerClose, history }) => {
   const classes = useStyles();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
@@ -173,7 +174,7 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem, auth
         </Box>
       )
     }
-  }, [sketchItems])
+  }, [sketchItems, pathname, search])
 
   const storebasket = (product) => { //버튼클릭하면 해당 상품 장바구니 DB로 연결
     fetch(sangminserver+'/cart/toolbar',{
@@ -192,6 +193,9 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem, auth
     .then((res) => res.text())
     .then((text) => {
       if(text === "success"){
+        if(pathname.startsWith('/order/cart')){
+          push('/order/cart', {reload: true})
+        }
         enqueueSnackbar("장바구니에 넣었습니다.",{"variant": "success", action: () => <Button onClick={() => push("/order/cart")}>바로가기</Button>});
       }
       else{
@@ -263,6 +267,9 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem, auth
           )
           .then((text) => {
             if(text === "success"){
+              if(queryString.parse(search).page === "closet"){
+                push("/mypage/"+authStore.currentId+"?page=closet", {reload: true})
+              }
               enqueueSnackbar("작업을 나의옷장에 저장했습니다.",{"variant": "success", action: () => (
                 <Button onClick={() => push("/mypage/"+authStore.currentId+"?page=closet")}>
                   <Typography variant="button" color="textSecondary">바로가기</Typography>
@@ -412,15 +419,15 @@ SketchComponent.propTypes = {
 const mapStateToProps = state => ({
   sketchItems: state.sketch.list,
   authStore: state.auth,
-  //pathname: state.router.location.pathname,
-  //search: state.router.location.search,
+  pathname: state.router.location.pathname,
+  search: state.router.location.search,
   //hash: state.router.location.hash,
 })
 
 const mapDispatchToProps = (dispatch) => ({
   sketchResetItems: () => dispatch(sketchResetItems()),
   sketchRemoveItem: (src) => dispatch(sketchRemoveItem(src)),
-  push: (url) => dispatch(push(url)),
+  push: (url, props) => dispatch(push(url, props)),
   handleDrawerClose: () => dispatch(handleDrawerClose()),
 })
 

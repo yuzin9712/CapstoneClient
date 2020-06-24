@@ -155,7 +155,7 @@ const ShopProductItem = ({product, options, previews, reload}) => {
       (error) => console.error(error)
     )
     .then((text) => {
-      if(text === "success"){
+      if(text === "delete product success"){
         enqueueSnackbar(product.pname+": 삭제했습니다.",{"variant": "success"});
         reload()
       }

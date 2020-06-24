@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SketchDrawer = function({drawerOpen, handleDrawerClose}){
+const SketchDrawer = function({drawerOpen}){
   const theme = useTheme();
   const classes = useStyles();
 
@@ -77,6 +77,8 @@ SketchDrawer.propTypes = {
 
 const mapStateToProps = state => ({
   drawerOpen: state.sketch.opened,
+  // pathname: state.router.location.pathname,
+  // search: state.router.location.search,
 })
 
 const mapDispatchToProps = dispatch => ({

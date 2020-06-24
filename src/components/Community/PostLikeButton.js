@@ -49,7 +49,7 @@ const PostLikeButton = ({targetpostid, initialLike, postlikeStore, requestPostLi
       }
     }
     else{
-      enqueueSnackbar("좋아요처리 실패",{"variant": "error"});
+      enqueueSnackbar("좋아요 처리에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
     }
   }, [postlikeStore])
 
