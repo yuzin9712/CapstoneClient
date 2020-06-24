@@ -38,8 +38,5 @@ deploy: # 배포
     on:
       repo: yuzin9712/CapstoneClient
       branch: master
-notifications: 
-  email:
-    recipients:
-      - dbwls97@ajou.ac.kr
-#테스트
+notifications:
+  slack: swcapsoftjs:SFeXkFzGectFpZbsIe8EFqtK
