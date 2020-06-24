@@ -32,6 +32,7 @@ import ConfirmPopover from '../common/ConfirmPopover';
 import NameAvatarButton from '../common/NameAvatarButton';
 import CommentCard from './CommentCard';
 import moment from 'moment'
+import CommunitySubheader from './CommunitySubheader';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -156,6 +157,7 @@ const PostDetailPage = ({authStore, pathname, push, match}) => {
 
         return(
             <Container maxWidth="md" className={classes.root}>
+              <CommunitySubheader />
                 <Grid container component={Paper} direction="column" elevation={3}>
                     <Typography variant="h4" gutterBottom>{post.title}</Typography>
                     <Box display="flex" flexDirection="row" alignItems="center">
@@ -170,7 +172,7 @@ const PostDetailPage = ({authStore, pathname, push, match}) => {
                     </Box>
                     <Divider />
                     <Box p={3}>
-                      <Grid>
+                      <Grid container>
                           {images}
                       </Grid>
                       <Box py={1}>

@@ -84,9 +84,11 @@ const ProductDetailPage = ({pathname, goBack, match}) => {
   }, [loading])
 
   return(
-    <Box>
-      <Button onClick={() => goBack()}>뒤로가요</Button>
-      <Box>
+    <Box p={1} display="flex" flexDirection="column">
+      <Box display="flex" flexDirection="row" justifyContent="flex-end">
+        <Button onClick={() => goBack()}>돌아가기</Button>
+      </Box>
+      <Box display="flex" flexDirection="column">
         {productDetailComponent}
         <Box display="flex" p={3} flexDirection="column">
           <Box display="flex" flexDirection="row">

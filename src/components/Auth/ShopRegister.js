@@ -16,13 +16,11 @@ import {
   Avatar,
   Tab,
   Typography,
+  Link,
   Grid,
   TextField,
   Button,
-  Paper,
-  Dialog,
-  Divider,
-  ButtonBase
+  Paper
 } from '@material-ui/core'
 import {
   TabContext,
@@ -41,12 +39,14 @@ import {
   getLoginStatus
  } from '../../actions/auth';
 import { yujinserver } from '../../restfulapi';
-import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     alignItems: 'center',
+  },
+  paper: {
+    padding: theme.spacing(2)
   },
   text: {
     margin: theme.spacing(2),
@@ -58,10 +58,6 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
-  kakaoButton: {
-    width: '100%',
-    height: '100%',
-  }
 }));
 
 const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
@@ -71,7 +67,6 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const { register, control, handleSubmit } = useForm();
-  const [shopRegisterOpen, setShopRegisterOpen] = useState(false)
   useEffect(() => {
     if(authStore.fetching === 'FAILURE'){
       enqueueSnackbar("로그인에 실패했습니다: "+authStore.currentUser,{"variant": "error"});
@@ -88,8 +83,8 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
   }
 
   const loginView =
-  <Box display="flex" flexDirection="column" alignItems="center">
-    <form
+  <div>
+  <form
         className={classes.form}
         onSubmit={loginSubmit}
       >
@@ -124,10 +119,10 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
           로그인
         </Button>
       </form>
-      <ButtonBase component={Link} to={yujinserver+"/auth/kakao"}>
-        <Avatar src={kakaologo} variant="square" className={classes.kakaoButton} />
-      </ButtonBase>
-    </Box>
+      <a href={"http://www.softjs2.com/api/auth/kakao"}>
+          <img alt={"kakao_login"} src={kakaologo}/>
+</a>
+    </div>
 
 
   const registerSubmit = (data) => {
@@ -220,11 +215,11 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
     )
     .then((text) => {
       if(text === "success"){
-        enqueueSnackbar("제휴 신청에 성공했습니다! 활동이 승인되면 이메일으로 연락됩니다.",{"variant": "success"});
-        setShopRegisterOpen(false)
+        enqueueSnackbar("회원가입에 성공했습니다! 로그인해주세요.",{"variant": "success"});
+        setTabValue("1")
       }
       else{
-        enqueueSnackbar("제휴 신청에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
+        enqueueSnackbar("회원가입에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
       }
     })
   }
@@ -300,40 +295,24 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
 
   return(
     <Container className={classes.root} maxWidth="xs">
-      <Box display="flex" flexDirection="column" alignItems="center">
-        <Box py={2}>
-          <Box p={1} component={Paper}>
-            <Typography className={classes.text} align="center" gutterBottom component="h1" variant="h5">
-              멋쟁이마당
-            </Typography>
-            <Typography className={classes.text} align="center" gutterBottom variant="body2">
-              👓멋쟁이들의 패션 라운지
-            </Typography>
-            <TabContext value={tabValue} >
-              <TabList onChange={handleTabChange} variant="fullWidth" aria-label="simple tabs">
-                <Tab label="로그인" value="1" />
-                <Tab label="회원가입" value="2" />
-              </TabList>
-              <TabPanel value="1">{loginView}</TabPanel>
-              <TabPanel value="2">{registerView}</TabPanel>
-            </TabContext>
-          </Box>
-        </Box>
-        <Button color="secondary" variant="contained" onClick={() => setShopRegisterOpen(true)}>쇼핑몰 제휴신청은 여기로</Button>
-        <Dialog
-        maxWidth="xs"
-        open={shopRegisterOpen}
-        onClose={() => setShopRegisterOpen(false)}
-        >
-          <Box p={1} display="flex" flexDirection="column">
-            <Typography gutterBottom variant="h6">쇼핑몰 제휴신청</Typography>
-            <Typography>쇼핑몰 관리자 자격으로 회원가입합니다. 멋쟁이마당 운영자의 승인이 있기까지 로그인이 제한됩니다. 승인 상황은 이메일으로 안내됩니다.</Typography>
-            <Divider variant="middle" />
-            <Box pt={1} />
-            {shopRegisterView}
-          </Box>
-        </Dialog>
-      </Box>
+      <Paper className={classes.paper}>
+      <Typography className={classes.text} align="center" gutterBottom component="h1" variant="h5">
+        멋쟁이마당
+      </Typography>
+      <Typography className={classes.text} align="center" gutterBottom variant="body2">
+        👓멋쟁이들의 패션 라운지
+      </Typography>
+      <TabContext value={tabValue} >
+        <TabList onChange={handleTabChange} variant="fullWidth" aria-label="simple tabs">
+          <Tab label="로그인" value="1" />
+          <Tab label="회원가입" value="2" />
+          <Tab label="관리자임시" value="3" />
+        </TabList>
+        <TabPanel value="1">{loginView}</TabPanel>
+        <TabPanel value="2">{registerView}</TabPanel>
+        <TabPanel value="3">{shopRegisterView}</TabPanel>
+      </TabContext>
+      </Paper>
     </Container>
   )
 }

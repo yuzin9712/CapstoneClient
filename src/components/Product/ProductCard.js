@@ -40,7 +40,7 @@ const ProductCard = ({width, product, preview}) => {
   const [cardSize, setCardSize] = useState(1/2)
   const cardSizeLookup = {
     xs: 1/2,
-    sm: 1/4,
+    sm: 1/3,
     md: 1/4,
     lg: 1/4,
     xl: 1/4,
@@ -59,7 +59,7 @@ const ProductCard = ({width, product, preview}) => {
             variant="rounded"
             className={classes.cardMedia} />
           <CardContent className={classes.cardContent}>
-            <Typography gutterBottom color="inherit">{product.pname}</Typography>
+            <Typography gutterBottom color="textPrimary">{product.pname}</Typography>
           </CardContent>
         </CardActionArea>
       </Link>

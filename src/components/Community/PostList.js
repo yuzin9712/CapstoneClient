@@ -28,9 +28,9 @@ const PostList = ({posts}) => {
         if(posts.length) setPostCards(posts.map((post) => {
           return <PostCard post={post} />
         }))
-        else setPostCards(<Typography gutterBottom>작성한 게시글이 없어요.</Typography>)
+        else setPostCards(<Typography gutterBottom>작성된 게시글이 없어요.</Typography>)
       }
-      else setPostCards(<Typography gutterBottom>작성한 게시글이 없어요.</Typography>)
+      else setPostCards(<Typography gutterBottom>작성된 게시글이 없어요.</Typography>)
     }, [posts])
     
 

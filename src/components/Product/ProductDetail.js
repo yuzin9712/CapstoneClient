@@ -54,7 +54,8 @@ const useStyles = makeStyles((theme) => ({
     width: '6em',
   },
   description: {
-    alignSelf: 'center',
+    width: '100%',
+    height: '100%',
   }
 }));
 
@@ -242,10 +243,13 @@ const ProductDetail = ({product, options, previews, pushToOrderList, cleanOrderL
           </Button>
         </Box>
       </Box>
-      <Box p={3} flexGrow={1}>
+      <Box display="flex" flexDirection="column" p={3} flexGrow={1} alignItems="flex-start">
         <Typography variant="h6" gutterBottom>상품상세정보</Typography>
         <Divider />
-        <img src={product.description} alt={product.pname} />
+        <Box pt={1} />
+        <Box>
+          <Avatar src={product.description} className={classes.description} variant="square" />
+        </Box>
       </Box>
     </Grid>
   )
