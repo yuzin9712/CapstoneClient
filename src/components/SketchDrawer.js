@@ -16,42 +16,58 @@ import {
   ListItemText,
   Hidden,
   Container,
+  Drawer,
+  Dialog,
+  Tooltip,
+  Typography,
 } from '@material-ui/core'
 import {
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
   MoveToInbox as InboxIcon,
   Mail as MailIcon,
+  Close,
+  Help,
 } from '@material-ui/icons'
 import SketchComponent from './Sketch/SketchComponent'
+import SketchGuide from './Sketch/SketchGuide'
+import { handleDrawerClose } from '../actions/sketch'
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    transition: "all 1s ease-in-out",
+  transition: {
+    transition: "all 0.2s ease-in-out",
   },
-  closed: {
-    display: 'none',
-    marginRight: '-100vh',
-    opacity: 0,
-    flexGrow: 0,
-  }
+  opened: {
+    flexGrow: 1,
+  },
 }));
 
-const SketchDrawer = function({drawerOpen, handleDrawer}){
+const SketchDrawer = function({drawerOpen, handleDrawerClose}){
   const theme = useTheme();
   const classes = useStyles();
 
   return(
-    <Box className={clsx({
-      [classes.root]: true,
-      [classes.closed]: !drawerOpen
-    })}>
-      <Container maxWidth="sm" fixed>
+    // <Box className={clsx({
+    //   [classes.root]: true,
+    //   [classes.closed]: !drawerOpen
+    // })}>
+    //   <Container maxWidth="sm" fixed>
+    //     <SketchComponent />
+    //     {/* <Scatch /> */}
+    //   </Container>
+    // </Box>
+    <>
+      <Box flexGrow={0} className={clsx({
+        [classes.transition]: true,
+        [classes.opened]: drawerOpen,
+      })} />
+      <Drawer
+      open={drawerOpen}
+      anchor='right'
+      variant="persistent">
         <SketchComponent />
-        {/* <Scatch /> */}
-      </Container>
-    </Box>
+      </Drawer>
+    </>
   )
 }
 
@@ -64,7 +80,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  handleDrawer: () => dispatch(handleDrawer()),
+  handleDrawerClose: () => dispatch(handleDrawerClose()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SketchDrawer)

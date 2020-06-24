@@ -29,29 +29,32 @@ const useStyles = makeStyles((theme) => ({
   // },
 }));
 
-const SketchGuide = ({children, interval = 8000}) => {
+const SketchGuide = ({children = [], interval = 8000}) => {
   const classes = useStyles();
   const [progress, setProgress] = React.useState(0);
   const [activeStep, setActiveStep] = React.useState(0);
   const [stepper, setStepper] = useState(null)
   const maxSteps = children.length;
-  const tick = 10000 / interval
 
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((oldProgress) => {
-        if (oldProgress === 100) {
-          handleNext()
-          return 0;
-        }
-        return Math.min(oldProgress + tick, 100);
-      });
-    }, 100);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
+  if(interval > 0){
+    const tick = 10000 / interval
+  
+    React.useEffect(() => {
+      const timer = setInterval(() => {
+        setProgress((oldProgress) => {
+          if (oldProgress === 100) {
+            handleNext()
+            return 0;
+          }
+          return Math.min(oldProgress + tick, 100);
+        });
+      }, 100);
+  
+      return () => {
+        clearInterval(timer);
+      };
+    }, []);
+  }
   useEffect(() => {
     setStepper(
       children.map((child, index) => {
@@ -99,7 +102,7 @@ const SketchGuide = ({children, interval = 8000}) => {
           >
             {children}
           </SwipeableViews>
-          <LinearProgress variant="determinate" value={progress} />
+          {interval !== 0?<LinearProgress variant="determinate" value={progress} />:null}
         </Box>
         <IconButton size="small" onClick={handleNext}>
           <KeyboardArrowRight />

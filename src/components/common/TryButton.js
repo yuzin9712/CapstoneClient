@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const TryButton = ({pid, previews, fullButton, addItem, openDrawer, variant}) => {
+const TryButton = ({pid, previews, fullButton, addItem, openDrawer, variant, handleDrawerOpen}) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
@@ -42,7 +42,7 @@ const TryButton = ({pid, previews, fullButton, addItem, openDrawer, variant}) =>
   const handleTry = (preview) => {
     const proxyImage = preview.img.replace('https://swcap02.s3.ap-northeast-2.amazonaws.com','/images')
     addItem(pid, preview.color, proxyImage)
-    enqueueSnackbar("코디해보기 메뉴에 들어갔어요.",{variant:"success"})
+    enqueueSnackbar("코디해보기 메뉴에 들어갔어요.",{variant:"success", action: () => <Button onClick={() => handleDrawerOpen()}>코디툴 열기</Button>})
     handleClose()
   }
 
@@ -102,7 +102,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch) => ({
   addItem: (pid, color, img) => dispatch(sketchAddItem(pid, color, img)),
-  openDrawer: () => dispatch(handleDrawerOpen())
+  handleDrawerOpen: () => dispatch(handleDrawerOpen())
 //   requestFollow: (userId) => dispatch(requestFollow(userId)),
 //   requestUnfollow: (userId) => dispatch(requestUnfollow(userId)),
 })

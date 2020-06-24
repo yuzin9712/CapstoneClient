@@ -15,7 +15,7 @@ import {
   Collapse,
   Chip,
   Button, Typography, Avatar, IconButton, ThemeProvider ,
-  Popover, Fade, withWidth,
+  Popover, Fade, withWidth, ButtonBase,
 } from '@material-ui/core';
 import {
   Delete,
@@ -50,7 +50,8 @@ const useStyles = makeStyles((theme) => ({
       display: "flex",
     },
     productMedia: {
-        paddingTop: "100%",
+      width: theme.spacing(8),
+      height: theme.spacing(8),
     },
 }));
 
@@ -66,7 +67,7 @@ const ClosetCard = ({closet, reload, width}) => {
   }, [width])
   const cardSizeLookup = {
     xs: 1/2,
-    sm: 1/3,
+    sm: 1/2,
     md: 1/3,
     lg: 1/3,
     xl: 1/3,
@@ -94,49 +95,49 @@ const ClosetCard = ({closet, reload, width}) => {
   }
 
   return (
-    <Box component={Card} width={cardSize} elevation={0} p={1} className={classes.card} >
-      <CardActionArea>
-        <CardMedia
-          className={classes.cardMedia}
-          image={closet.img}
-        />
-      </CardActionArea>
-      <CardActions disableSpacing>
-        <IconButton aria-label="delete" onClick={(event) => setPopoverTarget(event.target)}>
-            <Delete />
-          </IconButton>
-          <ConfirmPopover text="정말 삭제하시겠습니까?" target={popoverTarget} action={() => handleRemove()} cancel={() => setPopoverTarget(null)} />
-          <Button
+    <Box p={1} width={cardSize}>
+      <Box component={Card} p={1} className={classes.card} variant="outlined" >
+        <CardActionArea>
+          <CardMedia
+            className={classes.cardMedia}
+            image={closet.img}
+          />
+        </CardActionArea>
+        <CardActions disableSpacing>
+          <IconButton aria-label="delete" onClick={(event) => setPopoverTarget(event.target)}>
+              <Delete />
+            </IconButton>
+            <ConfirmPopover text="정말 삭제하시겠습니까?" target={popoverTarget} action={() => handleRemove()} cancel={() => setPopoverTarget(null)} />
+            <Button
             className={clsx(classes.expand, {
               [classes.expandOpen]: expanded,
             })}
             onClick={handleExpandClick}
             aria-expanded={expanded}
             aria-label="show more"
-          >
-            {expanded? "":"사용한 아이템"}<ExpandMoreIcon />
-          </Button>
-      </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          {closet.products.map((product) => {
-            return(
-              <Box component={Card} width={1} elevation={0} className={classes.product}>
-                <Link component={CardActionArea} to={"/productDetail/"+product.id} style={{width: "25%"}}>
-                  <CardMedia
-                    className={classes.productMedia}
-                    image={product.img}
-                  />
-                </Link>
-                <CardContent style={{flexGrow:1}}>
-                  <Typography gutterBottom>{product.pname}</Typography>
-                  <Typography gutterBottom variant="body2">{product.price}원</Typography>
-                </CardContent>
-              </Box>
-            )
-          })}
-        </CardContent>
-      </Collapse>
+            >
+              {expanded? "":"사용한 아이템"}<ExpandMoreIcon />
+            </Button>
+        </CardActions>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <CardContent>
+            {closet.products.map((product) => {
+              return(
+                <Box p={1} display="flex" flexDirection="row" alignItems="center">
+                  <ButtonBase component={Link} to={"/productDetail/"+product.id}>
+                    <Avatar className={classes.productMedia} src={product.img} variant="rounded" />
+                  </ButtonBase>
+                  <Box pr={1} />
+                  <Box>
+                    <Typography>{product.pname}</Typography>
+                    <Typography variant="body2" color="textSecondary">{product.price}원</Typography>
+                  </Box>
+                </Box>
+              )
+            })}
+          </CardContent>
+        </Collapse>
+      </Box>
     </Box>
   );
 }

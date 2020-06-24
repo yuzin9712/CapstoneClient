@@ -3,25 +3,30 @@ import React, { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import {
-  Grid, Box, Button, ButtonBase, Avatar, Tooltip, IconButton, TextField, Popover, Typography,
+  Grid, Box, Button, ButtonBase, Avatar, Tooltip, IconButton, TextField, Popover, Typography, Dialog, Divider,
 } from '@material-ui/core'
 import { sangminserver, yujinserver } from '../../restfulapi';
-import { sketchResetItems, sketchRemoveItem } from '../../actions/sketch';
-import { AddShoppingCart, SaveAlt, Remove, Delete, Palette } from '@material-ui/icons';
+import { sketchResetItems, sketchRemoveItem, handleDrawerClose } from '../../actions/sketch';
+import { AddShoppingCart, SaveAlt, Remove, Delete, Palette, ChevronLeft, Help, Close } from '@material-ui/icons';
 import { brown, yellow, grey, red, pink, purple, deepPurple, indigo, blue, lightBlue, cyan, teal, green, lightGreen, lime, amber, orange, deepOrange, blueGrey } from '@material-ui/core/colors';
 import { useSnackbar } from 'notistack';
 import grid from '../../../public/grid.png'
 import {GithubPicker} from 'react-color'
 import { push } from 'connected-react-router';
+import SketchGuide from './SketchGuide';
+import costume_tuto1 from '../../../public/costume_tuto1.png'
+import costume_tuto2 from '../../../public/costume_tuto2.png'
+import costume_tuto3 from '../../../public/costume_tuto3.png'
 // import fabric from 'fabric'
 const fabric = window.fabric
 const OBJECT_COUNT_MAX = 25
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: '100vh'
+    width: theme.spacing(65),
+    height: '100vh',
   },
   paletteImage: {
     width: theme.spacing(10),
@@ -49,10 +54,15 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "white",
     borderRadius: "50%",
   },
+  dialogImage: {
+    width: '100%',
+    height: '100%',
+  },
 }));
 
-const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem, authStore, push }) => {
+const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem, authStore, push, handleDrawerClose }) => {
   const classes = useStyles();
+  const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const [canvas, setCanvas] = useState(null)
   const [ sketchItemComponents, setSketchItemComponents ] = useState(null)
@@ -63,6 +73,7 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem, auth
     cursorX: 0,
     cursorY: 0,
   })
+  const [guideOpen, setGuideOpen] = useState(false)
   const backgroundCanvas = new fabric.StaticCanvas()
   const [colorPickerAnchorEl, setColorPickerAnchorEl] = useState(null);
   const [canvasColor, setCanvasColor] = useState(grey[100])
@@ -93,9 +104,9 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem, auth
   useEffect(() => {
     if(canvas !== null){
       fabric.Image.fromURL("",(background) => {
-        backgroundCanvas.setWidth(175)
-        backgroundCanvas.setHeight(175)
-        backgroundCanvas.add(background)
+        // backgroundCanvas.setWidth(1)
+        // backgroundCanvas.setHeight(1)
+        // backgroundCanvas.add(background)
         backgroundCanvas.setBackgroundColor(canvasColor, () => backgroundCanvas.renderAll())
   
         const pattern = new fabric.Pattern({
@@ -126,8 +137,8 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem, auth
         'selection:updated': () => fabricCanvas.bringToFront(fabricCanvas.getActiveObject()),
         'selection:created': () => fabricCanvas.bringToFront(fabricCanvas.getActiveObject()),
       })
-      fabricCanvas.setWidth(536)
-      fabricCanvas.setHeight(400)
+      fabricCanvas.setWidth(theme.spacing(63))
+      fabricCanvas.setHeight(theme.spacing(50))
       setCanvas(fabricCanvas)
     }
   }, [canvas])
@@ -181,7 +192,7 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem, auth
     .then((res) => res.text())
     .then((text) => {
       if(text === "success"){
-        enqueueSnackbar("장바구니에 넣었습니다.",{"variant": "success"});
+        enqueueSnackbar("장바구니에 넣었습니다.",{"variant": "success", action: () => <Button onClick={() => push("/order/cart")}>바로가기</Button>});
       }
       else{
         enqueueSnackbar("장바구니에 넣지 못했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
@@ -200,16 +211,19 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem, auth
       canvas.remove(img)
     })
     canvas.discardActiveObject()
+    canvas.requestRenderAll()
   }
   const removeSelected = () => {
     canvas.getActiveObjects().forEach((obj) => canvas.remove(obj))
     canvas.discardActiveObject()
+    canvas.requestRenderAll()
   }
   const saveCloset = () => {
     canvas.discardActiveObject()
+    canvas.requestRenderAll()
     const objects = canvas.toJSON().objects
     if(objects.length === 0){
-      enqueueSnackbar("아무것도 없어요",{"variant": "error"});
+      enqueueSnackbar("저장할 내용이 없습니다.",{"variant": "error"});
     }
     else {
       const products = objects.reduce((result, obj) => {
@@ -267,7 +281,7 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem, auth
   const handleDrop = (event) => {
     if(dragInfo.drag){
       if(canvas.toJSON().objects.length >= OBJECT_COUNT_MAX){
-        enqueueSnackbar("그만올립시다",{"variant": "error"});
+        enqueueSnackbar("이 이상 올릴 수 없습니다.",{"variant": "error"});
       }
       else{
         const x = event.clientX - canvas._offset.left
@@ -300,40 +314,91 @@ const SketchComponent = ({ sketchItems, sketchResetItems, sketchRemoveItem, auth
   }
 
   return(
-    <Box display="flex" flexDirection="column" className={classes.root}>
-      <Box display="flex" justifyContent="flex-end" alignItems="center">
-        <Button variant="contained" color="primary" onClick={saveCloset}><SaveAlt />나의옷장에 저장</Button>
-        <Button variant="contained" color="secondary" onClick={removeAll}>전체삭제</Button>
-        <Button variant="outlined" onClick={removeSelected}>선택삭제</Button>
-        <Tooltip title="배경색">
-          <IconButton onClick={openColorPicker} style={{backgroundColor: canvasColor}}>
-            🌈
-          </IconButton>
-        </Tooltip>
-        <Popover
-        id={id}
-        open={open}
-        anchorEl={colorPickerAnchorEl}
-        onClose={closeColorPicker}
-        anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
-        transformOrigin={{vertical: 'top', horizontal: 'left'}}>
-          <GithubPicker 
-            colors={[red[100], pink[100], purple[100], deepPurple[100], indigo[100], blue[100], lightBlue[100], 
-              cyan[100], teal[100], green[100], lightGreen[100], lime[100], yellow[100], amber[100], orange[100], deepOrange[100], 
-              brown[100], grey[100], blueGrey[100], ]}
-            onChangeComplete={handleCanvasColor}
-          />
-        </Popover>
+    <>
+      <Box display="flex" flexDirection="column" className={classes.root}>
+        <Box p={1} display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
+          <Button variant="outlined" onClick={() => handleDrawerClose()}>
+            <ChevronLeft /> 닫기
+          </Button>
+          <Box display="flex" flexDirection="row">
+            <Button variant="outlined" onClick={() => push("/mypage/"+authStore.currentId+"?page=closet")}>
+              ✨나의옷장
+            </Button>
+            <Box pr={1} />
+            <Button variant="outlined" onClick={() => setGuideOpen(true)}>
+              <Help /> 사용법
+            </Button>
+            <Box pr={1} />
+            <Button onClick={openColorPicker} style={{backgroundColor: canvasColor}}>
+              🌈 배경색
+            </Button>
+          </Box>
+        </Box>
+        <Box px={1} onDrop={handleDrop}>
+          <canvas id="canvasRef" />
+        </Box>
+        <Box p={1} display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
+          <Button variant="contained" color="primary" onClick={saveCloset}><SaveAlt />나의옷장에 저장</Button>
+          <Box display="flex" flexDirection="row">
+            <Button variant="outlined" onClick={removeAll}>전체삭제</Button>
+            <Box pr={1} />
+            <Button variant="outlined" onClick={removeSelected}>선택삭제</Button>
+          </Box>
+        </Box>
+        <Divider variant="middle" />
+        <Box p={1} flexGrow={1} display="flex" flexDirection="column">
+          <Box flexGrow={1} display="flex" flexDirction="row" flexWrap="wrap" alignItems="flex-start" alignContent="flex-start" className={classes.list}>
+            {sketchItemComponents}
+          </Box>
+          <Button fullWidth variant="outlined" onClick={restart}>리스트 초기화</Button>
+        </Box>
       </Box>
-      <Box p={1} onDrop={handleDrop}>
-        <canvas id="canvasRef" />
-        {/* {canvasComponent} */}
-      </Box>
-      <Box p={1} flexGrow={1} component={Grid} container className={classes.list}>
-        {sketchItemComponents}
-      </Box>
-      <Button variant="outlined" onClick={restart}>리스트 초기화</Button>
-    </Box>
+      <Popover
+      id={id}
+      open={open}
+      anchorEl={colorPickerAnchorEl}
+      onClose={closeColorPicker}
+      anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+      transformOrigin={{vertical: 'top', horizontal: 'left'}}>
+        <GithubPicker 
+          colors={[red[100], pink[100], purple[100], deepPurple[100], indigo[100], blue[100], lightBlue[100], 
+            cyan[100], teal[100], green[100], lightGreen[100], lime[100], yellow[100], amber[100], orange[100], deepOrange[100], 
+            brown[100], grey[100], blueGrey[100], ]}
+          onChangeComplete={handleCanvasColor}
+        />
+      </Popover>
+      <Dialog
+      fullWidth
+      maxWidth="md"
+      open={guideOpen}
+      onClose={() => setGuideOpen(false)}>
+        <Box p={1} display="flex" flexDirection="column">
+          <Box p={1} display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
+            <Box px={1} fontSize="h6.fontSize" >코디 툴 사용 가이드</Box>
+            <Tooltip title="닫기">
+              <IconButton onClick={() => setGuideOpen(false)}>
+                <Close />
+              </IconButton>
+            </Tooltip>
+          </Box>
+          <Divider variant="middle" />
+          <SketchGuide interval={10000} >
+            <Box p={1} display="flex" flexDirection="column">
+              <Avatar src={costume_tuto1} className={classes.dialogImage} variant="rounded" />
+              <Box p={1} textAlign="center" alignItems="center"><Palette /> 버튼으로 상품을 담고 캔버스에 드래그해 원하는 상품으로 코디해보세요!</Box>
+            </Box>
+            <Box p={1} display="flex" flexDirection="column">
+              <Avatar src={costume_tuto2} className={classes.dialogImage} variant="rounded" />
+              <Box p={1} textAlign="center" alignItems="center">코디 툴에서 마음에 든 상품은 <AddShoppingCart /> 버튼으로 곧바로 장바구니에!</Box>
+            </Box>
+            <Box p={1} display="flex" flexDirection="column">
+              <Avatar src={costume_tuto3} className={classes.dialogImage} variant="rounded" />
+              <Box p={1} textAlign="center" alignItems="center">코디를 저장하면 ✨나의옷장에서 사용된 상품과 함께 확인할 수 있어요!</Box>
+            </Box>
+          </SketchGuide>
+        </Box>
+      </Dialog>
+    </>
   )
 }
 
@@ -355,7 +420,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch) => ({
   sketchResetItems: () => dispatch(sketchResetItems()),
   sketchRemoveItem: (src) => dispatch(sketchRemoveItem(src)),
-  push: (url) => dispatch(push(url))
+  push: (url) => dispatch(push(url)),
+  handleDrawerClose: () => dispatch(handleDrawerClose()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SketchComponent)
