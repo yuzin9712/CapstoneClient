@@ -16,6 +16,7 @@ import {
   Avatar,
   Tab,
   Typography,
+  Link,
   Grid,
   TextField,
   Button,
@@ -41,7 +42,6 @@ import {
   getLoginStatus
  } from '../../actions/auth';
 import { yujinserver } from '../../restfulapi';
-import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -124,7 +124,7 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
           로그인
         </Button>
       </form>
-      <ButtonBase component={Link} to={yujinserver+"/auth/kakao"}>
+      <ButtonBase component="a" href="http://www.softjs2.com/api/auth/kakao">
         <Avatar src={kakaologo} variant="square" className={classes.kakaoButton} />
       </ButtonBase>
     </Box>
@@ -327,8 +327,8 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
         >
           <Box p={1} display="flex" flexDirection="column">
             <Typography gutterBottom variant="h6">쇼핑몰 제휴신청</Typography>
-            <Typography>쇼핑몰 관리자 자격으로 회원가입합니다. 멋쟁이마당 운영자의 승인이 있기까지 로그인이 제한됩니다. 승인 상황은 이메일으로 안내됩니다.</Typography>
             <Divider variant="middle" />
+            <Typography>쇼핑몰 관리자 자격으로 회원가입합니다. 멋쟁이마당 운영자의 승인이 있기까지 로그인이 제한됩니다. 승인 상황은 이메일으로 안내됩니다.</Typography>
             <Box pt={1} />
             {shopRegisterView}
           </Box>
