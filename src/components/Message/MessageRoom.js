@@ -82,7 +82,7 @@ const MessageRoom = ({counter, handleClose, room, reload, search}) => {
           reload()
           setTextline("")
         }
-        else if(text === "삭제된 유저"){
+        else if(text === "삭제된유저"){
           enqueueSnackbar("탈퇴한 회원입니다.",{"variant": "error"});
           handleClose()
         }

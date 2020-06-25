@@ -34,6 +34,7 @@ import { sangminserver } from '../../restfulapi';
 import { useSnackbar } from 'notistack';
 import FollowButton from '../common/FollowButton';
 import ReviewComment from './ReviewComment';
+import NameAvatarButton from '../common/NameAvatarButton';
 
 const useStyles = makeStyles((theme) => ({
   cardMedia: {
@@ -267,7 +268,7 @@ const ReviewCard = ({authStore, width, review, reload}) => {
     <Box p={1} container={Card} item width={cardSizeLookup[width]} className={classes.card} variant="outlined">
       
       <Grid item container>
-        <Avatar item>{review.user_email.slice(0,1)}</Avatar>
+        <NameAvatarButton name={review.user_email} userId={review.userId} />
         <Box item direction="column" flexGrow={1}>
           <Typography>{review.user_email}</Typography>
           <Typography variant="body2" color="textSecondary">
@@ -275,7 +276,6 @@ const ReviewCard = ({authStore, width, review, reload}) => {
           </Typography>
         </Box>
         <Box item>
-          <FollowButton targetuserid={review.userId} />
           {review.userId === authStore.currentId?(
             editReview?(
               <React.Fragment>
