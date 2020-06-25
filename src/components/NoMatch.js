@@ -1,5 +1,7 @@
 import React from 'react'
 import { Box, Button } from '@material-ui/core'
+import { goBack } from 'connected-react-router'
+import { connect } from 'react-redux'
 
 const NoMatch = ({goBack}) => {
   return(
