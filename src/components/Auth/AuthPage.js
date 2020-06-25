@@ -1,5 +1,5 @@
 // "/auth"페이지
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { goBack, push } from 'connected-react-router'
@@ -69,6 +69,7 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
   const [ email, setEmail ] = useState("");
   const [ password, setPassword ] = useState("");
   const classes = useStyles();
+  const [fetching, setFetching] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
   const { register, control, handleSubmit } = useForm();
   const [shopRegisterOpen, setShopRegisterOpen] = useState(false)
@@ -84,10 +85,12 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
 
   const loginSubmit = (event) => {
     event.preventDefault()
+    setFetching(true)
     requestLogin(email, password)
+    .then(() => setFetching(false))
   }
 
-  const loginView =
+  const loginView = useMemo(() => (
   <Box display="flex" flexDirection="column" alignItems="center">
     <form
         className={classes.form}
@@ -115,6 +118,7 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
           onChange={(e) => (setPassword(e.target.value))}
           autoComplete="current-password" />
         <Button
+        disabled={fetching}
           type="submit"
           fullWidth
           variant="contained"
@@ -124,52 +128,69 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
           로그인
         </Button>
       </form>
-      <ButtonBase component="a" href="http://www.softjs2.com/api/auth/kakao">
+      <ButtonBase>
+        {fetching?
         <Avatar src={kakaologo} variant="square" className={classes.kakaoButton} />
+        :<a href="http://www.softjs2.com/api/auth/kakao">
+          <Avatar src={kakaologo} variant="square" className={classes.kakaoButton} />
+        </a>}
       </ButtonBase>
     </Box>
+  ), [fetching, email, password])
 
 
   const registerSubmit = (data) => {
-    fetch(yujinserver+"/auth/join",{
-        method: "POST",
-        headers: {
-          'Accept': 'application/json',
-          "Content-Type": "application/json",
-          'Cache': 'no-cache'
-        },
-        body: JSON.stringify(data),
-        credentials: 'include',
-    })
-    .then(
-      response => response.text(),
-      error => console.error(error)
-    )
-    .then((text) => {
-      if(text === "success"){
-        enqueueSnackbar("회원가입에 성공했습니다! 로그인해주세요.",{"variant": "success"});
-        setTabValue("1")
-      }
-      else{
-        enqueueSnackbar("회원가입에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
-      }
-    })
+    if(password !== data.password_confirm){
+      enqueueSnackbar("비밀번호와 비밀번호 확인이 다릅니다. 확인해주세요.",{"variant": "error"});
+    }
+    else if(!fetching){
+      setFetching(true)
+      fetch(yujinserver+"/auth/join",{
+          method: "POST",
+          headers: {
+            'Accept': 'application/json',
+            "Content-Type": "application/json",
+            'Cache': 'no-cache'
+          },
+          body: JSON.stringify({
+            email: email,
+            name: data.name,
+            password: password,
+          }),
+          credentials: 'include',
+      })
+      .then(
+        response => response.text(),
+        error => console.error(error)
+      )
+      .then((text) => {
+        if(text === "success"){
+          enqueueSnackbar("회원가입에 성공했습니다! 로그인해주세요.",{"variant": "success"});
+          setTabValue("1")
+        }
+        else{
+          enqueueSnackbar("회원가입에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
+        }
+        setFetching(false)
+      })
+    }
   }
-  const registerView = (
+  const registerView = useMemo(() => (
     <form
       className={classes.form}
       onSubmit={handleSubmit(registerSubmit)}
     >
       <TextField
-        inputRef={register({required: true})}
-        variant="outlined"
-        margin="normal"
-        required
-        fullWidth
-        id="email"
-        name="email"
-        label="이메일"
-      />
+      variant="outlined"
+      margin="normal"
+      required
+      fullWidth
+      id="email"
+      value={email}
+      onChange={(e) => (setEmail(e.target.value))}
+      label="Email Address"
+      autoComplete="email"
+      autoFocus />
       <TextField
         inputRef={register({required: true})}
         variant="outlined"
@@ -181,17 +202,28 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
         label="이름"
       />
       <TextField
+      variant="outlined"
+      margin="normal"
+      required
+      fullWidth
+      label="비밀번호"
+      type="password"
+      id="password"
+      onChange={(e) => (setPassword(e.target.value))}
+      autoComplete="current-password" />
+      <TextField
         inputRef={register({required: true})}
         variant="outlined"
         margin="normal"
         required
         fullWidth
-        id="password"
-        name="password"
+        id="password_confirm"
+        name="password_confirm"
         type="password"
-        label="비밀번호"
+        label="비밀번호 확인"
       />
       <Button
+      disabled={fetching}
         type="submit"
         fullWidth
         variant="contained"
@@ -201,34 +233,47 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
         가입
       </Button>
     </form>
-  )
+  ), [fetching, email, password])
 
   const shopRegisterSubmit = (data) => {
-    fetch(yujinserver+"/auth/shop",{
-        method: "POST",
-        headers: {
-          'Accept': 'application/json',
-          "Content-Type": "application/json",
-          'Cache': 'no-cache'
-        },
-        body: JSON.stringify(data),
-        credentials: 'include',
-    })
-    .then(
-      response => response.text(),
-      error => console.error(error)
-    )
-    .then((text) => {
-      if(text === "success"){
-        enqueueSnackbar("제휴 신청에 성공했습니다! 활동이 승인되면 이메일으로 연락됩니다.",{"variant": "success"});
-        setShopRegisterOpen(false)
-      }
-      else{
-        enqueueSnackbar("제휴 신청에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
-      }
-    })
+    if(password !== data.password_confirm){
+      enqueueSnackbar("비밀번호와 비밀번호 확인이 다릅니다. 확인해주세요.",{"variant": "error"});
+    }
+    else if(!fetching){
+      setFetching(true)
+      fetch(yujinserver+"/auth/shop",{
+          method: "POST",
+          headers: {
+            'Accept': 'application/json',
+            "Content-Type": "application/json",
+            'Cache': 'no-cache'
+          },
+          body: JSON.stringify({
+            shopname: data.shopname,
+            shopurl: data.shopurl,
+            email: email,
+            password: password,
+            phone: data.phone
+          }),
+          credentials: 'include',
+      })
+      .then(
+        response => response.text(),
+        error => console.error(error)
+      )
+      .then((text) => {
+        if(text === "success"){
+          enqueueSnackbar("제휴 신청에 성공했습니다! 제휴가 완료되면 그때부터 쇼핑몰 관리가 가능해집니다.",{"variant": "success"});
+          setShopRegisterOpen(false)
+        }
+        else{
+          enqueueSnackbar("제휴 신청에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.",{"variant": "error"});
+        }
+        setFetching(false)
+      })
+    }
   }
-  const shopRegisterView = (
+  const shopRegisterView = useMemo(() => (
     <form
       className={classes.form}
       onSubmit={handleSubmit(shopRegisterSubmit)}
@@ -248,31 +293,43 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
         inputRef={register({})}
         variant="outlined"
         margin="normal"
+        required
         fullWidth
         id="shopurl"
         name="shopurl"
         label="쇼핑몰홈페이지"
       />
       <TextField
-        inputRef={register({required: true})}
-        variant="outlined"
-        margin="normal"
-        required
-        fullWidth
-        id="email"
-        name="email"
-        label="이메일"
-      />
+      variant="outlined"
+      margin="normal"
+      required
+      fullWidth
+      id="email"
+      value={email}
+      onChange={(e) => (setEmail(e.target.value))}
+      label="Email Address"
+      autoComplete="email"
+      autoFocus />
+      <TextField
+      variant="outlined"
+      margin="normal"
+      required
+      fullWidth
+      label="비밀번호"
+      type="password"
+      id="password"
+      onChange={(e) => (setPassword(e.target.value))}
+      autoComplete="current-password" />
       <TextField
         inputRef={register({required: true})}
         variant="outlined"
         margin="normal"
         required
         fullWidth
-        id="password"
-        name="password"
+        id="password_confirm"
+        name="password_confirm"
         type="password"
-        label="비밀번호"
+        label="비밀번호 확인"
       />
       <TextField
         inputRef={register({required: true})}
@@ -286,6 +343,7 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
         label="대표번호"
       />
       <Button
+      disabled={fetching}
         type="submit"
         fullWidth
         variant="contained"
@@ -295,7 +353,7 @@ const AuthPage = ({authStore, dispatchBack, dispatchPush, requestLogin}) => {
         가입
       </Button>
     </form>
-  )
+  ), [fetching, email, password])
 
 
   return(

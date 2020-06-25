@@ -35,6 +35,7 @@ import { useSnackbar } from 'notistack';
 import FollowButton from '../common/FollowButton';
 import ReviewComment from './ReviewComment';
 import NameAvatarButton from '../common/NameAvatarButton';
+import RawNameAvatar from '../common/RawNameAvatar';
 
 const useStyles = makeStyles((theme) => ({
   cardMedia: {
@@ -136,8 +137,8 @@ const ReviewCard = ({authStore, width, review, reload}) => {
       }))
       const recent = json.comments.reverse()[0]
       if(recent !== undefined) setRecentComment(
-        <Box display="flex" flexDirection="row">
-        <Avatar className={classes.commentAvatar}>{recent.writer.slice(0,1)}</Avatar>
+        <Box display="flex" flexDirection="row" alignItems="center">
+        <NameAvatarButton name={recent.writer} userId={recent.userId} size={4} />
           <Box p={1} flexGrow={1}>
             <Typography item gutterBottom>
               {recent.content.length>50?recent.content.substring(0,50) + "...":recent.content}
@@ -214,7 +215,7 @@ const ReviewCard = ({authStore, width, review, reload}) => {
   const commentWriteComponent = (
     <form onSubmit={handleSubmit(submitComment)}>
       <Box display="flex" flexDirection="row" alignItems="center">
-        <Avatar className={classes.commentAvatar}>{authStore.currentUser.slice(0,1)}</Avatar>
+        <RawNameAvatar name={authStore.currentUser} size={4} />
         <Box flexGrow={1} p={1}>
           <TextField 
             inputRef={register({required: true})}

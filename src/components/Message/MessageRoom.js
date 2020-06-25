@@ -173,7 +173,6 @@ const MessageRoom = ({counter, handleClose, room, reload, search}) => {
             id="line"
             label="내용"
             autoFocus
-            multiline
             autoComplete="off"
             // className={classes.textfield}
             component={Box} flexGrow={1}

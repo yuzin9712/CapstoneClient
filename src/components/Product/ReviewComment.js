@@ -33,6 +33,8 @@ import { connect } from 'react-redux';
 import { sangminserver } from '../../restfulapi';
 import { useSnackbar } from 'notistack';
 import FollowButton from '../common/FollowButton';
+import NameAvatarButton from '../common/NameAvatarButton';
+import moment from 'moment'
 
 const useStyles = makeStyles((theme) => ({
   cardMedia: {
@@ -64,8 +66,7 @@ const ReviewComment = ({authStore, comment, reload}) => {
   const { enqueueSnackbar } = useSnackbar();
   const [content, setContent] = useState(null)
   const [editComment, setEditComment] = useState(false)
-  const createdAt = new Date(comment.createdAt)
-  const updatedAt = new Date(comment.updatedAt)
+  // const edited = Date.parse(comment.createdAt) < Date.parse(comment.updatedAt)
 
   useEffect(() => {
     if(editComment){
@@ -89,8 +90,8 @@ const ReviewComment = ({authStore, comment, reload}) => {
           <Typography gutterBottom display="inline">
             {comment.content} 
           </Typography>
-          <Typography gutterBottom display="inline" variant="body2">
-            {updatedAt.getTime()>createdAt.getTime()?" - "+updatedAt.toLocaleString()+" (수정됨)" : " - "+createdAt.toLocaleString()}
+          <Typography gutterBottom display="inline" variant="body2" color="textSecondary">
+            {" ー "+(moment(comment.createdAt).fromNow())}
           </Typography>
         </React.Fragment>
       )
@@ -165,9 +166,7 @@ const ReviewComment = ({authStore, comment, reload}) => {
 
   return (
     <Box p={1} display="flex" flexDirection="row" key={comment.id} alignItems="center">
-      <Avatar className={classes.commentAvatar}>
-        {comment.writer.slice(0,1)}
-      </Avatar>
+      <NameAvatarButton name={comment.writer} userId={comment.userId} size={3} />
       <Box display="flex" flexDirection="row" p={1} mx={1} flexGrow={1} alignItems="center" component={Paper} variant="outlined">
         <Box flexGrow={1}>{content}</Box>
         {authStore.currentId === comment.userId?

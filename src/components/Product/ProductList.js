@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Typography, Container } from '@material-ui/core';
+import { Grid, Typography, Container, Box } from '@material-ui/core';
 import ProductCard from './ProductCard';
 
 import axios from 'axios'
@@ -23,12 +23,15 @@ const ProductList = ({products, previews}) => {
     }, {})
     : []
 
-    const items = products.map((product) => {
+    const items = products.length > 0?products.map((product) => {
         
         return (
             <ProductCard product={product} preview={parsedPreviews[product.id]} key={product.id}/>
         )
-    });
+    })
+    :<Box p={5}>
+      검색된 상품이 없습니다.🤔
+    </Box>
 
     return (
         <Grid container spacing={1}>
