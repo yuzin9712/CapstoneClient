@@ -64,10 +64,16 @@ const ProductCategoryPage = ({pathname, search, match}) => {
         )
         .then((json) => {
           const length = json.products.length
-          const products = json.products.flatMap((product, index) => (!Boolean(product.deletedAt)?[{
-            ...product,
-            sales: length - index,
-          }]:[]))
+          const products = json.products.reduce((result, product, index) => {
+            if(Boolean(product.deletedAt)
+            || result.some((resultItem) => resultItem.id === product.id)){
+              return result
+            }
+            else return [...result, {
+              ...product,
+              sales: length - index,
+            }]
+          }, [])
           setPreviews(json.imgs)
           setInitialProducts(products)
           setProducts(products)

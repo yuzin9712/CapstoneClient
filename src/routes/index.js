@@ -48,9 +48,6 @@ import AdminManageUserPage from '../components/Admin/AdminManageUserPage'
 const routes = (
       <Switch>
         <Route exact path="/" component={MainPage} />
-        {/* <Route path="/login" component={LoginPage} />
-        <Route path="/logintest" component={LoginTest} /> */}
-        {/* <Route path="/auth" component={AuthPage} /> */}
         <Route path="/productList/category/:id" component={ProductCategoryPage} /> 
         <Route path="/productList/search" component={ProductSearchPage} /> 
         <Route path="/productDetail/:id" component={ProductDetailPage} /> 
